@@ -3,17 +3,11 @@
    ========================================== */
 
 /* === HERO === */
-.cand-hero {
-    position: relative;
-    height: 100vh;
-    display: flex;
-    align-items: flex-end;
-    background-image: url('/images/candidats-hero-bg.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    margin-top: 70px;
-}
+/* === HERO === */
+/* Replaced by HeroCarousel */
+/*.cand-hero {
+    ...
+}*/
 
 .cand-hero-overlay {
     position: absolute;
@@ -30,6 +24,9 @@
     text-align: left;
     padding-bottom: var(--spacing-3xl);
     color: var(--color-text-white);
+    margin-left: 0;
+    width: 100%;
+    padding-left: 100px;
 }
 
 .cand-hero-title {
@@ -137,7 +134,7 @@
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
     .cand-hero {
-        height: 80vh;
+        height: 50vh;
     }
 
     .cand-hero-title {

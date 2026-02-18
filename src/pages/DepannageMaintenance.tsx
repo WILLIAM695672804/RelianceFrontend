@@ -1,22 +1,39 @@
 import React from 'react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import HeroCarousel from '../components/common/HeroCarousel';
 import '../styles/variables.css';
 import './DepannageMaintenance.css';
+
+const depannageSlides = [
+    {
+        image: '/images/depannage-hero-bg.png', // Assuming image exists or placeholder
+        title: <>DÉPANNAGE & MAINTENANCE<br />TECHNIQUE</>,
+    },
+    {
+        image: 'https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=1600&h=900&fit=crop',
+        title: <>INTERVENTION RAPIDE<br />24/7 SUR SITE</>,
+        subtitle: "Nos techniciens sont prêts à intervenir pour tous vos besoins urgents."
+    },
+    {
+        image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=1600&h=900&fit=crop',
+        title: <>MAINTENANCE PRÉVENTIVE<br />POUR VOTRE TRANQUILLITÉ</>,
+        subtitle: "Évitez les pannes coûteuses grâce à nos plans de maintenance réguliers."
+    }
+];
 
 const DepannageMaintenance: React.FC = () => {
     return (
         <div className="page-depannage">
             <Header />
 
-            {/* Hero Section */}
-            <section className="dm-hero">
-                <div className="container dm-hero-content">
-                    <h1 className="dm-hero-title">
-                        DÉPANNAGE & MAINTENANCE<br />TECHNIQUE
-                    </h1>
-                </div>
-            </section>
+            {/* Hero Carousel */}
+            <HeroCarousel
+                slides={depannageSlides}
+                ctaLink="/devenir-membre" // Assuming consistent link
+                ctaText="Devenir membre"
+                className="dm-hero-carousel"
+            />
 
             {/* Section Introduction 1 - Image Left, Text Right */}
             <section className="dm-intro section">

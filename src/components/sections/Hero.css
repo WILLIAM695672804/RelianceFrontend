@@ -1,13 +1,14 @@
 .hero {
     position: relative;
-    height: 100vh;
+    height: 70vh;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     background-image: url('/images/hero-bg.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     overflow: hidden;
+    margin-top: 70px;
 }
 
 .hero-overlay {
@@ -25,6 +26,9 @@
     text-align: left;
     color: var(--color-text-white);
     padding-bottom: var(--spacing-3xl);
+    margin-left: 0;
+    width: 100%;
+    padding-left: 100px;
 }
 
 .hero-title {
@@ -54,7 +58,7 @@
 /* Responsive */
 @media (max-width: 768px) {
     .hero {
-        height: 80vh;
+        height: 50vh;
     }
 
     .hero-title {

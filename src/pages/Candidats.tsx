@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import HeroCarousel from '../components/common/HeroCarousel';
 import '../styles/variables.css';
 import './Candidats.css';
 
@@ -75,30 +76,43 @@ const expertiseData: ExpertiseCategory[] = [
     },
 ];
 
+const candidatSlides = [
+    {
+        image: '/images/candidats-hero-bg.png',
+        title: <>Devenir Technicien Reliance<br />Simple et sécuritaire</>,
+        subtitle: (
+            <ul className="cand-hero-list" style={{ listStyle: 'none', padding: 0 }}>
+                <li>- Nous vérifions et certifions votre profil professionnel</li>
+                <li>- Nous vous connectons avec des clients qualifiés</li>
+                <li>- Nous garantissons le paiement de vos interventions</li>
+                <li>- Nous vous accompagnons dans votre développement</li>
+            </ul>
+        )
+    },
+    {
+        image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1600&h=900&fit=crop',
+        title: <>REJOIGNEZ NOTRE RÉSEAU<br />D'EXPERTS CERTIFIÉS</>,
+        subtitle: "Bénéficiez d'une visibilité accrue et de missions régulières."
+    },
+    {
+        image: 'https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=1600&h=900&fit=crop',
+        title: <>VALORISEZ VOTRE SAVOIR-FAIRE<br />AUPRÈS DES MEILLEURS</>,
+        subtitle: "Travaillez avec des clients sérieux et développez votre carrière."
+    }
+];
+
 const Candidats: React.FC = () => {
     return (
         <div className="page-candidats">
             <Header />
 
-            {/* Hero Section */}
-            <section className="cand-hero">
-                <div className="cand-hero-overlay"></div>
-                <div className="container cand-hero-content">
-                    <h1 className="cand-hero-title">
-                        Devenir Technicien Reliance<br />
-                        Simple et sécuritaire
-                    </h1>
-                    <ul className="cand-hero-list">
-                        <li>- Nous vérifions et certifions votre profil professionnel</li>
-                        <li>- Nous vous connectons avec des clients qualifiés</li>
-                        <li>- Nous garantissons le paiement de vos interventions</li>
-                        <li>- Nous vous accompagnons dans votre développement</li>
-                    </ul>
-                    <button className="btn btn-primary cand-hero-cta">
-                        Devenir membre
-                    </button>
-                </div>
-            </section>
+            {/* Hero Carousel */}
+            <HeroCarousel
+                slides={candidatSlides}
+                ctaLink="/devenir-membre"
+                ctaText="Devenir membre"
+                className="cand-hero-carousel"
+            />
 
             {/* Section Domaines d'expertises */}
             <section className="cand-expertise section">

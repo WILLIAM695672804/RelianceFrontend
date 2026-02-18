@@ -2,29 +2,41 @@ import React from 'react';
 import { FaArrowRight, FaUsers, FaFileAlt, FaShieldAlt, FaChartLine, FaHandshake, FaClock } from 'react-icons/fa';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import HeroCarousel from '../components/common/HeroCarousel';
 import '../styles/variables.css';
 import './Entreprises.css';
+
+const entrepriseSlides = [
+    {
+        image: '/images/entreprises-hero-bg.png',
+        title: <>POUR LES ENTREPRISES<br />PARTENAIRES</>,
+    },
+    {
+        image: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1600&h=900&fit=crop',
+        title: <>DÉVELOPPEZ VOTRE<br />ACTIVITÉ AVEC NOUS</>,
+        subtitle: "Accédez à un réseau qualifié de professionnels et de clients potentiels."
+    },
+    {
+        image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&h=900&fit=crop',
+        title: <>SOLUTIONS SUR MESURE<br />POUR VOTRE CROISSANCE</>,
+        subtitle: "Des outils performants pour gérer vos interventions et vos équipes."
+    }
+];
 
 const Entreprises: React.FC = () => {
     return (
         <div className="page-entreprises">
             <Header />
 
-            {/* Hero Section */}
-            <section className="ent-hero">
-                <div className="ent-hero-overlay"></div>
-                <div className="container ent-hero-content">
-                    <h1 className="ent-hero-title">
-                        SIMPLIFIEZ LA GESTION<br />
-                        DE VOS INTERVENTIONS TECHNIQUES
-                    </h1>
-                    <button className="btn btn-primary ent-hero-cta">
-                        Devenir membre
-                    </button>
-                </div>
-            </section>
+            {/* Hero Carousel */}
+            <HeroCarousel
+                slides={entrepriseSlides}
+                ctaLink="/inscription/entreprise"
+                ctaText="Devenir membre"
+                className="ent-hero-carousel"
+            />
 
-            {/* Section Avantages Introduction */}
+            {/* Section Offre */}
             <section className="ent-intro section">
                 <div className="container">
                     <div className="ent-intro-grid">

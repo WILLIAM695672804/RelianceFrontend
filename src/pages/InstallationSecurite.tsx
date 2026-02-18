@@ -2,24 +2,41 @@ import React from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import HeroCarousel from '../components/common/HeroCarousel';
 import '../styles/variables.css';
 import './InstallationSecurite.css';
+
+const securiteSlides = [
+    {
+        image: '/images/security-hero-bg.png', // Assuming image exists or placeholder
+        title: <>INSTALLATION & SÉCURITÉ<br />PROFESSIONNELLE</>,
+    },
+    {
+        image: 'https://images.unsplash.com/photo-1558002038-1091a1661113?w=1600&h=900&fit=crop',
+        title: <>SYSTÈMES DE SURVEILLANCE<br />DERNIÈRE GÉNÉRATION</>,
+        subtitle: "Protégez vos biens et vos proches avec nos solutions connectées."
+    },
+    {
+        image: 'https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?w=1600&h=900&fit=crop',
+        title: <>EXPERTISE EN SÉCURITÉ<br />INCENDIE ET ACCÈS</>,
+        subtitle: "Audit, installation et maintenance de vos équipements de sécurité."
+    }
+];
 
 const InstallationSecurite: React.FC = () => {
     return (
         <div className="page-installation">
             <Header />
 
-            {/* Hero Section */}
-            <section className="is-hero">
-                <div className="container is-hero-content">
-                    <h1 className="is-hero-title">
-                        INSTALLATION & SÉCURITÉ
-                    </h1>
-                </div>
-            </section>
+            {/* Hero Carousel */}
+            <HeroCarousel
+                slides={securiteSlides}
+                ctaLink="/devenir-membre" // Assuming consistent link
+                ctaText="Devenir membre"
+                className="is-hero-carousel"
+            />
 
-            {/* Section 1 - Image Left, Text Right */}
+            {/* Section Introduction 1 - Image Left, Text Right */}
             <section className="is-intro section">
                 <div className="container">
                     <div className="is-intro-grid">

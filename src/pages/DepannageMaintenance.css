@@ -3,27 +3,11 @@
    ========================================== */
 
 /* === HERO === */
-.dm-hero {
-    margin-top: 70px;
-    background-color: #c4c4c4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 50vh;
-}
-
-.dm-hero-content {
-    text-align: center;
-}
-
-.dm-hero-title {
-    font-size: clamp(1.8rem, 4vw, 2.8rem);
-    font-weight: 700;
-    color: var(--color-text-white);
-    text-transform: uppercase;
-    line-height: 1.4;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
+/* === HERO === */
+/* Replaced by HeroCarousel */
+/*.dm-hero {
+    ...
+}*/
 
 /* === INTRO SECTIONS === */
 .dm-intro,
@@ -138,6 +122,10 @@
 @media (max-width: 768px) {
     .dm-intro-grid {
         grid-template-columns: 1fr;
+    }
+
+    .dm-hero {
+        height: 50vh;
     }
 
     .dm-process-grid {

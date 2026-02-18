@@ -3,19 +3,11 @@
    ========================================== */
 
 /* === HERO === */
-.ent-hero {
-    position: relative;
-    height: 70vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-image: url('/images/entreprises-hero-bg.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    text-align: center;
-    margin-top: 70px;
-}
+/* === HERO === */
+/* Replaced by HeroCarousel */
+/*.ent-hero {
+    ...
+}*/
 
 .ent-hero-overlay {
     position: absolute;
@@ -29,6 +21,9 @@
 .ent-hero-content {
     position: relative;
     z-index: 1;
+    width: 100%;
+    margin-left: 0;
+    padding-left: 100px;
 }
 
 .ent-hero-title {
