@@ -2,14 +2,14 @@
 
 Ce document recense l'ensemble des écrans et fonctionnalités implémentés pour la partie Frontend de l'Espace Technicien.
 
-## 🏠 Architecture Globale
+## Architecture Globale
 - **Base URL** : `/technicien`
 - **Structure** : Layout avec Sidebar responsive (navigation par Hubs) et Header commun.
 - **État** : Routes non sécurisées pour faciliter le développement et les tests.
 
 ---
 
-## ⚙️ HUB 1 : Administration & Configuration
+## HUB 1 : Administration & Configuration
 *Ce hub gère le profil technique et administratif du professionnel.*
 
 | Route | Description & Fonctionnalités |
@@ -21,7 +21,7 @@ Ce document recense l'ensemble des écrans et fonctionnalités implémentés pou
 
 ---
 
-## 🚀 HUB 2 : Cockpit Opérationnel
+## HUB 2 : Cockpit Opérationnel
 *Les outils du quotidien pour gérer l'activité en temps réel.*
 
 | Route | Description & Fonctionnalités |
@@ -31,7 +31,7 @@ Ce document recense l'ensemble des écrans et fonctionnalités implémentés pou
 
 ---
 
-## 🛠️ HUB 3 : Gestion de Mission (Workflow)
+## HUB 3 : Gestion de Mission (Workflow)
 *Le cycle de vie complet d'une intervention, de l'acceptation à la clôture.*
 
 | Route | Description & Fonctionnalités |
@@ -43,7 +43,7 @@ Ce document recense l'ensemble des écrans et fonctionnalités implémentés pou
 
 ---
 
-## 💰 HUB 4 : Finance & Portefeuille
+## HUB 4 : Finance & Portefeuille
 *Gestion des revenus et des flux financiers.*
 
 | Route | Description & Fonctionnalités |
@@ -54,7 +54,7 @@ Ce document recense l'ensemble des écrans et fonctionnalités implémentés pou
 
 ---
 
-## 💬 HUB 5 : Social & Réputation
+## HUB 5 : Social & Réputation
 *L'image du technicien et sa communauté.*
 
 | Route | Description & Fonctionnalités |
