@@ -1,0 +1,216 @@
+/* ==========================================
+   PAGE INSCRIPTION TECHNICIEN
+   ========================================== */
+
+/* === SECTION === */
+.it-section {
+    padding-top: calc(70px + var(--spacing-xl));
+    padding-bottom: var(--spacing-xl);
+    background-color: #fdf1f3;
+    min-height: calc(100vh - 70px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.it-section .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.it-page-title {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-text-black);
+    text-align: center;
+    margin-bottom: 4px;
+    font-style: italic;
+}
+
+.it-subtitle {
+    font-size: var(--text-sm);
+    color: var(--color-text-dark);
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+/* === CARD === */
+.it-card {
+    background-color: var(--color-bg-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    width: 100%;
+    max-width: 680px;
+    margin-bottom: var(--spacing-md);
+}
+
+/* === FORM ROWS === */
+.it-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+/* === FORM FIELDS === */
+.it-field {
+    margin-bottom: var(--spacing-sm);
+}
+
+.it-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--color-text-dark);
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.it-label-icon {
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.it-required {
+    color: var(--color-primary-red);
+}
+
+.it-input {
+    width: 100%;
+    padding: 9px 14px;
+    font-size: 0.9rem;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    transition: all var(--transition-base);
+    box-sizing: border-box;
+}
+
+.it-input:focus {
+    background-color: #e8e8e8;
+    box-shadow: 0 0 0 2px rgba(229, 75, 75, 0.2);
+}
+
+.it-input::placeholder {
+    color: #aaa;
+    font-size: 0.8rem;
+}
+
+.it-textarea {
+    resize: none;
+    font-family: inherit;
+}
+
+/* === COMPETENCES TAGS === */
+.it-competences-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.it-comp-tag {
+    padding: 6px 14px;
+    font-size: 0.78rem;
+    border: 1.5px solid #ddd;
+    border-radius: 50px;
+    background-color: var(--color-bg-white);
+    color: var(--color-text-dark);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.it-comp-tag:hover {
+    border-color: var(--color-primary-red);
+    color: var(--color-primary-red);
+}
+
+.it-comp-tag.active {
+    background-color: var(--color-primary-red);
+    border-color: var(--color-primary-red);
+    color: white;
+}
+
+/* === TERMS === */
+.it-terms {
+    margin-bottom: var(--spacing-sm);
+}
+
+.it-checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--color-text-dark);
+    cursor: pointer;
+    line-height: 1.4;
+}
+
+.it-checkbox-label input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.it-checkbox-label a {
+    color: var(--color-primary-red);
+    text-decoration: none;
+}
+
+.it-checkbox-label a:hover {
+    text-decoration: underline;
+}
+
+/* === SUBMIT BUTTON === */
+.it-submit-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-white);
+    background: linear-gradient(135deg, #e54b4b, #d63031);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.it-submit-btn:hover {
+    background: linear-gradient(135deg, #d63031, #c0392b);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(229, 75, 75, 0.3);
+}
+
+/* === LOGIN LINK === */
+.it-login-text {
+    font-size: var(--text-sm);
+    color: var(--color-text-dark);
+    text-align: center;
+}
+
+.it-login-link {
+    color: var(--color-primary-red);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.it-login-link:hover {
+    text-decoration: underline;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .it-row {
+        grid-template-columns: 1fr;
+    }
+
+    .it-card {
+        padding: var(--spacing-md);
+        margin: 0 var(--spacing-md);
+    }
+}

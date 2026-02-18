@@ -1,0 +1,187 @@
+/* ==========================================
+   PAGE INSCRIPTION ENTREPRISE
+   ========================================== */
+
+/* === SECTION === */
+.ie-section {
+    padding-top: calc(70px + var(--spacing-xl));
+    padding-bottom: var(--spacing-xl);
+    background-color: #fdf1f3;
+    min-height: calc(100vh - 70px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ie-section .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ie-page-title {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-text-black);
+    text-align: center;
+    margin-bottom: 4px;
+    font-style: italic;
+}
+
+.ie-subtitle {
+    font-size: var(--text-sm);
+    color: var(--color-text-dark);
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+/* === CARD === */
+.ie-card {
+    background-color: var(--color-bg-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    width: 100%;
+    max-width: 680px;
+    margin-bottom: var(--spacing-md);
+}
+
+/* === FORM ROWS === */
+.ie-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+/* === FORM FIELDS === */
+.ie-field {
+    margin-bottom: var(--spacing-sm);
+}
+
+.ie-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--color-text-dark);
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.ie-label-icon {
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.ie-input {
+    width: 100%;
+    padding: 9px 14px;
+    font-size: 0.9rem;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    transition: all var(--transition-base);
+    box-sizing: border-box;
+}
+
+.ie-input:focus {
+    background-color: #e8e8e8;
+    box-shadow: 0 0 0 2px rgba(229, 75, 75, 0.2);
+}
+
+.ie-input::placeholder {
+    color: #aaa;
+    font-size: 0.8rem;
+}
+
+.ie-select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 10px;
+    padding-right: 30px;
+}
+
+/* === TERMS === */
+.ie-terms {
+    margin-bottom: var(--spacing-sm);
+}
+
+.ie-checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--color-text-dark);
+    cursor: pointer;
+    line-height: 1.4;
+}
+
+.ie-checkbox-label input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.ie-checkbox-label a {
+    color: var(--color-primary-red);
+    text-decoration: none;
+}
+
+.ie-checkbox-label a:hover {
+    text-decoration: underline;
+}
+
+/* === SUBMIT BUTTON === */
+.ie-submit-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-white);
+    background: linear-gradient(135deg, #e54b4b, #d63031);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.ie-submit-btn:hover {
+    background: linear-gradient(135deg, #d63031, #c0392b);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(229, 75, 75, 0.3);
+}
+
+/* === LOGIN LINK === */
+.ie-login-text {
+    font-size: var(--text-sm);
+    color: var(--color-text-dark);
+    text-align: center;
+}
+
+.ie-login-link {
+    color: var(--color-primary-red);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.ie-login-link:hover {
+    text-decoration: underline;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .ie-row {
+        grid-template-columns: 1fr;
+    }
+
+    .ie-card {
+        padding: var(--spacing-md);
+        margin: 0 var(--spacing-md);
+    }
+}

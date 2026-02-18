@@ -1,0 +1,59 @@
+.how-it-works {
+    background-color: var(--color-bg-light);
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-xl);
+}
+
+.step-card {
+    text-align: center;
+    padding: var(--spacing-2xl);
+}
+
+.step-number {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    color: var(--color-text-white);
+    margin: 0 auto var(--spacing-lg);
+}
+
+.step-number.blue {
+    background-color: var(--color-primary-blue);
+}
+
+.step-number.red {
+    background-color: var(--color-primary-red);
+}
+
+.step-number.green {
+    background-color: #10B981;
+}
+
+.step-title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text-black);
+}
+
+.step-description {
+    font-size: var(--text-base);
+    color: var(--color-text-gray);
+    line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .steps-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+}

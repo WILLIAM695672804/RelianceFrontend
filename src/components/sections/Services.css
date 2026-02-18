@@ -1,0 +1,65 @@
+.services {
+    background-color: var(--color-bg-white);
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-xl);
+}
+
+.service-card {
+    text-align: center;
+    padding: var(--spacing-2xl);
+    transition: all var(--transition-base);
+}
+
+.service-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-3xl);
+    color: var(--color-text-white);
+    margin: 0 auto var(--spacing-lg);
+    transition: transform var(--transition-base);
+}
+
+.service-icon.red {
+    background-color: var(--color-primary-red);
+}
+
+.service-icon.blue {
+    background-color: var(--color-primary-blue);
+}
+
+.service-card:hover .service-icon {
+    transform: scale(1.1);
+}
+
+.service-title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text-black);
+}
+
+.service-description {
+    font-size: var(--text-base);
+    color: var(--color-text-gray);
+    line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+}

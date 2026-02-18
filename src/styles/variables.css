@@ -1,0 +1,232 @@
+/* ===================================
+   DESIGN SYSTEM - RELIANCE PLATFORM
+   Based on brbconseils.net reference
+   =================================== */
+
+:root {
+  /* === COLORS === */
+  /* Primary */
+  --color-primary-red: #E82948;
+  --color-primary-blue: #1E3A8A;
+  --color-primary-dark: #000000;
+  
+  /* Secondary */
+  --color-bg-white: #FFFFFF;
+  --color-bg-light: #F2F2F2;
+  --color-bg-gradient-start: #4F46E5;
+  --color-bg-gradient-end: #E82948;
+  
+  /* Text */
+  --color-text-dark: #333333;
+  --color-text-black: #000000;
+  --color-text-white: #FFFFFF;
+  --color-text-gray: #6B7280;
+  
+  /* === TYPOGRAPHY === */
+  --font-heading: 'Montserrat', sans-serif;
+  --font-body: 'Roboto', sans-serif;
+  
+  /* Font Sizes */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.25rem;    /* 20px */
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-3xl: 1.875rem;  /* 30px */
+  --text-4xl: 2.25rem;   /* 36px */
+  --text-5xl: 3rem;      /* 48px */
+  
+  /* === SPACING === */
+  --spacing-xs: 0.5rem;   /* 8px */
+  --spacing-sm: 1rem;     /* 16px */
+  --spacing-md: 1.5rem;   /* 24px */
+  --spacing-lg: 2rem;     /* 32px */
+  --spacing-xl: 3rem;     /* 48px */
+  --spacing-2xl: 4rem;    /* 64px */
+  --spacing-3xl: 6rem;    /* 96px */
+  
+  /* === LAYOUT === */
+  --container-max-width: 1280px;
+  --border-radius: 8px;
+  --border-radius-sm: 4px;
+  --border-radius-lg: 12px;
+  
+  /* === SHADOWS === */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+  
+  /* === TRANSITIONS === */
+  --transition-fast: 150ms ease;
+  --transition-base: 300ms ease;
+  --transition-slow: 500ms ease;
+}
+
+/* === RESET & BASE STYLES === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--color-text-dark);
+  background-color: var(--color-bg-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text-black);
+}
+
+h1 { font-size: var(--text-5xl); }
+h2 { font-size: var(--text-4xl); }
+h3 { font-size: var(--text-3xl); }
+h4 { font-size: var(--text-2xl); }
+h5 { font-size: var(--text-xl); }
+h6 { font-size: var(--text-lg); }
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color var(--transition-base);
+}
+
+a:hover {
+  color: var(--color-primary-red);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+/* === UTILITY CLASSES === */
+.container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+.section {
+  padding: var(--spacing-3xl) 0;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+  font-size: var(--text-4xl);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-white {
+  color: var(--color-text-white);
+}
+
+/* === BUTTONS === */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 12px 32px;
+  border-radius: var(--border-radius-sm);
+  font-weight: 600;
+  font-size: var(--text-base);
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: var(--color-primary-red);
+  color: var(--color-text-white);
+}
+
+.btn-primary:hover {
+  background-color: #d01f3a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(232, 41, 72, 0.3);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-text-white);
+  border: 2px solid var(--color-text-white);
+}
+
+.btn-outline:hover {
+  background-color: var(--color-text-white);
+  color: var(--color-primary-red);
+}
+
+/* === CARDS === */
+.card {
+  background: var(--color-bg-white);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* === ANIMATIONS === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  :root {
+    --text-5xl: 2.25rem;  /* 36px */
+    --text-4xl: 1.875rem; /* 30px */
+    --text-3xl: 1.5rem;   /* 24px */
+    --spacing-3xl: 3rem;  /* 48px */
+    --spacing-2xl: 2rem;  /* 32px */
+  }
+  
+  .container {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .section {
+    padding: var(--spacing-2xl) 0;
+  }
+}

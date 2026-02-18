@@ -1,0 +1,170 @@
+/* ==========================================
+   PAGE DEVENIR MEMBRE
+   ========================================== */
+
+/* === AUTH SECTION === */
+.dm-auth {
+    padding-top: calc(70px + var(--spacing-3xl));
+    background-color: var(--color-bg-white);
+}
+
+.dm-auth-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: var(--spacing-3xl);
+    align-items: flex-start;
+}
+
+.dm-auth-title {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-text-black);
+    margin-bottom: var(--spacing-lg);
+}
+
+.dm-login-btn {
+    padding: 14px 32px;
+    font-size: var(--text-base);
+    border-radius: 4px;
+}
+
+.dm-auth-desc {
+    font-size: var(--text-base);
+    color: var(--color-text-dark);
+    line-height: 1.7;
+    margin-bottom: var(--spacing-xl);
+}
+
+/* === CARDS === */
+.dm-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+}
+
+.dm-card {
+    padding: var(--spacing-2xl);
+    border-radius: var(--border-radius-md);
+    color: var(--color-text-white);
+}
+
+.dm-card h3 {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+}
+
+.dm-card p {
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    margin-bottom: var(--spacing-md);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.dm-card-candidat {
+    background-color: #111111;
+}
+
+.dm-card-entreprise {
+    background-color: #8b0000;
+}
+
+.dm-card-agence {
+    background-color: #1a2744;
+}
+
+.dm-card-company {
+    background-color: #2d2d2d;
+}
+
+.dm-card-btn {
+    padding: 10px 24px;
+    font-size: var(--text-sm);
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: lowercase;
+    transition: all var(--transition-base);
+}
+
+.dm-card-btn-white {
+    background-color: var(--color-bg-white);
+    color: var(--color-text-black);
+    border: 2px solid var(--color-bg-white);
+}
+
+.dm-card-btn-white:hover {
+    background-color: transparent;
+    color: var(--color-text-white);
+}
+
+.dm-card-btn-red {
+    background-color: transparent;
+    color: var(--color-text-white);
+    border: 2px solid var(--color-primary-red);
+}
+
+.dm-card-btn-red:hover {
+    background-color: var(--color-primary-red);
+}
+
+/* === ADVANTAGES SECTION === */
+.dm-advantages {
+    background-color: var(--color-bg-white);
+    border-top: 1px solid #e0e0e0;
+}
+
+.dm-advantages-content {
+    max-width: 800px;
+    margin-left: auto;
+}
+
+.dm-advantages-title {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-text-black);
+    margin-bottom: var(--spacing-xl);
+}
+
+.dm-advantages-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dm-advantages-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    font-size: var(--text-base);
+    color: var(--color-text-dark);
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid #e0e0e0;
+    line-height: 1.6;
+}
+
+.dm-advantages-list li:last-child {
+    border-bottom: none;
+}
+
+.dm-check-icon {
+    font-size: 1.3rem;
+    color: var(--color-primary-red);
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .dm-auth-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dm-cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dm-advantages-content {
+        margin-left: 0;
+    }
+}

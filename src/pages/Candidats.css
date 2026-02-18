@@ -1,0 +1,158 @@
+/* ==========================================
+   PAGE CANDIDATS
+   ========================================== */
+
+/* === HERO === */
+.cand-hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    background-image: url('/images/candidats-hero-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-top: 70px;
+}
+
+.cand-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.cand-hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: left;
+    padding-bottom: var(--spacing-3xl);
+    color: var(--color-text-white);
+}
+
+.cand-hero-title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: var(--spacing-lg);
+    color: var(--color-text-white);
+}
+
+.cand-hero-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--spacing-xl) 0;
+}
+
+.cand-hero-list li {
+    font-size: var(--text-base);
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.6;
+}
+
+.cand-hero-cta {
+    padding: 14px 36px;
+    font-size: var(--text-base);
+    border-radius: 50px;
+}
+
+/* === EXPERTISE SECTION === */
+.cand-expertise {
+    background-color: var(--color-bg-light);
+}
+
+.cand-section-title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    color: var(--color-primary-red);
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+}
+
+.cand-expertise-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+}
+
+.cand-expertise-card {
+    background-color: var(--color-bg-white);
+    border: 1px solid #e5e5e5;
+    padding: var(--spacing-2xl);
+    text-align: center;
+}
+
+.cand-category-title {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text-black);
+    margin-bottom: var(--spacing-lg);
+}
+
+.cand-job-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--spacing-xl) 0;
+}
+
+.cand-job-item {
+    display: flex;
+    align-items: baseline;
+    padding: 8px 0;
+    font-size: var(--text-base);
+    color: var(--color-text-dark);
+}
+
+.cand-job-title {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.cand-job-dots {
+    flex: 1;
+    border-bottom: 2px dotted #ccc;
+    margin: 0 8px;
+    position: relative;
+    top: -4px;
+}
+
+.cand-job-positions {
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-weight: 500;
+    color: var(--color-text-black);
+}
+
+.cand-apply-btn {
+    padding: 10px 28px;
+    font-size: var(--text-sm);
+    border-radius: 4px;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .cand-hero {
+        height: 80vh;
+    }
+
+    .cand-hero-title {
+        font-size: var(--text-2xl);
+    }
+
+    .cand-expertise-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cand-job-title {
+        font-size: var(--text-sm);
+    }
+
+    .cand-job-positions {
+        font-size: var(--text-sm);
+    }
+}
