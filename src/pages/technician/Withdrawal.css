@@ -1,0 +1,181 @@
+/* Withdrawal Page Styles */
+.withdrawal-page {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.withdrawal-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+}
+
+.balance-preview {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    border: 1px solid #e2e8f0;
+}
+
+.balance-preview span {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.balance-preview strong {
+    color: #1e293b;
+    font-size: 1.1rem;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #334155;
+    font-size: 0.95rem;
+}
+
+.amount-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.amount-input {
+    width: 100%;
+    padding: 15px;
+    padding-right: 60px;
+    /* Space for currency */
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.amount-input:focus {
+    border-color: var(--color-primary-blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.currency-suffix {
+    position: absolute;
+    right: 15px;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.method-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.method-option {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+}
+
+.method-option:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.method-option.selected {
+    border-color: var(--color-primary-blue);
+    background-color: #eff6ff;
+    color: var(--color-primary-blue);
+}
+
+.method-icon {
+    font-size: 1.5rem;
+}
+
+.fee-summary {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.fee-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.fee-row.total {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 1rem;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed #e2e8f0;
+}
+
+.submit-withdrawal-btn {
+    width: 100%;
+    background: var(--color-primary-blue);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.submit-withdrawal-btn:hover {
+    background: #1d4ed8;
+}
+
+.submit-withdrawal-btn:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+}
+
+.info-alert {
+    background-color: #f0f9ff;
+    border: 1px solid #bae6fd;
+    color: #0369a1;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: start;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 480px) {
+    .method-selector {
+        grid-template-columns: 1fr;
+    }
+}
