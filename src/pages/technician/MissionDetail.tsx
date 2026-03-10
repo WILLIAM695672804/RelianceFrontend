@@ -1,221 +1,246 @@
 import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
-    FaArrowLeft,
     FaMapMarkerAlt,
-    FaPhoneAlt,
-    FaCommentAlt,
-    FaStar,
+    FaCalendarAlt,
     FaClock,
-    FaTools,
-    FaCheck,
-    FaDirections,
-    FaShieldAlt,
-    FaCamera
+    FaCheckCircle,
+    FaRoute,
+    FaFileInvoiceDollar,
+    FaRobot,
+    FaArrowRight,
+    FaToolbox,
+    FaLock,
+    FaExclamationTriangle
 } from 'react-icons/fa';
-import { useNavigate, useParams } from 'react-router-dom';
 import './MissionDetail.css';
 
-const MissionDetail: React.FC = () => {
+// Props for V4 (Cockpit overlay)
+interface MissionDetailProps {
+    missionId?: string;
+    onClose?: () => void;
+}
+
+const MissionDetail: React.FC<MissionDetailProps> = ({ missionId, onClose }) => {
+    // If we have a missionId prop, we are in the Cockpit overlay. Otherwise, fallback to URL params.
+    const params = useParams();
+    const id = missionId || params.id;
     const navigate = useNavigate();
-    const { id } = useParams();
 
-    // Mock Data (would ideally come from an API based on ID)
-    const mission = {
-        id: id || 'M-2684',
-        title: "Réparation Fuite d'Eau - Salle de Bain",
-        status: 'ACCEPTED', // ACCEPTED, EN_ROUTE, IN_PROGRESS, COMPLETED
-        address: "123 Rue de la République, Douala",
-        client: {
-            name: "Sophie M.",
-            rating: 4.9,
-            phone: "+237 699 99 99 99"
-        },
-        description: "Fuite importante sous le lavabo de la salle de bain principale. Le joint semble usé. Merci d'apporter des joints de rechange.",
-        price: "15.000 FCFA",
-        checklist: [
-            { id: 1, label: "Port des EPI (Chaussures, Gants)", checked: false },
-            { id: 2, label: "Coupure d'eau générale", checked: false },
-            { id: 3, label: "Protection du sol", checked: false },
-            { id: 4, label: "Photo Avant Travaux", checked: false }
-        ]
+    // V3: Strict B2B Escrow Workflow States
+    const [missionStatus, setMissionStatus] = useState<
+        'pending' | 
+        'accepted' | 
+        'arrived' | 
+        'diagnostic_billed' | 
+        'quote_submitted' | 
+        'quote_accepted' | 
+        'in_progress'
+    >('pending');
+
+    // Mocks for Escrow funds validation
+    const [diagEscrowSecured] = useState(true); // Simulate client already locked 5000 XAF
+    const [quoteEscrowSecured, setQuoteEscrowSecured] = useState(false); // Simulate client needs to lock 150000 XAF
+
+    const handleAccept = () => setMissionStatus('accepted');
+    const handleStartRoute = () => navigate(`/technicien/mission/${id}/route`);
+    const handleArrived = () => setMissionStatus('arrived');
+
+    // Phase 1 : Diagnostic
+    const handleBillDiagnostic = () => {
+        // In reality, this pings the backend. Here we simulate the process.
+        setMissionStatus('diagnostic_billed');
     };
 
-    const [currentStep, setCurrentStep] = useState(0); // 0: Accepted, 1: En Route, 2: In Progress, 3: Completed
-    const [checklist, setChecklist] = useState(mission.checklist);
-
-    const toggleCheckItem = (itemId: number) => {
-        setChecklist(prev => prev.map(item =>
-            item.id === itemId ? { ...item, checked: !item.checked } : item
-        ));
+    // Phase 2 : Devis
+    const handleCreateQuote = () => {
+        // Here we simulate the technician submits a quote of 150,000 XAF
+        setMissionStatus('quote_submitted');
+        
+        // Simulate client approving and locking funds in Escrow after 3 seconds
+        setTimeout(() => {
+            setQuoteEscrowSecured(true);
+            setMissionStatus('quote_accepted');
+        }, 3000);
     };
 
-    const handleMainAction = () => {
-        if (currentStep < 3) {
-            setCurrentStep(prev => prev + 1);
-            // In a real app, this would update the backend status
-        } else {
-            navigate('/technicien/dashboard');
-        }
-    };
-
-    const getButtonLabel = () => {
-        switch (currentStep) {
-            case 0: return "JE PARS (EN ROUTE)";
-            case 1: return "JE SUIS ARRIVÉ";
-            case 2: return "TERMINER LA MISSION";
-            case 3: return "RETOUR DASHBOARD";
-            default: return "ACTION";
-        }
-    };
-
-    const getButtonIcon = () => {
-        switch (currentStep) {
-            case 0: return <FaDirections />;
-            case 1: return <FaMapMarkerAlt />;
-            case 2: return <FaCheck />;
-            case 3: return <FaArrowLeft />;
-            default: return <FaCheck />;
-        }
-    };
+    const handleStartWork = () => setMissionStatus('in_progress');
+    const handleCompleteWork = () => navigate(`/technicien/mission/${id}/travaux`);
 
     return (
-        <div className="tech-page mission-detail-page">
-            {/* Header */}
-            <div className="mission-header">
-                <button className="back-btn" onClick={() => navigate('/technicien/dashboard')}>
-                    <FaArrowLeft /> Retour
-                </button>
-                <div className="mission-id">#{mission.id}</div>
+        <div className="tech-page mission-detail-page" style={{ paddingTop: 0, marginTop: 0 }}>
+            {/* Header / Close button for Cockpit */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h2 style={{ margin: 0, fontSize: '1.2rem', color: '#1e293b' }}>
+                    Intervention {id ? `#${id}` : '#M-2684'}
+                </h2>
+                {onClose && (
+                    <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#64748b' }}>
+                        &times;
+                    </button>
+                )}
             </div>
 
-            <div className="mission-grid">
-                {/* Main Content */}
-                <div className="mission-main">
-                    {/* Map Section */}
-                    <div className="map-card">
-                        <div className="map-placeholder">
-                            <FaMapMarkerAlt style={{ fontSize: '3rem', color: '#cbd5e1', marginBottom: '10px' }} />
-                            <span>Carte Intéractive (Simulation)</span>
-                        </div>
-                        <div className="map-overlay-info">
-                            <FaDirections style={{ color: '#2563eb' }} />
-                            <span>15 min (2.5 km)</span>
+            {/* V3: Permanent Escrow Security Banner */}
+            <div className={`mission-status-banner ${missionStatus}`} style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+                <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                    {missionStatus === 'pending' && <><FaClock /> En attente de votre confirmation</>}
+                    {missionStatus === 'accepted' && <><FaRoute /> Mission Acceptée - En attente de départ</>}
+                    {missionStatus === 'arrived' && <><FaMapMarkerAlt /> Sur place - Phase de diagnostic</>}
+                    {missionStatus === 'diagnostic_billed' && <><FaFileInvoiceDollar /> Diagnostic facturé - En attente du devis</>}
+                    {missionStatus === 'quote_submitted' && <><FaClock /> Attente de provisionnement Escrow par le client...</>}
+                    {missionStatus === 'quote_accepted' && <><FaCheckCircle /> Devis Validé & Fonds Sécurisés</>}
+                    {missionStatus === 'in_progress' && <><FaToolbox /> Travaux en cours</>}
+                </div>
+                
+                {/* Dynamically show what funds are locked in Escrow by Reliance */}
+                <div style={{ background: 'rgba(255,255,255,0.2)', padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <FaLock /> 
+                    Garantie Reliance : 
+                    {missionStatus === 'pending' || missionStatus === 'accepted' || missionStatus === 'arrived' 
+                        ? " 5 000 FCFA (Diagnostic) sécurisés" 
+                        : quoteEscrowSecured 
+                            ? " 155 000 FCFA (Diagnostic + Travaux) sécurisés"
+                            : " 5 000 FCFA (Diagnostic) sécurisés. Paiement Travaux en attente."}
+                </div>
+            </div>
+
+            {/* Main Info */}
+            <div className="mission-card-main">
+                <div className="mission-header-info">
+                    <h2>Fuite d'eau sous évier</h2>
+                    <span className="badge badge-urgent">Urgence Haute</span>
+                </div>
+
+                <div className="mission-meta-grid">
+                    <div className="meta-item">
+                        <FaMapMarkerAlt className="meta-icon" />
+                        <div>
+                            <strong>Adresse</strong>
+                            <p>Rue 5, Bonapriso, Douala</p>
                         </div>
                     </div>
-
-                    {/* Client Info */}
-                    <div className="client-card">
-                        <div className="client-info">
-                            <div className="client-avatar">SM</div>
-                            <div className="client-details">
-                                <h3>{mission.client.name}</h3>
-                                <div className="client-rating">
-                                    <FaStar /> {mission.client.rating}
-                                </div>
-                            </div>
-                        </div>
-                        <div className="contact-actions">
-                            <button className="contact-btn message"><FaCommentAlt /></button>
-                            <button className="contact-btn phone"><FaPhoneAlt /></button>
+                    <div className="meta-item">
+                        <FaCalendarAlt className="meta-icon" />
+                        <div>
+                            <strong>Date souhaitée</strong>
+                            <p>Aujourd'hui, 14:00 - 15:00</p>
                         </div>
                     </div>
-
-                    {/* Job Info */}
-                    <div className="job-info-card">
-                        <h2 className="job-title">{mission.title}</h2>
-                        <div className="info-row">
-                            <FaMapMarkerAlt className="info-icon" />
-                            <div className="info-content">
-                                <label>Adresse d'intervention</label>
-                                <p>{mission.address}</p>
-                            </div>
-                        </div>
-                        <div className="info-row">
-                            <FaTools className="info-icon" />
-                            <div className="info-content">
-                                <label>Description</label>
-                                <p>{mission.description}</p>
-                            </div>
-                        </div>
-                        <div className="info-row">
-                            <FaClock className="info-icon" />
-                            <div className="info-content">
-                                <label>Rendez-vous</label>
-                                <p>Aujourd'hui, 14:00 - 16:00</p>
-                            </div>
+                    <div className="meta-item">
+                        <FaCheckCircle className="meta-icon" />
+                        <div>
+                            <strong>Client</strong>
+                            <p>Alice Dubois (Nouveau)</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Sidebar */}
-                <div className="mission-sidebar">
-                    {/* Security Checklist */}
-                    <div className="checklist-card">
-                        <div className="checklist-header">
-                            <h3><FaShieldAlt style={{ marginRight: '8px', color: '#16a34a' }} /> Sécurité & Qualité</h3>
-                            <span className="progress-pill">
-                                {checklist.filter(i => i.checked).length}/{checklist.length}
-                            </span>
-                        </div>
-                        <div className="checklist-items">
-                            {checklist.map(item => (
-                                <div
-                                    key={item.id}
-                                    className={`checklist-item ${item.checked ? 'checked' : ''}`}
-                                    onClick={() => toggleCheckItem(item.id)}
-                                >
-                                    <input
-                                        type="checkbox"
-                                        checked={item.checked}
-                                        onChange={() => { }} // Handled by div click
-                                    />
-                                    <span className="checklist-label">{item.label}</span>
-                                </div>
-                            ))}
-                        </div>
-                        <button style={{
-                            width: '100%',
-                            marginTop: '15px',
-                            padding: '8px',
-                            background: '#f8fafc',
-                            border: '1px dashed #cbd5e1',
-                            borderRadius: '6px',
-                            color: '#64748b',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '8px'
-                        }}>
-                            <FaCamera /> Ajouter une photo
+                <div className="problem-description">
+                    <h3>Description du client</h3>
+                    <p>"L'eau coule abondamment sous l'évier de la cuisine depuis ce matin. J'ai dû couper l'arrivée générale d'eau."</p>
+                    <div className="attached-photos">
+                        <div className="photo-thumb">Photos jointes (2)</div>
+                    </div>
+                </div>
+
+                {missionStatus === 'pending' && (
+                    <div className="ml-estimation-box" style={{ marginTop: '20px', background: '#f8fafc', border: '1px solid #cbd5e1' }}>
+                        <div className="ml-header" style={{ color: '#0ea5e9' }}><FaRobot /> Analyse IA (Données du marché)</div>
+                        <p><strong>Diagnostic estimé : </strong> Rupture de flexible ou joint endommagé.</p>
+                        <p><strong>Temps de réparation moyen : </strong> 45 minutes.</p>
+                        <div className="suggested-price" style={{ color: '#0ea5e9' }}>Tarif de base estimé : 15 000 FCFA</div>
+                    </div>
+                )}
+            </div>
+
+            {/* Workflow Action Sticker */}
+            <div className="action-sticker">
+                {missionStatus === 'pending' && (
+                    <div className="action-group">
+                        <button className="btn-secondary" onClick={onClose || (() => window.history.back())}>Décliner</button>
+                        <button className="btn-primary" onClick={handleAccept}>Accepter la Mission</button>
+                    </div>
+                )}
+
+                {missionStatus === 'accepted' && (
+                    <div className="action-group">
+                        <button className="btn-primary" onClick={handleStartRoute}>
+                            <FaRoute /> Lancer l'itinéraire GPS <FaArrowRight style={{ marginLeft: '8px' }} />
+                        </button>
+                        <button className="btn-secondary" onClick={handleArrived}>
+                            <FaMapMarkerAlt /> Je suis sur place
                         </button>
                     </div>
+                )}
 
-                    {/* Price Card */}
-                    <div className="job-info-card" style={{ textAlign: 'center' }}>
-                        <label style={{ color: '#64748b', fontSize: '0.9rem' }}>Revenu Estimé</label>
-                        <h2 style={{ fontSize: '2rem', color: '#1e293b', margin: '5px 0' }}>{mission.price}</h2>
-                        <span style={{ fontSize: '0.8rem', color: '#16a34a', background: '#dcfce7', padding: '2px 8px', borderRadius: '10px' }}>
-                            Commission incluse
-                        </span>
+                {/* V3 Phase 1: Diagnostic Lock */}
+                {missionStatus === 'arrived' && (
+                    <div className="action-group vertical">
+                        {diagEscrowSecured ? (
+                            <div style={{ background: '#dcfce7', color: '#166534', padding: '10px', borderRadius: '8px', fontSize: '0.9rem', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <FaCheckCircle /> Les frais de diagnostic (5000 FCFA) sont garantis.
+                            </div>
+                        ) : (
+                            <div style={{ background: '#fee2e2', color: '#991b1b', padding: '10px', borderRadius: '8px', fontSize: '0.9rem', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <FaExclamationTriangle /> En attente des fonds de diagnostic du client...
+                            </div>
+                        )}
+                        
+                        <p style={{ textAlign: 'center', fontSize: '0.9rem', color: '#64748b' }}>Procédez à l'inspection de l'équipement.</p>
+                        <button 
+                            className="btn-primary" 
+                            onClick={handleBillDiagnostic}
+                            disabled={!diagEscrowSecured}
+                            style={{ opacity: diagEscrowSecured ? 1 : 0.5 }}
+                        >
+                            <FaFileInvoiceDollar /> Valider le Diagnostic
+                        </button>
                     </div>
-                </div>
-            </div>
+                )}
 
-            {/* Sticky Action Bar */}
-            <div className="action-bar">
-                <div className="status-steps">
-                    <div className={`step-dot ${currentStep >= 0 ? 'done' : ''}`}></div>
-                    <div className={`step-dot ${currentStep >= 1 ? 'done' : ''}`}></div>
-                    <div className={`step-dot ${currentStep >= 2 ? 'done' : ''}`}></div>
-                    <div className={`step-dot ${currentStep >= 3 ? 'done' : ''}`}></div>
-                </div>
-                <button
-                    className={`main-action-btn ${currentStep === 2 ? 'finish' : ''}`}
-                    onClick={handleMainAction}
-                >
-                    {getButtonIcon()} {getButtonLabel()}
-                </button>
+                {/* V3 Phase 2: Quote Submission & Lock */}
+                {missionStatus === 'diagnostic_billed' && (
+                    <div className="action-group vertical">
+                        <p style={{ textAlign: 'center', fontSize: '0.9rem', color: '#64748b' }}>Diagnostic terminé. Soumettez un devis pour les pièces et la main d'œuvre.</p>
+                        <button className="btn-primary outline" onClick={handleCreateQuote}>
+                            Émettre le Devis de Réparation
+                        </button>
+                    </div>
+                )}
+
+                {missionStatus === 'quote_submitted' && (
+                    <div className="action-group vertical">
+                        <div style={{ background: '#fef3c7', color: '#92400e', padding: '16px', borderRadius: '8px', fontSize: '0.9rem', textAlign: 'center' }}>
+                            <FaClock style={{ fontSize: '1.5rem', marginBottom: '8px' }} />
+                            <p style={{ margin: 0, fontWeight: 600 }}>Devis envoyé au client.</p>
+                            <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem' }}>Ne commencez pas les travaux. En attente que le client transfère les fonds (150 000 FCFA) vers le compte de séquestre Reliance.</p>
+                        </div>
+                    </div>
+                )}
+
+                {missionStatus === 'quote_accepted' && (
+                    <div className="action-group vertical">
+                        <div style={{ background: '#dcfce7', color: '#166534', padding: '12px', borderRadius: '8px', fontSize: '0.9rem', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <FaCheckCircle style={{ fontSize: '1.2rem' }} /> 
+                            <div>
+                                <strong>Fonds débloqués !</strong> 150 000 FCFA ont été ajoutés au séquestre pour cette réparation.
+                            </div>
+                        </div>
+                        <button className="btn-primary" onClick={handleStartWork}>
+                            Démarrer les travaux
+                        </button>
+                    </div>
+                )}
+
+                {missionStatus === 'in_progress' && (
+                    <div className="action-group vertical">
+                        <p style={{ textAlign: 'center', fontSize: '0.9rem', color: '#10b981' }}>Travaux rémunérés en cours de réalisation...</p>
+                        <button className="btn-primary" style={{ background: '#10b981' }} onClick={handleCompleteWork}>
+                            <FaCheckCircle /> Terminer & Demander Paiement Final
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

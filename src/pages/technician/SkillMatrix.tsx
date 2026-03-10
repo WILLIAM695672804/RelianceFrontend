@@ -1,200 +1,159 @@
 import React, { useState } from 'react';
-import { FaChevronDown, FaUpload, FaCheck, FaSave } from 'react-icons/fa';
+import { FaTools, FaBolt, FaCheckCircle, FaMoneyBillWave } from 'react-icons/fa';
 import './SkillMatrix.css';
 
 interface Skill {
     id: string;
     name: string;
-    selected: boolean;
-    hourlyRate?: number;
-    baseFee?: number;
-    expertiseLevel: number; // 0-100
-    certificate?: string; // Placeholder for file name
+    checked: boolean;
+    price: string; // V2: Base fee definition
 }
 
-interface Category {
+interface SkillCategory {
     id: string;
-    name: string;
+    title: string;
+    icon: React.ReactNode;
     skills: Skill[];
 }
 
-const initialData: Category[] = [
-    {
-        id: 'plomberie',
-        name: 'Plomberie',
-        skills: [
-            { id: 'fuite', name: 'Recherche de fuite', selected: false, expertiseLevel: 50 },
-            { id: 'chauffe-eau', name: 'Installation Chauffe-eau', selected: false, expertiseLevel: 50 },
-            { id: 'wc', name: 'Remplacement WC', selected: false, expertiseLevel: 50 },
-            { id: 'debouchage', name: 'Débouchage Canalisation', selected: false, expertiseLevel: 50 },
-        ]
-    },
-    {
-        id: 'electricite',
-        name: 'Électricité',
-        skills: [
-            { id: 'tableau', name: 'Mise aux normes tableau électrique', selected: false, expertiseLevel: 50 },
-            { id: 'prise', name: 'Installation Prise / Interrupteur', selected: false, expertiseLevel: 50 },
-            { id: 'panne', name: 'Recherche de panne', selected: false, expertiseLevel: 50 },
-        ]
-    },
-    {
-        id: 'climatisation',
-        name: 'Froid & Climatisation',
-        skills: [
-            { id: 'install-clim', name: 'Installation Climatiseur', selected: false, expertiseLevel: 50 },
-            { id: 'entretien-clim', name: 'Entretien & Recharge gaz', selected: false, expertiseLevel: 50 },
-            { id: 'depannage-frigo', name: 'Dépannage Frigo Industriel', selected: false, expertiseLevel: 50 },
-        ]
-    },
-    {
-        id: 'serrurerie',
-        name: 'Serrurerie',
-        skills: [
-            { id: 'ouverture', name: 'Ouverture de porte', selected: false, expertiseLevel: 50 },
-            { id: 'blindage', name: 'Blindage de porte', selected: false, expertiseLevel: 50 },
-            { id: 'changement-serrure', name: 'Changement de serrure', selected: false, expertiseLevel: 50 },
-        ]
-    }
-];
-
 const SkillMatrix: React.FC = () => {
-    const [categories, setCategories] = useState<Category[]>(initialData);
-    const [openCategory, setOpenCategory] = useState<string | null>('plomberie');
+    const [openCategory, setOpenCategory] = useState<string>('plomb');
+
+    const [categories, setCategories] = useState<SkillCategory[]>([
+        {
+            id: 'plomb',
+            title: 'Plomberie',
+            icon: <FaTools />,
+            skills: [
+                { id: 'fuite', name: 'Recherche et réparation de fuite', checked: true, price: '15000' },
+                { id: 'debouchage', name: 'Débouchage canalisations', checked: true, price: '10000' },
+                { id: 'chauffe', name: 'Installation chauffe-eau', checked: false, price: '25000' },
+                { id: 'robinet', name: 'Remplacement robinetterie', checked: true, price: '8000' }
+            ]
+        },
+        {
+            id: 'elec',
+            title: 'Électricité',
+            icon: <FaBolt />,
+            skills: [
+                { id: 'panne', name: 'Dépannage électrique (Coupure)', checked: false, price: '12000' },
+                { id: 'tableau', name: 'Mise aux normes tableau', checked: false, price: '30000' },
+                { id: 'luminaire', name: 'Installation luminaires', checked: false, price: '5000' }
+            ]
+        }
+    ]);
 
     const toggleCategory = (id: string) => {
-        setOpenCategory(openCategory === id ? null : id);
+        setOpenCategory(openCategory === id ? '' : id);
     };
 
     const handleSkillToggle = (categoryId: string, skillId: string) => {
         setCategories(prev => prev.map(cat => {
-            if (cat.id !== categoryId) return cat;
-            return {
-                ...cat,
-                skills: cat.skills.map(skill => {
-                    if (skill.id !== skillId) return skill;
-                    return { ...skill, selected: !skill.selected };
-                })
-            };
+            if (cat.id === categoryId) {
+                return {
+                    ...cat,
+                    skills: cat.skills.map(s =>
+                        s.id === skillId ? { ...s, checked: !s.checked } : s
+                    )
+                };
+            }
+            return cat;
         }));
     };
 
-    const handleSkillChange = (categoryId: string, skillId: string, field: keyof Skill, value: any) => {
+    const handlePriceChange = (categoryId: string, skillId: string, value: string) => {
         setCategories(prev => prev.map(cat => {
-            if (cat.id !== categoryId) return cat;
-            return {
-                ...cat,
-                skills: cat.skills.map(skill => {
-                    if (skill.id !== skillId) return skill;
-                    return { ...skill, [field]: value };
-                })
-            };
+            if (cat.id === categoryId) {
+                return {
+                    ...cat,
+                    skills: cat.skills.map(s =>
+                        s.id === skillId ? { ...s, price: value } : s
+                    )
+                };
+            }
+            return cat;
         }));
+    };
+
+    const handleSave = () => {
+        alert("Modifications enregistrées côté client (Frontend local) !\nCes prix influenceront les recommandations de l'algorithme.");
     };
 
     return (
-        <div className="tech-page">
-            <h1 className="page-title">Matrice de Compétences</h1>
-            <p className="page-subtitle" style={{ marginBottom: '30px', color: '#666' }}>
-                Définissez précisément les services que vous proposez ainsi que vos tarifs.
+        <div className="tech-page skills-page" style={{ paddingTop: 0, marginTop: 0, boxShadow: 'none' }}>
+            <p style={{ color: '#64748b', marginBottom: '24px' }}>
+                Sélectionnez vos spécialités et définissez votre **Tarif de base estimé** pour guider le système de matching.
             </p>
 
-            {categories.map(category => (
-                <div key={category.id} className="skill-category">
-                    <div
-                        className="category-header"
-                        onClick={() => toggleCategory(category.id)}
-                    >
-                        <h3 className="category-title">
-                            {category.name}
-                            <span style={{ fontSize: '0.8rem', color: '#94a3b8', marginLeft: '10px', fontWeight: 'normal' }}>
-                                ({category.skills.filter(s => s.selected).length} activés)
-                            </span>
-                        </h3>
-                        <FaChevronDown className={`toggle-icon ${openCategory === category.id ? 'open' : ''}`} />
-                    </div>
+            <div className="skills-accordion">
+                {categories.map(cat => (
+                    <div key={cat.id} className={`accordion-item ${openCategory === cat.id ? 'active' : ''}`}>
+                        <div
+                            className="accordion-header"
+                            onClick={() => toggleCategory(cat.id)}
+                        >
+                            <h3 className="accordion-title">
+                                <span className="accordion-icon">{cat.icon}</span>
+                                {cat.title}
+                            </h3>
+                            <div>{openCategory === cat.id ? '▲' : '▼'}</div>
+                        </div>
 
-                    {openCategory === category.id && (
-                        <div className="category-content">
-                            {category.skills.map(skill => (
-                                <div key={skill.id} className={`skill-item ${skill.selected ? 'selected' : ''}`}>
-                                    <div className="skill-header">
-                                        <label className="skill-checkbox-wrapper">
-                                            <input
-                                                type="checkbox"
-                                                className="skill-checkbox"
-                                                checked={skill.selected}
-                                                onChange={() => handleSkillToggle(category.id, skill.id)}
-                                            />
-                                            <span className="skill-name">{skill.name}</span>
-                                        </label>
-                                    </div>
-
-                                    {skill.selected && (
-                                        <div className="skill-details">
-                                            <div className="form-group">
-                                                <label className="form-label">Taux Horaire (XAF)</label>
+                        {openCategory === cat.id && (
+                            <div className="accordion-content">
+                                <div className="skills-grid-v2">
+                                    {cat.skills.map(skill => (
+                                        <div key={skill.id} className={`skill-card ${skill.checked ? 'checked' : ''}`}>
+                                            <label className="skill-checkbox-area">
                                                 <input
-                                                    type="number"
-                                                    className="form-input"
-                                                    placeholder="Ex: 5000"
-                                                    value={skill.hourlyRate || ''}
-                                                    onChange={(e) => handleSkillChange(category.id, skill.id, 'hourlyRate', parseInt(e.target.value))}
+                                                    type="checkbox"
+                                                    checked={skill.checked}
+                                                    onChange={() => handleSkillToggle(cat.id, skill.id)}
                                                 />
-                                            </div>
+                                                <span className="skill-name">{skill.name}</span>
+                                            </label>
 
-                                            <div className="form-group">
-                                                <label className="form-label">Frais Déplacement (XAF)</label>
-                                                <input
-                                                    type="number"
-                                                    className="form-input"
-                                                    placeholder="Ex: 2000"
-                                                    value={skill.baseFee || ''}
-                                                    onChange={(e) => handleSkillChange(category.id, skill.id, 'baseFee', parseInt(e.target.value))}
-                                                />
-                                            </div>
-
-                                            <div className="form-group" style={{ minWidth: '250px' }}>
-                                                <label className="form-label">
-                                                    Niveau d'expertise: {skill.expertiseLevel}%
-                                                </label>
-                                                <div className="expertise-slider-container">
-                                                    <input
-                                                        type="range"
-                                                        min="0"
-                                                        max="100"
-                                                        className="expertise-slider"
-                                                        value={skill.expertiseLevel}
-                                                        onChange={(e) => handleSkillChange(category.id, skill.id, 'expertiseLevel', parseInt(e.target.value))}
-                                                    />
-                                                    <div className="expertise-labels">
-                                                        <span>Débutant</span>
-                                                        <span>Expert</span>
+                                            {skill.checked && (
+                                                <div className="skill-pricing-area">
+                                                    <label>Tarif de base (FCFA)</label>
+                                                    <div className="price-input-wrapper">
+                                                        <FaMoneyBillWave className="price-icon" />
+                                                        <input
+                                                            type="number"
+                                                            value={skill.price}
+                                                            onChange={(e) => handlePriceChange(cat.id, skill.id, e.target.value)}
+                                                            placeholder="Ex: 10000"
+                                                        />
                                                     </div>
                                                 </div>
-                                            </div>
-
-                                            <div className="upload-section">
-                                                <button className="upload-btn">
-                                                    <FaUpload />
-                                                    {skill.certificate ? 'Certificat chargé' : 'Preuve de compétence (PDF/JPG)'}
-                                                </button>
-                                            </div>
+                                            )}
                                         </div>
-                                    )}
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            ))}
-
-            <div className="action-bar">
-                <button className="btn btn-primary save-btn">
-                    <FaSave style={{ marginRight: '10px' }} />
-                    Enregistrer mes compétences
-                </button>
+                            </div>
+                        )}
+                    </div>
+                ))}
             </div>
+
+            {/* Expérience Commune */}
+            <div className="settings-block">
+                <h2>Outils & Véhicule</h2>
+                <div className="skills-grid-v2">
+                    <label className="skill-checkbox-area">
+                        <input type="checkbox" defaultChecked />
+                        <span className="skill-name">Je possède mon propre véhicule (Auto/Moto)</span>
+                    </label>
+                    <label className="skill-checkbox-area">
+                        <input type="checkbox" defaultChecked />
+                        <span className="skill-name">Je possède mon matériel professionnel</span>
+                    </label>
+                </div>
+            </div>
+
+            <button className="btn-primary save-skills" onClick={handleSave}>
+                <FaCheckCircle /> Enregistrer le Profil Compétences
+            </button>
         </div>
     );
 };

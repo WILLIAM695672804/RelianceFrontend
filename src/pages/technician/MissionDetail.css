@@ -1,366 +1,339 @@
-/* Mission Detail Styles */
+/* Mission Detail Marketive Style */
 .mission-detail-page {
     max-width: 1000px;
     margin: 0 auto;
     padding-bottom: 100px;
-    /* Space for sticky footer */
+    /* Space for action menu */
 }
 
-/* Header with Back Button & Status */
-.mission-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+/* Header Map/Photos */
+.mission-header-media {
+    height: 300px;
+    background: #e2e8f0;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-.back-btn {
+.mission-map-view {
+    width: 100%;
+    height: 100%;
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/ec/OpenStreetMap_Douala.png');
+    background-position: center;
+    background-size: cover;
+}
+
+.media-toggles {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     background: white;
-    border: 1px solid #e2e8f0;
-    padding: 8px 16px;
+    padding: 4px;
     border-radius: 8px;
     display: flex;
-    align-items: center;
-    gap: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.media-toggle-btn {
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
     color: #64748b;
     cursor: pointer;
-    font-weight: 500;
     transition: all 0.2s;
 }
 
-.back-btn:hover {
-    background: #f8fafc;
-    color: #1e293b;
-}
-
-.mission-id {
-    font-family: monospace;
-    color: #94a3b8;
-    background: #f1f5f9;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.9rem;
+.media-toggle-btn.active {
+    background: #1e293b;
+    color: white;
 }
 
 /* Main Grid Layout */
 .mission-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 25px;
+    gap: 24px;
 }
 
-/* Left Column: Map, Client, Job Info */
-.mission-main {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-}
-
-/* Map Card */
-.map-card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    position: relative;
-    height: 250px;
-}
-
-.map-placeholder {
-    width: 100%;
-    height: 100%;
-    background-color: #e2e8f0;
-    background-image:
-        radial-gradient(#cbd5e1 1px, transparent 1px),
-        linear-gradient(45deg, #f1f5f9 25%, transparent 25%, transparent 75%, #f1f5f9 75%, #f1f5f9),
-        linear-gradient(45deg, #f1f5f9 25%, transparent 25%, transparent 75%, #f1f5f9 75%, #f1f5f9);
-    background-size: 20px 20px, 40px 40px, 40px 40px;
-    background-position: 0 0, 0 0, 20px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    color: #64748b;
-}
-
-.map-overlay-info {
-    position: absolute;
-    bottom: 15px;
-    left: 15px;
-    background: white;
-    padding: 10px 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-/* Client Card */
+/* Info Card */
+.mission-info-card,
 .client-card {
     background: white;
     border-radius: 12px;
-    padding: 20px;
+    padding: 24px;
     border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    margin-bottom: 24px;
+}
+
+.mission-status-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
 }
 
-.client-info {
+.mission-id {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.status-badge-detailed {
+    background: #dcfce7;
+    color: #166534;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.mission-details-list {
     display: flex;
-    align-items: center;
-    gap: 15px;
+    flex-direction: column;
+    gap: 16px;
 }
 
-.client-avatar {
-    width: 50px;
-    height: 50px;
-    background: #e0e7ff;
-    color: var(--color-primary-blue);
-    border-radius: 50%;
+.detail-item {
+    display: flex;
+    gap: 16px;
+}
+
+.detail-icon {
+    width: 40px;
+    height: 40px;
+    background: #f8fafc;
+    color: #7c3aed;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
-    font-weight: 700;
+    flex-shrink: 0;
 }
 
-.client-details h3 {
-    margin: 0 0 2px 0;
-    font-size: 1.1rem;
-    color: #1e293b;
-}
-
-.client-rating {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.9rem;
-    color: #f59e0b;
-}
-
-.contact-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.contact-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: transform 0.2s;
-}
-
-.contact-btn:hover {
-    transform: scale(1.1);
-}
-
-.contact-btn.phone {
-    background: #dcfce7;
-    color: #166534;
-}
-
-.contact-btn.message {
-    background: #dbeafe;
-    color: #1e40af;
-}
-
-/* Job Info */
-.job-info-card {
-    background: white;
-    border-radius: 12px;
-    padding: 25px;
-    border: 1px solid #e2e8f0;
-}
-
-.job-title {
-    font-size: 1.3rem;
-    color: #1e293b;
-    margin-bottom: 20px;
-}
-
-.info-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.info-icon {
-    margin-top: 3px;
-    color: #94a3b8;
-    font-size: 1.1rem;
-}
-
-.info-content label {
-    display: block;
+.detail-content h4 {
+    margin: 0 0 4px 0;
     font-size: 0.85rem;
     color: #64748b;
-    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-.info-content p {
+.detail-content p {
     margin: 0;
-    color: #334155;
+    color: #1e293b;
     font-size: 1rem;
+    font-weight: 500;
     line-height: 1.4;
 }
 
-/* Right Column: Checklist & Finance */
-.mission-sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+/* Security Checklist */
+.checklist-section h3 {
+    font-size: 1.1rem;
+    color: #1e293b;
+    margin-bottom: 16px;
 }
 
-.checklist-card {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    border: 1px solid #e2e8f0;
-}
-
-.checklist-header {
+.check-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-.checklist-header h3 {
-    margin: 0;
-    font-size: 1rem;
+.check-item:hover {
+    border-color: #cbd5e1;
+}
+
+.check-item.done {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.check-item span {
+    color: #334155;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/* Client Card */
+.client-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.client-avatar {
+    width: 60px;
+    height: 60px;
+    background: #e0e7ff;
+    color: #4f46e5;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.client-name h3 {
+    margin: 0 0 4px 0;
+    color: #1e293b;
+    font-size: 1.1rem;
+}
+
+.client-rating {
+    color: #f59e0b;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.client-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-contact {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-contact.call {
+    background: #f1f5f9;
     color: #1e293b;
 }
 
-.progress-pill {
-    font-size: 0.75rem;
-    background: #f1f5f9;
-    padding: 2px 8px;
-    border-radius: 10px;
-    color: #64748b;
-    font-weight: 600;
-}
-
-.checklist-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid #f1f5f9;
-    cursor: pointer;
-}
-
-.checklist-item:last-child {
-    border-bottom: none;
-}
-
-.checklist-item input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    margin-top: 2px;
-    cursor: pointer;
-}
-
-.checklist-label {
-    font-size: 0.9rem;
-    color: #475569;
-    transition: color 0.2s;
-}
-
-.checklist-item.checked .checklist-label {
-    text-decoration: line-through;
-    color: #cbd5e1;
-}
-
-/* Sticky Action Bar */
-.action-bar {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 800px;
-    background: white;
-    padding: 15px 25px;
-    border-radius: 50px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #e2e8f0;
-    z-index: 100;
-}
-
-.status-steps {
-    display: flex;
-    gap: 5px;
-}
-
-.step-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
+.btn-contact.call:hover {
     background: #e2e8f0;
 }
 
-.step-dot.active {
-    background: var(--color-primary-blue);
+.btn-contact.msg {
+    background: #7c3aed;
+    color: white;
 }
 
-.step-dot.done {
-    background: var(--color-primary-green);
+.btn-contact.msg:hover {
+    background: #6d28d9;
+}
+
+/* Sticky Action Bar */
+.mission-action-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 270px;
+    /* Accounts for sidebar width + some margin */
+    right: 20px;
+    background: white;
+    padding: 16px 24px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+
+.next-step-info p {
+    margin: 0 0 4px 0;
+    font-size: 0.8rem;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.next-step-info h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1e293b;
 }
 
 .main-action-btn {
-    background: var(--color-primary-blue);
+    background: #10b981;
     color: white;
     border: none;
     padding: 12px 30px;
-    border-radius: 30px;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
-    transition: all 0.2s;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+    transition: all 0.2s;
 }
 
 .main-action-btn:hover {
+    background: #059669;
     transform: translateY(-2px);
-    box-shadow: 0 6px 10px rgba(37, 99, 235, 0.4);
+    box-shadow: 0 6px 10px rgba(16, 185, 129, 0.3);
 }
 
-.main-action-btn.finish {
-    background: var(--color-primary-green);
-    box-shadow: 0 4px 6px rgba(22, 163, 74, 0.3);
+.secondary-action-btn {
+    background: white;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-@media (max-width: 900px) {
+.secondary-action-btn:hover {
+    background: #f8fafc;
+}
+
+@media (max-width: 1024px) {
     .mission-grid {
         grid-template-columns: 1fr;
     }
+}
 
-    .action-bar {
-        width: 95%;
-        bottom: 10px;
-        border-radius: 16px;
+@media (max-width: 768px) {
+    .mission-action-bar {
+        left: 20px;
+        /* Remove sidebar offset on mobile */
         flex-direction: column;
         gap: 15px;
+        text-align: center;
     }
 
-    .main-action-btn {
+    .main-action-btn,
+    .secondary-action-btn {
         width: 100%;
         justify-content: center;
     }

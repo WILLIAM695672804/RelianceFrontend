@@ -73,9 +73,7 @@ const Trophies: React.FC = () => {
     ];
 
     return (
-        <div className="tech-page trophies-page">
-            <h1 className="page-title">Mes Trophées & Badges</h1>
-
+        <div className="tech-page trophies-page" style={{ paddingTop: 0, marginTop: 0, boxShadow: 'none' }}>
             {/* Level & XP Hero */}
             <div className="trophies-hero">
                 <div className="level-info">

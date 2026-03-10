@@ -14,10 +14,10 @@ import './Profile.css';
 
 const Profile: React.FC = () => {
     // Mock Data
-    const [bio, setBio] = useState("Plombier certifié avec plus de 5 ans d'expérience. Spécialisé dans les dépannages d'urgence et les rénovations de salle de bain. Travail soigné et garanti.");
+    const [bio] = useState("Plombier certifié avec plus de 5 ans d'expérience. Spécialisé dans les dépannages d'urgence et les rénovations de salle de bain. Travail soigné et garanti.");
 
     return (
-        <div className="tech-page profile-page">
+        <div className="tech-page profile-page" style={{ paddingTop: 0, marginTop: 0, boxShadow: 'none' }}>
             {/* Header / Cover */}
             <div className="profile-header">
                 <div className="cover-photo">

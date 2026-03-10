@@ -1,0 +1,169 @@
+.tech-cockpit-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Will take full height of the main tech layout */
+    background-color: #f1f5f9;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+/* Header Area */
+.cockpit-header {
+    background: white;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    z-index: 10; /* Above the content area */
+}
+
+.cockpit-status-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-toggle-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-toggle-status.offline {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.btn-toggle-status.offline:hover {
+    background-color: #e2e8f0;
+}
+
+.btn-toggle-status.online {
+    background-color: #10b981;
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.escrow-guardian-shield {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #ecfdf5;
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid #a7f3d0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #065f46;
+}
+
+/* Sub-Navigation Pills */
+.cockpit-tabs {
+    display: flex;
+    gap: 8px;
+    background: #f8fafc;
+    padding: 6px;
+    border-radius: 12px;
+    width: fit-content;
+}
+
+.cockpit-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cockpit-tab:hover {
+    color: #0f172a;
+    background: #e2e8f0;
+}
+
+.cockpit-tab.active {
+    background: white;
+    color: #0ea5e9;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    font-weight: 600;
+}
+
+/* Dynamic Content Area */
+.cockpit-content-area {
+    flex: 1;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: #f8fafc;
+}
+
+.tab-pane-wrapper {
+    width: 100%;
+    min-height: 100%;
+    /* To prevent the imported pages from thinking they are standalone pages and messing up margins */
+}
+
+/* Make sure the nested LiveRadar or other pages don't have double padding */
+.tab-pane-wrapper .tech-page {
+    padding: 0; 
+    margin: 0;
+    min-height: 100%;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.tab-pane-wrapper .page-title {
+    display: none; /* Hide the nested page titles since we have tabs now */
+}
+
+
+/* Offline State */
+.offline-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    z-index: 50;
+    text-align: center;
+    padding: 20px;
+}
+
+.offline-overlay h2 {
+    color: #334155;
+    margin-bottom: 12px;
+    font-size: 1.5rem;
+}
+
+.offline-overlay p {
+    color: #64748b;
+    margin-bottom: 24px;
+    max-width: 400px;
+}

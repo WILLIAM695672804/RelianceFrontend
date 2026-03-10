@@ -1,0 +1,369 @@
+/* Live Radar V2 Marketive Style */
+.radar-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding-bottom: 80px;
+}
+
+.page-subtitle {
+    color: #64748b;
+    margin-bottom: 24px;
+    font-size: 0.95rem;
+}
+
+/* Status Bar */
+.radar-status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    transition: all 0.3s ease;
+}
+
+.radar-status-bar.active {
+    background: #ecfeff;
+    /* Cyan light */
+    border: 1px solid #cffafe;
+}
+
+.radar-status-bar.inactive {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.status-indicator h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1e293b;
+}
+
+.ping {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #94a3b8;
+}
+
+.ping.animate {
+    background: #06b6d4;
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
+    animation: ping-pulse 1.5s infinite;
+}
+
+@keyframes ping-pulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(6, 182, 212, 0);
+    }
+
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(6, 182, 212, 0);
+    }
+}
+
+.btn-toggle-radar {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-toggle-radar.start {
+    background: #06b6d4;
+    color: white;
+}
+
+.btn-toggle-radar.start:hover {
+    background: #0891b2;
+}
+
+.btn-toggle-radar.stop {
+    background: white;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-toggle-radar.stop:hover {
+    background: #f8fafc;
+}
+
+/* Radar Map Area */
+.radar-map-area {
+    height: 300px;
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/ec/OpenStreetMap_Douala.png');
+    background-size: cover;
+    background-position: center;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.map-overlay-layer {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+}
+
+.technician-marker {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tech-icon {
+    font-size: 2.5rem;
+    color: #3b82f6;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.pulse-ring {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border: 2px solid rgba(59, 130, 246, 0.8);
+    border-radius: 50%;
+    animation: radar-scan 3s infinite linear;
+    box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+@keyframes radar-scan {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* Incoming Feed */
+.incoming-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.empty-scan-state {
+    text-align: center;
+    padding: 40px;
+    color: #64748b;
+}
+
+.spin-icon {
+    font-size: 2rem;
+    color: #06b6d4;
+    margin-bottom: 16px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Mission Card */
+.incoming-mission-card {
+    background: white;
+    border-radius: 16px;
+    border: 2px solid #7c3aed;
+    /* Highlight border */
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.15);
+    animation: slide-up 0.3s ease-out;
+}
+
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.timer-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background: #7c3aed;
+    transition: width 1s linear;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: #f8fafc;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.match-score {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #06b6d4;
+    font-weight: 700;
+}
+
+.expires-text {
+    color: #ef4444;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.mission-title {
+    margin: 0 0 12px 0;
+    color: #1e293b;
+    font-size: 1.25rem;
+}
+
+.mission-location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #475569;
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+}
+
+.distance {
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.route-link {
+    margin-left: auto;
+    color: #3b82f6;
+    text-decoration: none;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.problem-box {
+    background: #f1f5f9;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    color: #334155;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.ml-estimation-box {
+    border: 1px dashed #7c3aed;
+    background: #f3e8ff;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.ml-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #7c3aed;
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.ml-estimation-box p {
+    margin: 0 0 8px 0;
+    color: #475569;
+    font-size: 0.95rem;
+}
+
+.suggested-price {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.card-actions {
+    display: flex;
+    border-top: 1px solid #f1f5f9;
+}
+
+.btn-action {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    font-size: 1.05rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-action.reject {
+    background: white;
+    color: #64748b;
+}
+
+.btn-action.reject:hover {
+    background: #f8fafc;
+    color: #ef4444;
+}
+
+.btn-action.accept {
+    background: #10b981;
+    color: white;
+}
+
+.btn-action.accept:hover {
+    background: #059669;
+}
+
+@media (max-width: 600px) {
+    .radar-status-bar {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+    }
+
+    .btn-toggle-radar {
+        width: 100%;
+    }
+}

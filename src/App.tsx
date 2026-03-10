@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './styles/variables.css';
 import Home from './pages/Home';
@@ -19,9 +18,10 @@ import TechnicianLayout from './layouts/TechnicianLayout';
 import SkillMatrix from './pages/technician/SkillMatrix';
 import ZoneIntervention from './pages/technician/ZoneIntervention';
 import KYCStatus from './pages/technician/KYCStatus';
-import Abonnement from './pages/technician/Abonnement';
 import Dashboard from './pages/technician/Dashboard';
 import Planning from './pages/technician/Planning';
+import LiveRadar from './pages/technician/LiveRadar';
+import Cockpit from './pages/technician/Cockpit';
 import MissionDetail from './pages/technician/MissionDetail';
 import QuoteEditor from './pages/technician/QuoteEditor';
 import MissionRoute from './pages/technician/MissionRoute';
@@ -29,10 +29,11 @@ import MissionCompletion from './pages/technician/MissionCompletion';
 import Wallet from './pages/technician/Wallet';
 import Withdrawal from './pages/technician/Withdrawal';
 import TransactionHistory from './pages/technician/TransactionHistory';
-import Profile from './pages/technician/Profile';
+import IdentityHub from './pages/technician/IdentityHub';
 import Reviews from './pages/technician/Reviews';
 import SocialWall from './pages/technician/SocialWall';
 import Trophies from './pages/technician/Trophies';
+import SlaAuditLog from './pages/technician/SlaAuditLog';
 
 function App() {
   return (
@@ -58,8 +59,9 @@ function App() {
           <Route path="competences" element={<SkillMatrix />} />
           <Route path="zone" element={<ZoneIntervention />} />
           <Route path="verification" element={<KYCStatus />} />
-          <Route path="abonnement" element={<Abonnement />} />
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="cockpit" element={<Cockpit />} />
+          <Route path="radar" element={<LiveRadar />} />
           <Route path="planning" element={<Planning />} />
           <Route path="mission/:id" element={<MissionDetail />} />
           <Route path="mission/:id/devis" element={<QuoteEditor />} />
@@ -68,8 +70,9 @@ function App() {
           <Route path="wallet" element={<Wallet />} />
           <Route path="wallet/retrait" element={<Withdrawal />} />
           <Route path="wallet/historique" element={<TransactionHistory />} />
-          <Route path="profil" element={<Profile />} />
+          <Route path="identite" element={<IdentityHub />} />
           <Route path="avis" element={<Reviews />} />
+          <Route path="audit-sla" element={<SlaAuditLog />} />
           <Route path="social" element={<SocialWall />} />
           <Route path="trophees" element={<Trophies />} />
           {/* Add other routes here as we build them */}

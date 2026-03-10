@@ -16,9 +16,7 @@ const ZoneIntervention: React.FC = () => {
     const circleSize = 200 + (radius * 5);
 
     return (
-        <div className="tech-page zone-page">
-            <h1 className="page-title">Zone d'Intervention</h1>
-
+        <div className="tech-page zone-page" style={{ paddingTop: 0, marginTop: 0 }}>
             <div className="zone-container">
                 {/* Controls Panel */}
                 <div className="zone-controls">

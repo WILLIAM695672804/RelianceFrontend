@@ -1,187 +1,223 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
     FaIdCard,
-    FaFileContract,
-    FaUserGraduate,
-    FaCamera,
+    FaFileInvoiceDollar,
+    FaShieldAlt,
     FaCheckCircle,
-    FaTimesCircle,
     FaClock,
-    FaCloudUploadAlt,
-    FaEye,
+    FaTimesCircle,
+    FaUpload,
+    FaFileContract,
     FaTrash,
-    FaExclamationTriangle
+    FaUserTie,
+    FaBuilding
 } from 'react-icons/fa';
 import './KYCStatus.css';
 
-interface Document {
+interface KYCDocument {
     id: string;
-    type: 'ID' | 'CRIMINAL_RECORD' | 'DIPLOMA' | 'PHOTO';
-    title: string;
-    description: string;
-    status: 'MISSING' | 'PENDING' | 'VALID' | 'REJECTED';
-    fileName?: string;
-    rejectionReason?: string;
+    name: string;
+    status: 'verified' | 'pending' | 'missing' | 'rejected';
+    note: string;
+    icon: React.ReactNode;
+    fileUrl?: string;
 }
 
-const initialDocuments: Document[] = [
-    {
-        id: '1',
-        type: 'ID',
-        title: 'Pièce d\'identité (CNI / Passeport)',
-        description: 'Recto-verso lisible. En cours de validité.',
-        status: 'VALID',
-        fileName: 'cni_william_recto_verso.pdf'
-    },
-    {
-        id: '2',
-        type: 'CRIMINAL_RECORD',
-        title: 'Extrait de Casier Judiciaire',
-        description: 'Bulletin n°3 datant de moins de 3 mois.',
-        status: 'PENDING',
-        fileName: 'casier_judiciaire_2026.pdf'
-    },
-    {
-        id: '3',
-        type: 'DIPLOMA',
-        title: 'Diplômes & Certifications',
-        description: 'Preuves de qualification pour vos compétences.',
-        status: 'REJECTED',
-        fileName: 'certificat_plomberie.jpg',
-        rejectionReason: 'Le document est flou et la date n\'est pas visible. Merci de scanner à nouveau.'
-    },
-    {
-        id: '4',
-        type: 'PHOTO',
-        title: 'Photo de profil',
-        description: 'Photo professionnelle, fond neutre, visage dégagé.',
-        status: 'MISSING'
-    }
-];
-
 const KYCStatus: React.FC = () => {
-    const [documents, setDocuments] = useState<Document[]>(initialDocuments);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [activeDocId, setActiveDocId] = useState<string | null>(null);
 
-    const getStatusIcon = (status: string) => {
+    // V3: B2B Affiliation State
+    const [affiliationType, setAffiliationType] = useState<'independent' | 'agency' | null>(null);
+    const [agencyCode, setAgencyCode] = useState('');
+
+    const [documents, setDocuments] = useState<KYCDocument[]>([
+        { id: 'id_card', name: 'Pièce d\'identité (CNI / Passeport)', status: 'verified', note: 'Vérifiée le 10 Fév 2026', icon: <FaIdCard />, fileUrl: 'cni-recto-verso.pdf' },
+        { id: 'kbis', name: 'Registre du Commerce / NIU', status: 'verified', note: 'Vérifié le 10 Fév 2026', icon: <FaFileInvoiceDollar />, fileUrl: 'kbis-2025.pdf' },
+        { id: 'rcp', name: 'Assurance Responsabilité Civile Pro', status: 'pending', note: 'En cours de vérification par l\'administrateur', icon: <FaShieldAlt />, fileUrl: 'attestation-rcp.pdf' },
+        { id: 'casier', name: 'Extrait de Casier Judiciaire (Optionnel)', status: 'missing', note: 'Requis pour les missions haute sécurité', icon: <FaFileContract /> },
+        { id: 'diploma', name: 'Diplôme ou Certification (Spécialité)', status: 'rejected', note: 'Document illisible, merci de renvoyer une version claire.', icon: <FaFileContract /> }
+    ]);
+
+    const getStatusInfo = (status: string) => {
         switch (status) {
-            case 'VALID': return <FaCheckCircle />;
-            case 'REJECTED': return <FaTimesCircle />;
-            case 'PENDING': return <FaClock />;
-            default: return <FaExclamationTriangle />;
+            case 'verified': return { label: 'Validé', class: 'verified', icon: <FaCheckCircle /> };
+            case 'pending': return { label: 'En attente de validation', class: 'pending', icon: <FaClock /> };
+            case 'rejected': return { label: 'Rejeté par l\'Admin', class: 'rejected', icon: <FaTimesCircle /> };
+            default: return { label: 'Non fourni', class: 'missing', icon: null };
         }
     };
 
-    const getStatusLabel = (status: string) => {
-        switch (status) {
-            case 'VALID': return 'Validé';
-            case 'REJECTED': return 'Rejeté';
-            case 'PENDING': return 'En cours';
-            default: return 'Manquant';
-        }
+    const overallStatus = documents.some(d => d.id !== 'casier' && d.status === 'missing') ? 'warning'
+        : documents.some(d => d.status === 'rejected') ? 'danger'
+            : documents.some(d => d.status === 'pending') ? 'warning'
+                : 'success';
+
+    const triggerFileSelect = (id: string) => {
+        setActiveDocId(id);
+        fileInputRef.current?.click();
     };
 
-    const handleUpload = (id: string) => {
-        // Mock upload functionality
-        alert(`Upload simulé pour le document : ${id}`);
-        setDocuments(prev => prev.map(doc =>
-            doc.id === id ? { ...doc, status: 'PENDING', fileName: 'nouveau_document.pdf', rejectionReason: undefined } : doc
-        ));
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file && activeDocId) {
+            setDocuments(prev => prev.map(doc => {
+                if (doc.id === activeDocId) {
+                    return {
+                        ...doc,
+                        status: 'pending',
+                        note: 'Nouveau document envoyé, en cours de vérification...',
+                        fileUrl: file.name
+                    };
+                }
+                return doc;
+            }));
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        }
+        setActiveDocId(null);
     };
 
-    const handleDelete = (id: string) => {
-        if (window.confirm('Voulez-vous vraiment supprimer ce document ?')) {
-            setDocuments(prev => prev.map(doc =>
-                doc.id === id ? { ...doc, status: 'MISSING', fileName: undefined, rejectionReason: undefined } : doc
-            ));
-        }
+    const handleRemoveFile = (id: string) => {
+        setDocuments(prev => prev.map(doc => {
+            if (doc.id === id) {
+                return {
+                    ...doc,
+                    status: 'missing',
+                    note: 'Document retiré.',
+                    fileUrl: undefined
+                };
+            }
+            return doc;
+        }));
     };
 
     return (
-        <div className="tech-page kyc-page">
-            <h1 className="page-title">Centre de Vérification (KYC)</h1>
+        <div className="tech-page kyc-page" style={{ paddingTop: 0, marginTop: 0, boxShadow: 'none' }}>
+            <p style={{ color: '#64748b', marginBottom: '30px' }}>
+                Soumettez vos documents légaux pour valider votre profil sur la plateforme Reliance.
+            </p>
 
-            {/* Global Status Header */}
-            <div className="kyc-header-card">
-                <div className="kyc-title-group">
-                    <h2>Statut de votre dossier</h2>
-                    <p>Votre profil est en cours d'examen. Complétez les éléments manquants pour activer votre compte.</p>
+            {/* V3: B2B Affiliation Selector */}
+            <div className="affiliation-section">
+                <h2>1. Statut d'Affiliation (Rôle)</h2>
+                <div className="affiliation-cards">
+                    <div 
+                        className={`affiliation-card ${affiliationType === 'independent' ? 'active' : ''}`}
+                        onClick={() => setAffiliationType('independent')}
+                    >
+                        <FaUserTie className="affil-icon" />
+                        <h3>Technicien Indépendant</h3>
+                        <p>Vous gérez vos propres missions, votre planning et votre portefeuille Reliance.</p>
+                    </div>
+                    <div 
+                        className={`affiliation-card ${affiliationType === 'agency' ? 'active' : ''}`}
+                        onClick={() => setAffiliationType('agency')}
+                    >
+                        <FaBuilding className="affil-icon" />
+                        <h3>Employé d'Agence</h3>
+                        <p>Vos flux financiers et certaines missions sont gérés par un superviseur d'agence.</p>
+                    </div>
                 </div>
-                <div className="global-status pending">
-                    <FaClock /> Analyse en cours
+
+                {affiliationType === 'agency' && (
+                    <div className="agency-code-input">
+                        <label>Code de rattachement Agence :</label>
+                        <div className="input-with-button">
+                            <input 
+                                type="text" 
+                                placeholder="Ex: AGN-X789-2026" 
+                                value={agencyCode}
+                                onChange={(e) => setAgencyCode(e.target.value)}
+                            />
+                            <button className="btn-primary" onClick={() => alert("Simulation : Rattachement à l'Agence 'Tech Solutions S.A' validé.")}>
+                                Rattacher
+                            </button>
+                        </div>
+                        <small>Demandez ce code à votre employeur pour que votre Wallet soit lié aux comptes de l'agence.</small>
+                    </div>
+                )}
+            </div>
+
+            <hr className="divider" />
+
+            <h2>2. Documents de Vérification (KYC)</h2>
+            <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={handleFileChange}
+            />
+
+            {/* Summary Widget */}
+            <div className={`kyc-summary border-${overallStatus}`}>
+                <div className="kyc-icon-large">
+                    <FaShieldAlt />
+                </div>
+                <div className="kyc-text">
+                    <h2>Statut de Vérification</h2>
+                    <p>
+                        {overallStatus === 'success' ? 'Tous vos documents requis sont validés.'
+                            : overallStatus === 'danger' ? 'Attention : Certains documents ont été rejetés.'
+                                : 'Vos documents sont incomplets ou en cours de vérification.'}
+                    </p>
+                </div>
+                <div className={`status-badge-lg ${overallStatus}`}>
+                    {overallStatus === 'success' ? <FaCheckCircle /> : overallStatus === 'danger' ? <FaTimesCircle /> : <FaClock />}
+                    {overallStatus === 'success' ? 'Profil Vérifié' : overallStatus === 'danger' ? 'Action Requise' : 'Vérification en cours'}
                 </div>
             </div>
 
             {/* Documents Grid */}
-            <div className="documents-grid">
-                {documents.map(doc => (
-                    <div key={doc.id} className={`doc-card border-${doc.status.toLowerCase()}`}>
-                        <div className="doc-header">
-                            <div className="doc-icon">
-                                {doc.type === 'ID' && <FaIdCard />}
-                                {doc.type === 'CRIMINAL_RECORD' && <FaFileContract />}
-                                {doc.type === 'DIPLOMA' && <FaUserGraduate />}
-                                {doc.type === 'PHOTO' && <FaCamera />}
-                            </div>
-                            <span className={`doc-status status-${doc.status.toLowerCase()}`}>
-                                {getStatusIcon(doc.status)} {getStatusLabel(doc.status)}
-                            </span>
-                        </div>
+            <div className="kyc-grid">
+                {documents.map(doc => {
+                    const statusInfo = getStatusInfo(doc.status);
+                    const isRequired = doc.id !== 'casier';
 
-                        <h3 className="doc-title">{doc.title}</h3>
-                        <p className="doc-desc">{doc.description}</p>
+                    return (
+                        <div key={doc.id} className={`doc-card border-${doc.status}`}>
+                            <div className="doc-info">
+                                <h3>
+                                    {doc.icon} {doc.name}
+                                    {isRequired && <span style={{ color: '#ef4444', fontSize: '1.2rem', marginLeft: '4px' }}>*</span>}
+                                </h3>
+                                <p className={doc.status === 'rejected' ? 'text-danger' : ''}>{doc.note}</p>
 
-                        {/* File Preview or Upload Zone */}
-                        {doc.fileName ? (
-                            <div className="file-preview-container">
-                                <div className="file-preview">
-                                    <div className="file-info">
-                                        <FaFileContract />
-                                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '150px' }}>
-                                            {doc.fileName}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+                                    <span className={`doc-status ${statusInfo.class}`}>
+                                        {statusInfo.icon} {statusInfo.label}
+                                    </span>
+                                    {doc.fileUrl && (
+                                        <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                            📄 {doc.fileUrl}
+                                            {doc.status !== 'verified' && (
+                                                <button
+                                                    onClick={() => handleRemoveFile(doc.id)}
+                                                    style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '2px' }}
+                                                    title="Supprimer"
+                                                >
+                                                    <FaTrash size={12} />
+                                                </button>
+                                            )}
                                         </span>
-                                    </div>
-                                    <div className="file-actions">
-                                        <button className="action-btn view-btn" title="Voir">
-                                            <FaEye />
-                                        </button>
-                                        <button
-                                            className="action-btn delete-btn"
-                                            title="Supprimer"
-                                            onClick={() => handleDelete(doc.id)}
-                                        >
-                                            <FaTrash />
-                                        </button>
-                                    </div>
+                                    )}
                                 </div>
-                                {doc.status === 'REJECTED' && (
-                                    <div className="admin-feedback">
-                                        <div className="feedback-title">
-                                            <FaExclamationTriangle /> Motif du rejet :
-                                        </div>
-                                        <p className="feedback-text">{doc.rejectionReason}</p>
-                                        <button
-                                            style={{ width: '100%', marginTop: '10px', fontSize: '0.8rem' }}
-                                            className="btn btn-outline-danger"
-                                            onClick={() => handleUpload(doc.id)}
-                                        >
-                                            Renvoyer un document valide
-                                        </button>
-                                    </div>
+                            </div>
+                            <div className="doc-action">
+                                {doc.status === 'verified' ? (
+                                    <FaCheckCircle className="doc-icon verified" />
+                                ) : (
+                                    <button
+                                        className={`btn-upload-kyc ${doc.status === 'rejected' ? 'btn-upload-danger' : ''}`}
+                                        onClick={() => triggerFileSelect(doc.id)}
+                                    >
+                                        <FaUpload /> {doc.fileUrl ? 'Remplacer' : 'Uploader'}
+                                    </button>
                                 )}
                             </div>
-                        ) : (
-                            <div className="upload-zone" onClick={() => handleUpload(doc.id)}>
-                                <div className="upload-icon">
-                                    <FaCloudUploadAlt />
-                                </div>
-                                <p className="upload-text">
-                                    <strong>Cliquez pour envoyer</strong><br />
-                                    ou glissez votre fichier ici
-                                </p>
-                            </div>
-                        )}
-                    </div>
-                ))}
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

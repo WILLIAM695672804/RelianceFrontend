@@ -1,126 +1,173 @@
-import React from 'react';
-import {
-    FaStar,
-    FaCheckCircle,
-    FaReply,
-    FaQuoteRight
-} from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaStar, FaRegStar, FaChartLine, FaArrowUp, FaArrowDown, FaCommentDots } from 'react-icons/fa';
 import './Reviews.css';
 
+interface Review {
+    id: string;
+    clientName: string;
+    rating: number;
+    text: string;
+    date: string;
+    techReply?: string;
+    reputationImpact: number; // +10, -5, etc.
+}
+
+interface RepChange {
+    id: string;
+    date: string;
+    reason: string;
+    change: number;
+}
+
 const Reviews: React.FC = () => {
-    // Mock Data
-    const reviews = [
+    // V2 Mock Data
+    const [reviews] = useState<Review[]>([
         {
-            id: 1,
-            author: "Sophie M.",
-            avatar: "SM",
-            date: "Il y a 2 jours",
+            id: 'r1',
+            clientName: 'Alice Dubois',
             rating: 5,
-            content: "Excellent travail ! William est arrivé à l'heure, a réparé la fuite rapidement et a laissé la salle de bain impeccable. Je recommande vivement.",
-            verified: true,
-            reply: "Merci Sophie ! Ravi d'avoir pu vous aider. N'hésitez pas si besoin."
+            text: 'Intervention très rapide, problème résolu en moins d\'une heure. Le technicien a laissé le chantier propre. Je recommande vivement.',
+            date: 'Il y a 2 jours',
+            reputationImpact: 15
         },
         {
-            id: 2,
-            author: "Jean P.",
-            avatar: "JP",
-            date: "Il y a 1 semaine",
+            id: 'r2',
+            clientName: 'Marc T.',
             rating: 4,
-            content: "Bon technicien, compétent. Juste un petit retard de 10 minutes, mais prévenu à l'avance.",
-            verified: true,
-            reply: null
-        },
-        {
-            id: 3,
-            author: "Agence Immobilière du Centre",
-            avatar: "AI",
-            date: "Il y a 3 semaines",
-            rating: 5,
-            content: "Intervention professionnelle sur notre chantier de rénovation. Respect des délais et devis conforme.",
-            verified: true,
-            reply: "Merci pour votre confiance renouvelée !"
+            text: 'Bon travail globalement, mais avec 15 minutes de retard sur l\'horaire prévu. Sinon, la réparation du chauffe-eau est impeccable.',
+            date: 'La semaine dernière',
+            techReply: 'Bonjour Marc, je vous prie de m\'excuser pour ce retard dû aux bouchons. Ravi que la réparation vous satisfasse !',
+            reputationImpact: 5
         }
-    ];
+    ]);
 
-    const distribution = [
-        { stars: 5, count: 42, percent: 70 },
-        { stars: 4, count: 12, percent: 20 },
-        { stars: 3, count: 4, percent: 7 },
-        { stars: 2, count: 1, percent: 2 },
-        { stars: 1, count: 1, percent: 1 },
-    ];
+    const [repHistory] = useState<RepChange[]>([
+        { id: 'h1', date: '08 Mar 2026', reason: 'Avis 5 étoiles (Alice D.)', change: +15 },
+        { id: 'h2', date: '05 Mar 2026', reason: 'Avis 4 étoiles (Marc T.)', change: +5 },
+        { id: 'h3', date: '01 Mar 2026', reason: 'Annulation tardive sans justification', change: -20 },
+        { id: 'h4', date: '25 Fév 2026', reason: 'Mission complétée dans les temps (Bonus SLA)', change: +10 }
+    ]);
 
-    const renderStars = (rating: number) => {
-        return [...Array(5)].map((_, i) => (
-            <FaStar key={i} color={i < rating ? "#f59e0b" : "#e2e8f0"} />
-        ));
+    const currentRepScore = 850;
+    const repLevel = 'Expert Plombier';
+
+    // State for replies
+    const [replyingTo, setReplyingTo] = useState<string | null>(null);
+    const [replyText, setReplyText] = useState('');
+
+    const toggleReply = (id: string) => {
+        setReplyingTo(replyingTo === id ? null : id);
+        setReplyText('');
     };
 
     return (
-        <div className="tech-page reviews-page">
-            <h1 className="page-title">Avis Clients</h1>
+        <div className="tech-page reviews-page" style={{ paddingTop: 0, marginTop: 0, boxShadow: 'none' }}>
+            <p style={{ color: '#64748b', marginBottom: '24px' }}>
+                Votre score de réputation affecte directement votre visibilité (Radar Live) et les missions qui vous sont proposées.
+            </p>
 
-            {/* Rating Summary */}
-            <div className="reviews-summary">
-                <div className="global-rating">
-                    <div className="big-rating">4.8</div>
-                    <div className="stars-display">{renderStars(5)}</div>
-                    <div className="rating-count">60 avis</div>
+            {/* Reputation Dashboard V2 */}
+            <div className="reputation-dashboard">
+                <div className="rep-score-card">
+                    <h2>Score de Réputation</h2>
+                    <div className="rep-score-value">{currentRepScore} <span>/ 1000</span></div>
+                    <div className="rep-level-badge">{repLevel}</div>
+                    <p>Vous êtes dans le top <strong>10%</strong> des techniciens de votre zone.</p>
                 </div>
 
-                <div className="rating-bars">
-                    {distribution.map((d) => (
-                        <div key={d.stars} className="rating-bar-row">
-                            <div className="star-label">{d.stars} ★</div>
-                            <div className="bar-container">
-                                <div className="bar-fill" style={{ width: `${d.percent}%` }}></div>
+                <div className="rep-history-card">
+                    <h3><FaChartLine /> Historique des Variations</h3>
+                    <div className="rep-history-list">
+                        {repHistory.map(item => (
+                            <div key={item.id} className="rep-history-item">
+                                <div className="rep-item-info">
+                                    <strong>{item.reason}</strong>
+                                    <span>{item.date}</span>
+                                </div>
+                                <div className={`rep-item-change ${item.change > 0 ? 'positive' : 'negative'}`}>
+                                    {item.change > 0 ? <FaArrowUp /> : <FaArrowDown />}
+                                    {Math.abs(item.change)} pts
+                                </div>
                             </div>
-                            <div className="bar-count">{d.count}</div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
 
-            {/* Reviews List */}
+            {/* Standard Reviews Summary */}
+            <div className="reviews-summary">
+                <div className="average-score-box">
+                    <div className="average-score">4.8</div>
+                    <div className="stars-container">
+                        <FaStar /><FaStar /><FaStar /><FaStar /><FaStar style={{ opacity: 0.5 }} />
+                    </div>
+                    <div className="total-reviews-count">Basé sur 42 avis</div>
+                </div>
+
+                <div className="score-bars">
+                    {[5, 4, 3, 2, 1].map((star) => {
+                        const count = star === 5 ? 30 : star === 4 ? 10 : star === 3 ? 2 : 0;
+                        const percentage = (count / 42) * 100;
+                        return (
+                            <div key={star} className="score-bar-row">
+                                <div className="score-label">{star} <FaStar /></div>
+                                <div className="score-bar-bg">
+                                    <div className="score-bar-fill" style={{ width: `${percentage}%` }}></div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Review List */}
             <div className="reviews-list">
+                <h3>Avis récents</h3>
                 {reviews.map(review => (
                     <div key={review.id} className="review-card">
                         <div className="review-header">
                             <div className="reviewer-info">
-                                <div className="reviewer-avatar">{review.avatar}</div>
-                                <div className="reviewer-details">
-                                    <h4>{review.author}</h4>
-                                    <span className="review-date">{review.date}</span>
+                                <div className="reviewer-avatar">{review.clientName.charAt(0)}</div>
+                                <div>
+                                    <div className="reviewer-name">{review.clientName}</div>
+                                    <div className="review-meta">{review.date}</div>
                                 </div>
                             </div>
                             <div style={{ textAlign: 'right' }}>
-                                <div style={{ color: '#f59e0b' }}>{renderStars(review.rating)}</div>
-                                {review.verified && (
-                                    <div className="review-badge" style={{ marginTop: '5px', justifyContent: 'flex-end' }}>
-                                        <FaCheckCircle /> Mission vérifiée
-                                    </div>
-                                )}
+                                <div className="review-rating">
+                                    {[...Array(5)].map((_, i) => i < review.rating ? <FaStar key={i} /> : <FaRegStar key={i} />)}
+                                </div>
+                                <div className="rep-impact">+{review.reputationImpact} pts</div>
                             </div>
                         </div>
 
-                        <div className="review-content">
-                            <FaQuoteRight style={{ color: '#e2e8f0', marginRight: '10px', verticalAlign: 'top' }} />
-                            {review.content}
-                        </div>
+                        <div className="review-content">{review.text}</div>
 
-                        {review.reply ? (
-                            <div className="review-reply">
-                                <div className="reply-header">
-                                    Votre réponse
-                                    <span style={{ fontWeight: 'normal', color: '#94a3b8' }}>Répondu</span>
-                                </div>
-                                <p className="reply-text">{review.reply}</p>
+                        {review.techReply ? (
+                            <div className="tech-reply-box">
+                                <div className="tech-reply-header"><FaCommentDots /> Votre réponse :</div>
+                                <div className="tech-reply-content">{review.techReply}</div>
                             </div>
                         ) : (
-                            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <button className="btn-reply">
-                                    <FaReply /> Répondre
-                                </button>
+                            <div className="review-actions">
+                                {replyingTo === review.id ? (
+                                    <div className="reply-input-area">
+                                        <textarea
+                                            className="reply-textarea"
+                                            placeholder="Rédigez une réponse publique..."
+                                            value={replyText}
+                                            onChange={(e) => setReplyText(e.target.value)}
+                                        ></textarea>
+                                        <div className="reply-btn-group">
+                                            <button className="btn-cancel-reply" onClick={() => toggleReply(review.id)}>Annuler</button>
+                                            <button className="btn-send-reply">Poster la réponse</button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <button className="btn-reply-toggle" onClick={() => toggleReply(review.id)}>
+                                        <FaCommentDots /> Répondre publiquement
+                                    </button>
+                                )}
                             </div>
                         )}
                     </div>
