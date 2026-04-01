@@ -1,8 +1,4 @@
 import React, { useState } from 'react';
-import { 
-    FaWallet, FaLock, FaUnlockAlt, FaCreditCard, 
-    FaHistory, FaArrowUp, FaTimes, FaMobileAlt, FaCheckCircle 
-} from 'react-icons/fa';
 import './ClientWallet.css';
 
 interface Transaction {
@@ -15,168 +11,288 @@ interface Transaction {
 
 const ClientWallet: React.FC = () => {
     // Mock Data
-    const [balance] = useState(24500); // Available balance
-    const [escrowAmount, setEscrowAmount] = useState(20000); // Funds currently locked for ongoing interventions
+    const [balance] = useState(4250500); // Available balance
     
+    // Recharge Modal States
     const [showRechargeModal, setShowRechargeModal] = useState(false);
     const [rechargeStep, setRechargeStep] = useState(1);
     const [selectedMethod, setSelectedMethod] = useState('');
-
-    const transactions: Transaction[] = [
-        { id: 'TRX-101', type: 'escrow', amount: 20000, date: 'Aujourd\'hui', label: 'Séquestre: Fuite d\'eau #REQ-019' },
-        { id: 'TRX-098', type: 'recharge', amount: 50000, date: '10 Mars 2026', label: 'Recharge Orange Money' },
-        { id: 'TRX-095', type: 'payment', amount: 15000, date: '25 Fév 2026', label: 'Paiement: Électricité #REQ-012' }
-    ];
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XAF', maximumFractionDigits: 0 }).format(amount);
     };
 
-    const handleReleaseFunds = () => {
-        if (window.confirm('Voulez-vous libérer le paiement de 20 000 FCFA au technicien pour finaliser la mission ?')) {
-            setEscrowAmount(0);
-            alert('Fonds libérés avec succès ! Le technicien a été payé.');
-        }
-    };
-
     return (
-        <div className="client-wallet-container">
-            <div className="wallet-header">
-                <div>
-                    <h1>Portefeuille & Paiements</h1>
-                    <p>Gérez vos moyens de paiement et surveillez vos transactions en toute transparence.</p>
-                </div>
-                <button className="btn-recharge-primary" onClick={() => setShowRechargeModal(true)}>
-                    <FaArrowUp /> Recharger mon compte
-                </button>
-            </div>
-
-            <div className="balances-row">
-                {/* Available Balance */}
-                <div className="balance-card-client main">
-                    <div className="balance-icon-btn"><FaWallet /></div>
-                    <div className="balance-info-client">
-                        <h3>Solde Disponible</h3>
-                        <div className="amount-display">{formatCurrency(balance)}</div>
-                        <span className="balance-hint">Utilisable immédiatement pour payer ou bloquer un devis.</span>
-                    </div>
-                </div>
-
-                {/* Escrow Balance */}
-                <div className={`balance-card-client escrow ${escrowAmount > 0 ? 'active' : ''}`}>
-                    <div className="balance-icon-btn">{escrowAmount > 0 ? <FaLock /> : <FaUnlockAlt />}</div>
-                    <div className="balance-info-client">
-                        <h3>Fonds en Séquestre</h3>
-                        <div className="amount-display">{formatCurrency(escrowAmount)}</div>
-                        <span className="balance-hint">
-                            {escrowAmount > 0 
-                                ? 'Bloqués sur la plateforme jusqu\'à la validation des travaux.' 
-                                : 'Aucun montant bloqué actuellement.'}
-                        </span>
-                    </div>
-                    {escrowAmount > 0 && (
-                        <button className="btn-release-escrow" onClick={handleReleaseFunds}>
-                            Libérer l'artisan
-                        </button>
-                    )}
-                </div>
-            </div>
-
-            <div className="wallet-bottom-grid">
-                {/* Payment Methods */}
-                <div className="payment-methods-widget">
-                    <h3><FaCreditCard /> Moyens de paiement</h3>
-                    
-                    <div className="pm-list">
-                        <div className="pm-card default">
-                            <div className="pm-logo om">OM</div>
-                            <div className="pm-details">
-                                <strong>Orange Money</strong>
-                                <span>+237 6** ** ** 12</span>
-                            </div>
-                            <span className="pm-badge">Par défaut</span>
-                        </div>
-                        <div className="pm-card">
-                            <div className="pm-logo mtn">MOMO</div>
-                            <div className="pm-details">
-                                <strong>MTN Mobile Money</strong>
-                                <span>+237 6** ** ** 45</span>
+        <div className="cw-page">
+            <div className="cw-content-area">
+                
+                {/* Balance Bento Grid Section */}
+                <div className="cw-bento-grid top-tiles">
+                    {/* Main Balance Card */}
+                    <div className="cw-balance-card">
+                        <div className="cw-balance-glow"></div>
+                        <div className="cw-balance-content">
+                            <p className="cw-balance-label">Total Available Balance</p>
+                            <h1 className="cw-balance-amount">{formatCurrency(balance).replace('FCFA', '').trim()} <span className="cw-currency-symbol">XAF</span></h1>
+                            
+                            <div className="cw-equivalent-rates">
+                                <div className="cw-rate-item">
+                                    <p className="cw-rate-label">Equivalent EUR</p>
+                                    <p className="cw-rate-value">€ 6,480.00</p>
+                                </div>
+                                <div className="cw-rate-item">
+                                    <p className="cw-rate-label">Equivalent USD</p>
+                                    <p className="cw-rate-value">$ 7,025.15</p>
+                                </div>
                             </div>
                         </div>
-                        <button className="btn-add-pm">+ Ajouter un moyen de paiement</button>
+                        
+                        <div className="cw-balance-actions">
+                            <button className="cw-btn-add-funds" onClick={() => setShowRechargeModal(true)}>
+                                <span className="material-symbols-outlined">add_circle</span>
+                                Add Funds
+                            </button>
+                            <button className="cw-btn-share text-primary bg-white hover-bg-slate-50">
+                                <span className="material-symbols-outlined">ios_share</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Quick Stats / Actions */}
+                    <div className="cw-funding-methods-card">
+                        <div>
+                            <h3 className="cw-card-title">Funding Methods</h3>
+                            <div className="cw-methods-list">
+                                <div className="cw-method-item">
+                                    <div className="cw-method-info">
+                                        <div className="cw-method-icon orange">
+                                            <span className="material-symbols-outlined">smartphone</span>
+                                        </div>
+                                        <span className="cw-method-name">Mobile Money</span>
+                                    </div>
+                                    <span className="material-symbols-outlined cw-icon-chevron">chevron_right</span>
+                                </div>
+                                <div className="cw-method-item">
+                                    <div className="cw-method-info">
+                                        <div className="cw-method-icon blue">
+                                            <span className="material-symbols-outlined">credit_card</span>
+                                        </div>
+                                        <span className="cw-method-name">Bank Card</span>
+                                    </div>
+                                    <span className="material-symbols-outlined cw-icon-chevron">chevron_right</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="cw-secure-badge">
+                            <span className="material-symbols-outlined">shield</span>
+                            Secure PCI-DSS Payments
+                        </div>
                     </div>
                 </div>
 
-                {/* Transaction History */}
-                <div className="transaction-history-widget">
-                    <h3><FaHistory /> Historique récent</h3>
-                    
-                    <div className="transactions-list">
-                        {transactions.map(trx => (
-                            <div key={trx.id} className="transaction-item">
-                                <div className={`trx-icon ${trx.type}`}>
-                                    {trx.type === 'recharge' && <FaArrowUp />}
-                                    {trx.type === 'escrow' && <FaLock />}
-                                    {trx.type === 'payment' && <FaUnlockAlt />}
-                                </div>
-                                <div className="trx-details">
-                                    <strong>{trx.label}</strong>
-                                    <span>{trx.date} • {trx.id}</span>
-                                </div>
-                                <div className={`trx-amount ${trx.type}`}>
-                                    {trx.type === 'recharge' ? '+' : '-'}{formatCurrency(trx.amount)}
-                                </div>
+                {/* Spending Insights & Invoices Asymmetric Section */}
+                <div className="cw-bento-grid split-insights">
+                    {/* Spending Chart Simulation */}
+                    <div className="cw-chart-card">
+                        <div className="cw-card-header-flex">
+                            <div>
+                                <h3 className="cw-card-title">Monthly Spending</h3>
+                                <p className="cw-card-subtitle italic text-slate-500">Financial velocity tracking</p>
                             </div>
-                        ))}
+                            <select className="cw-select-filter">
+                                <option>Last 6 Months</option>
+                                <option>This Year</option>
+                            </select>
+                        </div>
+                        
+                        <div className="cw-chart-simulation">
+                            <div className="cw-bar-group">
+                                <div className="cw-bar h-12"></div>
+                                <span className="cw-bar-label">Jan</span>
+                            </div>
+                            <div className="cw-bar-group">
+                                <div className="cw-bar h-24"></div>
+                                <span className="cw-bar-label">Feb</span>
+                            </div>
+                            <div className="cw-bar-group active">
+                                <div className="cw-bar h-36"></div>
+                                <span className="cw-bar-label">Mar</span>
+                            </div>
+                            <div className="cw-bar-group">
+                                <div className="cw-bar h-16"></div>
+                                <span className="cw-bar-label">Apr</span>
+                            </div>
+                            <div className="cw-bar-group">
+                                <div className="cw-bar h-20"></div>
+                                <span className="cw-bar-label">May</span>
+                            </div>
+                            <div className="cw-bar-group focus">
+                                <div className="cw-bar h-40"></div>
+                                <span className="cw-bar-label">Jun</span>
+                            </div>
+                        </div>
                     </div>
-                    <button className="btn-view-all-trx">Voir tout l'historique</button>
+
+                    {/* Saved Invoices Section */}
+                    <div className="cw-invoices-card">
+                        <div className="cw-card-header-flex mb-6">
+                            <h3 className="cw-card-title">Invoices</h3>
+                            <button className="cw-btn-link text-primary hover:underline">View All</button>
+                        </div>
+                        <div className="cw-invoices-list">
+                            {[
+                                { id: 'INV-2024-0012', date: 'June 12, 2024', size: '240 KB' },
+                                { id: 'INV-2024-0009', date: 'May 28, 2024', size: '1.2 MB' },
+                                { id: 'INV-2024-0005', date: 'April 15, 2024', size: '512 KB' }
+                            ].map(inv => (
+                                <div className="cw-invoice-item" key={inv.id}>
+                                    <div className="cw-invoice-icon bg-red-50 text-red-500">
+                                        <span className="material-symbols-outlined">picture_as_pdf</span>
+                                    </div>
+                                    <div className="cw-invoice-info">
+                                        <div className="cw-invoice-id">{inv.id}</div>
+                                        <div className="cw-invoice-metatext-slate-400">{inv.date} • {inv.size}</div>
+                                    </div>
+                                    <button className="cw-btn-download text-slate-400 hover:text-primary">
+                                        <span className="material-symbols-outlined">download</span>
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Transaction Ledger */}
+                <div className="cw-ledger-card rounded-3xl overflow-hidden mt-6">
+                    <div className="cw-ledger-header flex items-center justify-between p-6 border-b border-slate-100">
+                        <div>
+                            <h3 className="cw-card-title">Transaction Ledger</h3>
+                            <p className="cw-card-subtitle text-slate-500">History of all financial movements</p>
+                        </div>
+                        <div className="cw-ledger-filters flex gap-2">
+                            <button className="cw-filter-pill active">All</button>
+                            <button className="cw-filter-pill">Holds</button>
+                            <button className="cw-filter-pill">Payments</button>
+                        </div>
+                    </div>
+
+                    <div className="cw-table-wrapper overflow-x-auto w-full">
+                        <table className="cw-ledger-table w-full text-left">
+                            <thead className="bg-slate-50 text-[10px] uppercase font-bold text-slate-400 tracking-widest">
+                                <tr>
+                                    <th className="px-6 py-4">Transaction Details</th>
+                                    <th className="px-6 py-4">Type</th>
+                                    <th className="px-6 py-4">Status</th>
+                                    <th className="px-6 py-4 text-right">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50">
+                                <tr className="cw-ledger-row hover:bg-slate-50/50 transition-colors">
+                                    <td className="px-6 py-4">
+                                        <div className="cw-td-flex">
+                                            <div className="cw-td-icon bg-surface-container">
+                                                <span className="material-symbols-outlined text-slate-500">lock_clock</span>
+                                            </div>
+                                            <div>
+                                                <div className="cw-td-title font-bold text-sm">Escrow: Logistics Task #42</div>
+                                                <div className="cw-td-meta text-xs text-slate-400">June 21, 2024 • 14:20</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-xs font-medium text-slate-600">Hold</td>
+                                    <td className="px-6 py-4"><span className="cw-status-badge blue bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">ACTIVE</span></td>
+                                    <td className="px-6 py-4 text-right cw-td-amount text-slate-800 font-bold">- 850,000 XAF</td>
+                                </tr>
+                                <tr className="cw-ledger-row hover:bg-slate-50/50 transition-colors">
+                                    <td className="px-6 py-4">
+                                        <div className="cw-td-flex">
+                                            <div className="cw-td-icon deposit bg-tertiary-fixed-dim/20">
+                                                <span className="material-symbols-outlined text-tertiary-container">account_balance</span>
+                                            </div>
+                                            <div>
+                                                <div className="cw-td-title font-bold text-sm">Top-up via Orange Money</div>
+                                                <div className="cw-td-meta text-xs text-slate-400">June 18, 2024 • 09:12</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-xs font-medium text-slate-600">Deposit</td>
+                                    <td className="px-6 py-4"><span className="cw-status-badge green bg-green-100 text-green-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">COMPLETED</span></td>
+                                    <td className="px-6 py-4 text-right cw-td-amount text-tertiary-container font-bold">+ 1,200,000 XAF</td>
+                                </tr>
+                                <tr className="cw-ledger-row hover:bg-slate-50/50 transition-colors">
+                                    <td className="px-6 py-4">
+                                        <div className="cw-td-flex">
+                                            <div className="cw-td-icon bg-surface-container">
+                                                <span className="material-symbols-outlined text-slate-500">shopping_bag</span>
+                                            </div>
+                                            <div>
+                                                <div className="cw-td-title font-bold text-sm">Marketplace Purchase: Server Rack</div>
+                                                <div className="cw-td-meta text-xs text-slate-400">June 15, 2024 • 11:45</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-xs font-medium text-slate-600">Payment</td>
+                                    <td className="px-6 py-4"><span className="cw-status-badge green bg-green-100 text-green-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">COMPLETED</span></td>
+                                    <td className="px-6 py-4 text-right cw-td-amount text-slate-800 font-bold">- 325,000 XAF</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="cw-ledger-footer p-4 bg-slate-50 text-center">
+                        <button className="cw-btn-load-more text-xs font-bold text-slate-500 hover:text-primary transition-colors">Load more transactions...</button>
+                    </div>
                 </div>
             </div>
 
-            {/* Recharge Modal */}
+            {/* Float Action Add Funds (Mobile mainly) */}
+            <button className="cw-mobile-fab md:hidden fixed right-6 bottom-24 w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50" onClick={() => setShowRechargeModal(true)}>
+                <span className="material-symbols-outlined">add</span>
+            </button>
+
+            {/* Recharge Modal overlay (Retained & Stylized via Glassmorphism) */}
             {showRechargeModal && (
-                <div className="wallet-modal-overlay">
-                    <div className="wallet-modal-content">
-                        <button className="btn-close-modal" onClick={() => {setShowRechargeModal(false); setRechargeStep(1)}}>
-                            <FaTimes />
+                <div className="cw-modal-backdrop fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in" onClick={() => {setShowRechargeModal(false); setRechargeStep(1)}}>
+                    <div className="cw-modal-content bg-white/95 backdrop-blur-md rounded-[2rem] p-8 w-full max-w-md shadow-2xl relative animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+                        <button className="cw-modal-close absolute top-6 right-6 w-10 h-10 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-full transition-all text-slate-500" onClick={() => {setShowRechargeModal(false); setRechargeStep(1)}}>
+                            <span className="material-symbols-outlined">close</span>
                         </button>
 
                         {rechargeStep === 1 && (
-                            <div className="recharge-step-1">
-                                <h2>Recharger mon compte</h2>
-                                <p>Choisissez votre méthode de paiement sécurisée.</p>
+                            <div className="cw-recharge-step">
+                                <h2 className="font-headline text-2xl font-bold text-primary mb-2">Recharger mon compte</h2>
+                                <p className="text-sm text-slate-500 mb-8">Choisissez votre méthode de paiement sécurisée.</p>
 
-                                <div className="recharge-methods-grid">
+                                <div className="cw-payment-methods flex gap-4 mb-8">
                                     <div 
-                                        className={`recharge-method-card ${selectedMethod === 'om' ? 'selected' : ''}`}
+                                        className={`cw-pm-card flex-1 flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all cursor-pointer ${selectedMethod === 'om' ? 'border-orange-500 bg-orange-50' : 'border-slate-100 hover:border-slate-300'}`}
                                         onClick={() => setSelectedMethod('om')}
                                     >
-                                        <div className="pm-logo om">OM</div>
-                                        <span>Orange Money</span>
+                                        <div className="cw-pm-logo w-12 h-12 bg-orange-100 text-orange-600 font-bold rounded-xl flex items-center justify-center">OM</div>
+                                        <span className="text-xs font-bold text-slate-700">Orange</span>
                                     </div>
                                     <div 
-                                        className={`recharge-method-card ${selectedMethod === 'momo' ? 'selected' : ''}`}
+                                        className={`cw-pm-card flex-1 flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all cursor-pointer ${selectedMethod === 'momo' ? 'border-yellow-500 bg-yellow-50' : 'border-slate-100 hover:border-slate-300'}`}
                                         onClick={() => setSelectedMethod('momo')}
                                     >
-                                        <div className="pm-logo mtn">MOMO</div>
-                                        <span>MTN MoMo</span>
+                                        <div className="cw-pm-logo w-12 h-12 bg-yellow-100 text-yellow-600 font-bold rounded-xl flex items-center justify-center">MOMO</div>
+                                        <span className="text-xs font-bold text-slate-700">MTN MoMo</span>
                                     </div>
                                     <div 
-                                        className={`recharge-method-card ${selectedMethod === 'card' ? 'selected' : ''}`}
+                                        className={`cw-pm-card flex-1 flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all cursor-pointer ${selectedMethod === 'card' ? 'border-blue-500 bg-blue-50' : 'border-slate-100 hover:border-slate-300'}`}
                                         onClick={() => setSelectedMethod('card')}
                                     >
-                                        <div className="pm-logo card"><FaCreditCard /></div>
-                                        <span>Carte Bancaire</span>
+                                        <div className="cw-pm-logo w-12 h-12 bg-blue-100 text-blue-600 font-bold rounded-xl flex items-center justify-center"><span className="material-symbols-outlined">credit_card</span></div>
+                                        <span className="text-xs font-bold text-slate-700">Carte</span>
                                     </div>
                                 </div>
 
-                                <div className="amount-input-group">
-                                    <label>Montant à recharger (FCFA)</label>
-                                    <input type="number" placeholder="Ex: 10000" className="recharge-input" />
+                                <div className="cw-amount-input mb-8">
+                                    <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Montant à recharger (FCFA)</label>
+                                    <input type="number" placeholder="Ex: 50000" className="w-full bg-slate-50 border-none rounded-xl px-4 py-3 font-semibold text-lg text-primary focus:ring-2 focus:ring-primary/20" />
                                 </div>
 
                                 <button 
-                                    className="btn-recharge-next" 
+                                    className={`w-full py-4 rounded-full font-bold transition-all ${selectedMethod ? 'bg-primary text-white hover:bg-secondary shadow-lg hover:shadow-xl' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`} 
                                     disabled={!selectedMethod}
                                     onClick={() => setRechargeStep(2)}
                                 >
@@ -186,26 +302,28 @@ const ClientWallet: React.FC = () => {
                         )}
 
                         {rechargeStep === 2 && (
-                            <div className="recharge-step-2">
-                                <div className="processing-icon">
-                                    <FaMobileAlt className="shake-animation" />
+                            <div className="cw-recharge-step flex flex-col items-center text-center py-4">
+                                <div className="cw-process-icon w-20 h-20 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-6 animate-pulse">
+                                    <span className="material-symbols-outlined text-4xl">smartphone</span>
                                 </div>
-                                <h2>Veuillez confirmer sur votre téléphone</h2>
-                                <p>Un menu USSD a été envoyé (ou envoyez manuellement au #150*...). Entrez votre code PIN secret pour valider la transaction de rechargement.</p>
+                                <h2 className="font-headline text-2xl font-bold text-primary mb-2">Validation Mobile</h2>
+                                <p className="text-sm text-slate-500 mb-8 max-w-[250px] mx-auto">Un menu USSD a été envoyé. Entrez votre code secret pour valider le rechargement sur votre mobile.</p>
                                 
-                                <button className="btn-simul-success" onClick={() => setRechargeStep(3)}>
-                                    (Simuler Succès)
+                                <button className="text-sm font-bold text-primary hover:underline" onClick={() => setRechargeStep(3)}>
+                                    (Simuler le Succès de la transaction)
                                 </button>
                             </div>
                         )}
 
                         {rechargeStep === 3 && (
-                            <div className="recharge-step-3">
-                                <FaCheckCircle className="success-check-icon" />
-                                <h2>Paiement réussi !</h2>
-                                <p>Votre portefeuille a été crédité avec succès. Les fonds sont disponibles immédiatement.</p>
-                                <button className="btn-recharge-next" onClick={() => {setShowRechargeModal(false); setRechargeStep(1)}}>
-                                    Fermer
+                            <div className="cw-recharge-step flex flex-col items-center text-center py-4">
+                                <div className="cw-success-icon w-20 h-20 bg-tertiary-fixed text-on-tertiary-fixed rounded-full flex items-center justify-center mb-6">
+                                    <span className="material-symbols-outlined text-4xl">check</span>
+                                </div>
+                                <h2 className="font-headline text-2xl font-bold text-primary mb-2">Paiement réussi !</h2>
+                                <p className="text-sm text-slate-500 mb-8 max-w-[250px] mx-auto">Votre portefeuille a été crédité avec succès. Les fonds sont disponibles immédiatement.</p>
+                                <button className="w-full bg-primary text-white font-bold py-4 rounded-full shadow-lg hover:bg-secondary transition-all" onClick={() => {setShowRechargeModal(false); setRechargeStep(1)}}>
+                                    Fermer et retourner au wallet
                                 </button>
                             </div>
                         )}

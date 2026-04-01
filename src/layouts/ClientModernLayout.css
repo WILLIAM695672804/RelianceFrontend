@@ -1,0 +1,4 @@
+/* ClientModernLayout.css */
+/* Reuses the exact same classes from TechnicianLayout.css */
+/* Just import TechnicianLayout.css styles — they share the same class names */
+@import '../layouts/TechnicianLayout.css';

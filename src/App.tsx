@@ -27,7 +27,9 @@ import PublicLayout from './layouts/PublicLayout';
 
 // Client Space
 import ClientLayout from './layouts/ClientLayout';
+import ClientModernLayout from './layouts/ClientModernLayout';
 import ClientDashboard from './pages/client/ClientDashboard';
+import ClientDashboardModern from './pages/client/ClientDashboardModern';
 import Auth2FA from './pages/client/Auth2FA';
 import RequestWizard from './pages/client/RequestWizard/RequestWizard';
 import MatchingResults from './pages/client/MatchingResults';
@@ -89,11 +91,21 @@ function App() {
           <Route path="/client" element={<ClientLayout />}>
             <Route path="dashboard" element={<ClientDashboard />} />
             <Route path="demande" element={<RequestWizard />} />
-            <Route path="matching" element={<MatchingResults />} />
             <Route path="suivi" element={<MissionTracking />} />
             <Route path="wallet" element={<ClientWallet />} />
             {/* Placeholders for upcoming sprints */}
             <Route path="profil" element={<div style={{padding: '30px'}}>Profil client en construction...</div>} />
+          </Route>
+
+          {/* NOUVEL Espace Client (Modern Aesthetic - Route Séparée) */}
+          <Route path="/espace-client" element={<ClientModernLayout />}>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<ClientDashboardModern />} />
+            <Route path="demande" element={<RequestWizard />} />
+            <Route path="matching" element={<MatchingResults />} />
+            {/* Using old components temporarily until they are modernized */}
+            <Route path="suivi" element={<MissionTracking />} />
+            <Route path="wallet" element={<ClientWallet />} />
           </Route>
 
           {/* Espace Technicien (Unsecured for testing) */}
