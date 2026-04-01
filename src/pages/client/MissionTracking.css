@@ -1,0 +1,515 @@
+.tracking-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    animation: fadeUpIn 0.4s ease;
+}
+
+.tracking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 24px 32px;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    margin-bottom: 24px;
+    border: 1px solid #e2e8f0;
+}
+
+.tracking-header h1 {
+    margin: 0 0 4px 0;
+    font-size: 1.6rem;
+    color: #0f172a;
+}
+
+.mission-id {
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.tech-assigned-badge {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #f8fafc;
+    padding: 12px 24px;
+    border-radius: 100px;
+    border: 1px solid #e2e8f0;
+}
+
+.tech-assigned-badge img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.tech-assigned-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.tech-assigned-info strong {
+    color: #1e293b;
+    font-size: 1.1rem;
+}
+
+.tech-assigned-info span {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+/* Grid Layout */
+.tracking-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 900px) {
+    .tracking-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.tracking-widget {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 24px;
+}
+
+.tracking-widget h3 {
+    margin: 0 0 24px 0;
+    color: #0f172a;
+    font-size: 1.25rem;
+}
+
+/* Timeline */
+.timeline-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.timeline-item {
+    display: flex;
+    gap: 20px;
+    position: relative;
+    padding-bottom: 24px;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 24px;
+    flex-shrink: 0;
+}
+
+.marker-icon {
+    font-size: 1.2rem;
+    background: white;
+    z-index: 2;
+}
+
+.marker-icon.empty {
+    color: #cbd5e1;
+}
+
+.timeline-item.completed .marker-icon {
+    color: #10b981;
+}
+
+.timeline-item.active .marker-icon.pulse {
+    color: #0ea5e9;
+    animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+    from { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.4); border-radius: 50%; }
+    to { box-shadow: 0 0 0 6px rgba(14, 165, 233, 0); border-radius: 50%; }
+}
+
+.timeline-connector {
+    width: 2px;
+    flex: 1;
+    background: #e2e8f0;
+    margin-top: 4px;
+}
+
+.timeline-item.completed .timeline-connector {
+    background: #10b981;
+}
+
+.timeline-content {
+    flex: 1;
+    padding-top: 2px;
+}
+
+.timeline-content h4 {
+    margin: 0 0 4px 0;
+    color: #1e293b;
+    font-size: 1.05rem;
+}
+
+.timeline-item:not(.completed):not(.active) .timeline-content h4,
+.timeline-item:not(.completed):not(.active) .timeline-content p {
+    color: #94a3b8;
+}
+
+.timeline-content p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+.timeline-time {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding-top: 2px;
+}
+
+/* Quote Alert Widget */
+.quote-alert-widget {
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border: 2px solid #bae6fd;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+}
+
+.quote-icon-box {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: white;
+    color: #0ea5e9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(14, 165, 233, 0.15);
+}
+
+.quote-alert-info flex {
+    flex: 1;
+}
+
+.quote-alert-info h3 {
+    margin: 0 0 4px 0;
+    color: #0c4a6e;
+    font-size: 1.1rem;
+}
+
+.quote-alert-info p {
+    margin: 0;
+    color: #0284c7;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.btn-view-quote {
+    background: #0ea5e9;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+
+.btn-view-quote:hover {
+    background: #0284c7;
+}
+
+@media (max-width: 640px) {
+    .quote-alert-widget {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* Chat Widget */
+.chat-widget {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 24px); /* matches left col */
+    min-height: 500px;
+}
+
+.chat-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.chat-header h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: #f8fafc;
+}
+
+.chat-bubble-wrapper {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.chat-bubble-wrapper.mine {
+    justify-content: flex-end;
+}
+
+.chat-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.chat-bubble {
+    padding: 12px 16px;
+    border-radius: 16px;
+    max-width: 80%;
+    position: relative;
+}
+
+.theirs .chat-bubble {
+    background: white;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+    border-bottom-left-radius: 4px;
+}
+
+.mine .chat-bubble {
+    background: #0ea5e9;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.chat-bubble p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.chat-timestamp {
+    display: block;
+    font-size: 0.75rem;
+    margin-top: 6px;
+    opacity: 0.7;
+    text-align: right;
+}
+
+.chat-input-area {
+    padding: 16px 24px;
+    background: white;
+    border-top: 1px solid #e2e8f0;
+    border-radius: 0 0 20px 20px;
+    display: flex;
+    gap: 12px;
+}
+
+.chat-input-area input {
+    flex: 1;
+    border: 1px solid #cbd5e1;
+    border-radius: 24px;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.chat-input-area input:focus {
+    border-color: #0ea5e9;
+}
+
+.chat-input-area button {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #0ea5e9;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background 0.2s;
+}
+
+.chat-input-area button:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+}
+
+.chat-input-area button:hover:not(:disabled) {
+    background: #0284c7;
+}
+
+/* Quote Modal */
+.quote-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+}
+
+.quote-modal-content {
+    background: white;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 20px;
+    padding: 40px;
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+}
+
+.btn-close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #475569;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.btn-close-modal:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.quote-document {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.quote-doc-header h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.5rem;
+}
+
+.quote-doc-header p {
+    color: #64748b;
+    margin: 0;
+}
+
+.quote-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.quote-table th {
+    text-align: left;
+    padding: 12px 16px;
+    background: #f8fafc;
+    color: #475569;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.quote-table td {
+    padding: 16px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #1e293b;
+}
+
+.quote-table tfoot td {
+    border-bottom: none;
+    padding-top: 24px;
+}
+
+.quote-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+}
+
+.btn-reject-quote {
+    background: white;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-sign-quote {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s;
+}
+
+.btn-sign-quote:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+}
+
+.quote-signed-banner {
+    background: #ecfdf5;
+    border: 1px solid #10b981;
+    color: #065f46;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.signed-icon {
+    font-size: 1.8rem;
+    color: #10b981;
+}

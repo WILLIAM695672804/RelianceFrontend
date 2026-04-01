@@ -1,169 +1,439 @@
-.tech-cockpit-container {
+/* Cockpit CSS translated from Stitch generated Tailwind */
+.tech-cockpit-page {
+    font-family: var(--tech-font-body);
+    color: var(--tech-on-surface);
+    margin-bottom: var(--spacing-3xl);
+}
+
+.tech-cockpit-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .tech-cockpit-grid {
+        grid-template-columns: repeat(12, 1fr);
+    }
+}
+
+.tech-cockpit-main {
+    grid-column: span 12;
     display: flex;
     flex-direction: column;
-    height: 100%; /* Will take full height of the main tech layout */
-    background-color: #f1f5f9;
-    border-radius: 12px;
-    overflow: hidden;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .tech-cockpit-main {
+        grid-column: span 8;
+    }
+}
+
+.tech-cockpit-sidebar {
+    grid-column: span 12;
+}
+
+@media (min-width: 1024px) {
+    .tech-cockpit-sidebar {
+        grid-column: span 4;
+    }
+}
+
+/* Hero Section */
+.tech-cockpit-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+    .tech-cockpit-hero {
+        flex-direction: row;
+        align-items: flex-end;
+    }
+}
+
+.tech-hero-subtitle {
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--tech-outline);
+    margin: 0 0 0.25rem 0;
+}
+
+.tech-hero-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    font-family: var(--tech-font-display);
+    color: var(--tech-on-surface);
+    line-height: 1;
+    margin: 0;
+}
+
+.tech-hero-stats {
+    display: flex;
+    gap: 1rem;
+}
+
+.tech-stat-box {
+    background-color: var(--tech-surface-container-low);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.tech-stat-box p:first-child {
+    font-size: 0.625rem;
+    color: var(--tech-outline);
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+    margin: 0;
+}
+
+.stat-value {
+    font-weight: 700;
+    font-size: 1rem;
+    margin: 0;
+}
+.stat-value.primary { color: var(--tech-primary); }
+.stat-value.tertiary { color: var(--tech-tertiary); }
+
+/* Earnings Bento */
+.tech-earnings-bento {
     position: relative;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-}
-
-/* Header Area */
-.cockpit-header {
-    background: white;
-    padding: 16px 24px;
-    border-bottom: 1px solid #e2e8f0;
+    overflow: hidden;
+    background-color: var(--tech-primary);
+    color: var(--color-bg-white);
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    z-index: 10; /* Above the content area */
+}
+.tech-earnings-bento:hover .tech-earnings-bg-circle {
+    transform: scale(1.1);
 }
 
-.cockpit-status-controls {
+.tech-earnings-bg-circle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 16rem;
+    height: 16rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 9999px;
+    margin-right: -5rem;
+    margin-top: -5rem;
+    transition: transform 0.7s;
+}
+
+.tech-bento-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.bento-icon {
+    font-size: 2.25rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+
+.tech-bento-content h3 {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+.tech-bento-value {
+    font-size: 3rem;
+    font-family: var(--tech-font-display);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    margin: 0.5rem 0 0 0;
+}
+.tech-bento-value span {
+    font-size: 1.5rem;
+    font-weight: 400;
+    opacity: 0.6;
+    font-family: var(--tech-font-body);
+}
+
+.tech-bento-footer {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.tech-bento-footer p {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+}
+.tech-bento-footer button {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-bg-white);
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    backdrop-filter: blur(10px);
+    transition: background-color 0.2s;
+    border: none;
+    cursor: pointer;
+}
+.tech-bento-footer button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Opportunities Grid */
+.tech-opportunities-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+@media (min-width: 640px) {
+    .tech-opportunities-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.tech-opp-card {
+    background-color: var(--tech-surface-container-lowest);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(195, 198, 214, 0.2);
+    transition: border-color 0.2s;
+}
+.tech-opp-card:hover {
+    border-color: rgba(25, 96, 163, 0.4);
+}
+
+.tech-opp-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    margin-bottom: 1rem;
 }
 
-.btn-toggle-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    border-radius: 30px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+.tech-opp-icon {
+    padding: 0.5rem;
+    background-color: rgba(25, 96, 163, 0.1);
+    color: var(--tech-secondary);
+    border-radius: 0.5rem;
 }
 
-.btn-toggle-status.offline {
-    background-color: #f1f5f9;
-    color: #475569;
+.tech-opp-badge {
+    background-color: var(--tech-tertiary-fixed);
+    color: var(--tech-on-tertiary-fixed);
+    font-size: 0.625rem;
+    font-weight: 700;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
 }
 
-.btn-toggle-status.offline:hover {
-    background-color: #e2e8f0;
-}
-
-.btn-toggle-status.online {
-    background-color: #10b981;
-    color: white;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-    animation: pulse-green 2s infinite;
-}
-
-@keyframes pulse-green {
-    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-}
-
-.escrow-guardian-shield {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #ecfdf5;
-    padding: 6px 16px;
-    border-radius: 20px;
-    border: 1px solid #a7f3d0;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #065f46;
-}
-
-/* Sub-Navigation Pills */
-.cockpit-tabs {
-    display: flex;
-    gap: 8px;
-    background: #f8fafc;
-    padding: 6px;
-    border-radius: 12px;
-    width: fit-content;
-}
-
-.cockpit-tab {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    border-radius: 8px;
-    border: none;
-    background: transparent;
-    color: #64748b;
-    font-weight: 500;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.cockpit-tab:hover {
-    color: #0f172a;
-    background: #e2e8f0;
-}
-
-.cockpit-tab.active {
-    background: white;
-    color: #0ea5e9;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    font-weight: 600;
-}
-
-/* Dynamic Content Area */
-.cockpit-content-area {
-    flex: 1;
-    position: relative;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background-color: #f8fafc;
-}
-
-.tab-pane-wrapper {
-    width: 100%;
-    min-height: 100%;
-    /* To prevent the imported pages from thinking they are standalone pages and messing up margins */
-}
-
-/* Make sure the nested LiveRadar or other pages don't have double padding */
-.tab-pane-wrapper .tech-page {
-    padding: 0; 
+.tech-opp-card h4 {
+    font-weight: 700;
+    color: var(--tech-on-surface);
     margin: 0;
-    min-height: 100%;
-    box-shadow: none;
-    border-radius: 0;
 }
 
-.tab-pane-wrapper .page-title {
-    display: none; /* Hide the nested page titles since we have tabs now */
+.tech-opp-card p {
+    font-size: 0.875rem;
+    color: var(--tech-outline);
+    margin: 0.25rem 0 0 0;
 }
 
+.tech-opp-footer {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
-/* Offline State */
-.offline-overlay {
-    position: absolute;
-    inset: 0;
+.tech-opp-price {
+    font-weight: 700;
+    color: var(--tech-secondary) !important;
+}
+
+/* Sidebar Journey Card */
+.tech-journey-card {
+    background-color: var(--tech-surface-container-low);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
+    height: 100%;
+}
+
+.tech-journey-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+.tech-journey-header h3 {
+    font-family: var(--tech-font-display);
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--tech-on-surface);
+    margin: 0;
+}
+.tech-journey-header button {
+    color: var(--tech-secondary);
+    font-size: 0.875rem;
+    font-weight: 700;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.tech-journey-map {
+    position: relative;
+    width: 100%;
+    height: 12rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    background-color: var(--tech-surface-variant);
+}
+.tech-journey-map img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(20%) brightness(95%);
+}
+.tech-journey-route {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-sm);
+}
+.tech-journey-route span:last-child {
+    font-size: 0.625rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-left: 0.5rem;
+}
+
+.tech-journey-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.tech-journey-badge {
+    align-self: flex-start;
+    background-color: var(--tech-secondary-fixed);
+    color: var(--tech-on-secondary-fixed);
+    font-size: 0.625rem;
+    font-weight: 700;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tech-journey-info h4 {
+    font-size: 1.5rem;
+    font-family: var(--tech-font-display);
+    font-weight: 800;
+    color: var(--tech-primary);
+    margin: 0.5rem 0 0 0;
+}
+
+.tech-layer-client {
+    font-size: 0.875rem;
+    color: var(--tech-outline);
+    margin: 0.25rem 0 1rem 0;
+}
+
+.tech-journey-details {
+    padding-top: 1rem;
+    border-top: 1px solid var(--tech-surface-variant);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.tech-detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.icon-faded {
+    color: var(--tech-outline-variant);
+    margin-top: 0.125rem;
+}
+
+.detail-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--tech-outline-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 0.25rem 0;
+}
+.detail-value {
+    font-size: 0.875rem;
+    color: var(--tech-on-surface);
+    margin: 0;
+}
+
+.tech-journey-actions {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.tech-btn-complete {
+    width: 100%;
+    background-color: var(--tech-primary);
+    color: var(--color-bg-white);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-family: var(--tech-font-display);
+    font-weight: 700;
+    display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(4px);
-    z-index: 50;
-    text-align: center;
-    padding: 20px;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.tech-btn-complete:hover {
+    box-shadow: var(--shadow-md);
+    filter: brightness(1.1);
 }
 
-.offline-overlay h2 {
-    color: #334155;
-    margin-bottom: 12px;
-    font-size: 1.5rem;
+.tech-btn-delay {
+    width: 100%;
+    background: transparent;
+    color: var(--tech-outline);
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
 }
-
-.offline-overlay p {
-    color: #64748b;
-    margin-bottom: 24px;
-    max-width: 400px;
+.tech-btn-delay:hover {
+    color: var(--tech-on-surface);
 }

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaUser, FaEnvelope, FaPhone, FaLock, FaTools, FaFileAlt } from 'react-icons/fa';
-import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import '../../styles/variables.css';
 import './InscriptionTechnicien.css';
@@ -64,7 +63,6 @@ const InscriptionTechnicien: React.FC = () => {
 
     return (
         <div className="page-inscription-technicien">
-            <Header />
 
             <section className="it-section">
                 <div className="container">

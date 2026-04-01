@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaUser, FaEnvelope, FaPhone, FaLock } from 'react-icons/fa';
-import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import '../../styles/variables.css';
 import './InscriptionClient.css';
@@ -35,7 +34,6 @@ const InscriptionClient: React.FC = () => {
 
     return (
         <div className="page-inscription-client">
-            <Header />
 
             <section className="ic-section">
                 <div className="container">

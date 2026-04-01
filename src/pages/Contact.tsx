@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { FaMapMarkerAlt, FaEnvelope, FaPhoneAlt, FaListUl, FaBullseye, FaHandPaper } from 'react-icons/fa';
-import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import '../styles/variables.css';
 import './Contact.css';
@@ -26,7 +25,6 @@ const Contact: React.FC = () => {
 
     return (
         <div className="page-contact">
-            <Header />
 
             {/* Section Titre + Info Cards */}
             <section className="ct-info section">

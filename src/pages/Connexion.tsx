@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
-import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import '../styles/variables.css';
 import './Connexion.css';
@@ -28,7 +27,6 @@ const Connexion: React.FC = () => {
 
     return (
         <div className="page-connexion">
-            <Header />
 
             <section className="cx-section">
                 <div className="container">

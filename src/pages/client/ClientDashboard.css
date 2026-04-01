@@ -1,0 +1,245 @@
+.client-dashboard {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* Welcome Banner */
+.welcome-banner {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    border-radius: 20px;
+    padding: 32px 40px;
+    color: white;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1);
+}
+
+.welcome-text h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.welcome-text p {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #cbd5e1;
+}
+
+/* Giant CTA Button */
+.cta-container {
+    display: flex;
+    justify-content: center;
+}
+
+.giant-cta-button {
+    width: 100%;
+    background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+    border: none;
+    border-radius: 24px;
+    padding: 32px 40px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 15px 35px rgba(14, 165, 233, 0.25);
+    text-align: left;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.giant-cta-button::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    transform: scale(0.5);
+}
+
+.giant-cta-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(14, 165, 233, 0.35);
+}
+
+.giant-cta-button:hover::before {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 0.5s ease;
+}
+
+.cta-icon-wrapper {
+    width: 70px;
+    height: 70px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.cta-icon {
+    font-size: 2rem;
+    color: white;
+}
+
+.cta-text {
+    flex: 1;
+}
+
+.cta-text h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.cta-text span {
+    font-size: 1rem;
+    color: #e0f2fe;
+    font-weight: 500;
+}
+
+.cta-arrow {
+    font-size: 1.8rem;
+    opacity: 0.8;
+    transition: transform 0.3s ease;
+}
+
+.giant-cta-button:hover .cta-arrow {
+    transform: translateX(10px);
+    opacity: 1;
+}
+
+/* Quick Overview Widget */
+.overview-widget {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border: 1px solid #f1f5f9;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #1e293b;
+}
+
+.view-all-btn {
+    background: transparent;
+    border: none;
+    color: #0ea5e9;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.view-all-btn:hover {
+    text-decoration: underline;
+}
+
+.requests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.request-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+
+.request-card:hover {
+    background: #f1f5f9;
+}
+
+.req-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.req-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.req-details strong {
+    color: #0f172a;
+    font-size: 1.05rem;
+}
+
+.req-id {
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.req-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.status-done {
+    background: #dcfce3;
+    color: #16a34a;
+}
+
+@media (max-width: 640px) {
+    .giant-cta-button {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px;
+        gap: 16px;
+    }
+    
+    .cta-arrow {
+        transform: rotate(90deg);
+    }
+    
+    .giant-cta-button:hover .cta-arrow {
+        transform: rotate(90deg) translateY(10px);
+    }
+    
+    .request-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

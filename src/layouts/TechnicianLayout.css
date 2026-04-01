@@ -1,317 +1,179 @@
-/* Marketive Style Layout for Technician Space */
-.tech-layout-container {
-    display: flex;
-    min-height: 100vh;
-    background: #f8fafc;
-    /* Lighter background */
-    font-family: 'Inter', system-ui, sans-serif;
-}
+/* ===== TechnicianLayout — Floating Dock Navigation ===== */
 
-/* Sidebar Styling */
-.tech-sidebar {
-    width: 250px;
-    background: white;
-    border-right: 1px solid #e2e8f0;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    height: 100vh;
-    overflow-y: auto;
-    z-index: 1000;
-}
-
-.tech-sidebar-header {
-    padding: 24px;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-.tech-logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1e293b;
-}
-
-.tech-logo-icon {
-    width: 32px;
-    height: 32px;
-    background: #7c3aed;
-    /* Purple brand color */
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    font-size: 1rem;
-}
-
-/* Navigation Menu */
-.tech-nav-section {
-    padding: 16px;
-}
-
-.tech-nav-title {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 8px;
-    padding-left: 12px;
-}
-
-.tech-nav-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.tech-nav-item {
-    margin-bottom: 4px;
-}
-
-.tech-nav-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
-    color: #64748b;
-    text-decoration: none;
-    font-size: 0.95rem;
-    border-radius: 8px;
-    transition: all 0.2s;
-    font-weight: 500;
-}
-
-.tech-nav-link:hover {
-    background: #f1f5f9;
-    color: #1e293b;
-}
-
-.tech-nav-link.active {
-    background: #eff6ff;
-    color: #2563eb;
-}
-
-/* For marketive style, we might want purple active state */
-.tech-nav-link.active.marketive-style {
-    background: #f3e8ff;
-    color: #7c3aed;
-}
-
-.tech-nav-icon {
-    font-size: 1.1rem;
-    opacity: 0.8;
-}
-
-/* Support Bottom Link */
-.tech-support-section {
-    margin-top: auto;
-    padding: 24px 16px;
-    border-top: 1px solid #f1f5f9;
-    background: #f8fafc;
-}
-
-/* Top Header */
-.tech-header {
-    height: 70px;
-    background: white;
-    border-bottom: 1px solid #e2e8f0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 32px;
-    position: sticky;
-    top: 0;
-    z-index: 900;
-}
-
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-}
-
-.view-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.project-tag {
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: #7c3aed;
-    background: #f3e8ff;
-    padding: 4px 10px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.project-tag::before {
-    content: '';
+.tech-layout-root {
     display: block;
-    width: 6px;
-    height: 6px;
-    background: #7c3aed;
-    border-radius: 50%;
-}
-
-.header-search {
+    min-height: 100vh;
     position: relative;
-    width: 300px;
+    background: var(--tech-surface, #f7fafc);
+    color: var(--tech-on-surface, #181c1e);
 }
 
-.search-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #94a3b8;
+/* ---- Top App Bar ---- */
+.tech-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: rgba(247, 250, 252, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.search-input {
+.tech-topbar-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     width: 100%;
-    padding: 10px 10px 10px 36px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    background: #f8fafc;
-    color: #1e293b;
-    font-size: 0.9rem;
-    transition: all 0.2s;
-    outline: none;
+    padding: 0.75rem 1.5rem;
 }
 
-.search-input:focus {
-    background: white;
-    border-color: #7c3aed;
-    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.1);
+.tech-topbar-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #1a365d;
+    margin: 0;
 }
 
-.header-right {
+.tech-topbar-actions {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 1rem;
 }
 
-.icon-button {
-    background: transparent;
-    border: 1px solid #cbd5e1;
-    color: #475569;
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
+.tech-topbar-actions .material-symbols-outlined {
+    font-size: 22px;
+    color: #64748b;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.tech-topbar-actions .material-symbols-outlined:hover {
+    color: #1960a3;
+}
+
+.tech-topbar-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    overflow: hidden;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    font-size: 1.1rem;
-    transition: all 0.2s;
+    transition: box-shadow 0.2s;
+}
+.tech-topbar-avatar:hover {
+    box-shadow: 0 0 0 2px #1960a3;
+}
+.tech-topbar-avatar .material-symbols-outlined {
+    font-size: 28px;
+    color: #94a3b8;
 }
 
-.icon-button:hover {
-    background: #f1f5f9;
-    color: #1e293b;
+/* ---- Main Content ---- */
+.tech-layout-main {
+    padding-top: 5rem;
+    padding-bottom: 7rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    max-width: 1760px;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+@media (min-width: 768px) {
+    .tech-layout-main {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
 }
 
-.icon-button.primary-solid {
-    background: #7c3aed;
-    color: white;
-    border: none;
-}
-
-.icon-button.primary-solid:hover {
-    background: #6d28d9;
-}
-
-.tech-user-menu {
+/* ---- Floating Dock NavBar (Bottom Center) ---- */
+.tech-floating-nav {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 60;
     display: flex;
     align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 8px;
-    transition: background 0.2s;
+    gap: 0.35rem;
+    padding: 0.4rem;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    border-radius: 9999px;
+    box-shadow: 
+        0 8px 32px rgba(26, 54, 93, 0.10),
+        0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.tech-user-menu:hover {
-    background: #f1f5f9;
+@media (min-width: 768px) {
+    .tech-floating-nav {
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
 }
 
-.tech-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    /* Square avatars are more modern */
-    background: #e2e8f0;
-    object-fit: cover;
-}
-
-/* Main Content Area */
-.tech-main-content {
-    flex: 1;
-    margin-left: 250px;
-    min-height: 100vh;
+/* ---- Nav Link (Pill Button) ---- */
+.tech-dock-link {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #64748b;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
 }
 
-.tech-page-wrapper {
-    padding: 32px;
-    flex: 1;
-    /* Added to let absolute positioning inside pages work correctly */
-    position: relative;
+@media (min-width: 768px) {
+    .tech-dock-link {
+        padding: 0.6rem 1.1rem;
+        font-size: 0.82rem;
+    }
 }
 
-/* Mobile Toggle (Hidden on desktop) */
-.mobile-toggle {
+.tech-dock-link:hover {
+    color: #1960a3;
+    background: rgba(241, 245, 249, 0.8);
+}
+
+/* Active state — filled pill */
+.tech-dock-link.active {
+    background: linear-gradient(135deg, #1a365d, #2b6cb0);
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(26, 54, 93, 0.25);
+    transform: scale(1.05);
+}
+
+.tech-dock-link .material-symbols-outlined {
+    font-size: 20px;
+}
+@media (min-width: 768px) {
+    .tech-dock-link .material-symbols-outlined {
+        font-size: 22px;
+    }
+}
+
+/* Hide label text on small screens for inactive links */
+.tech-dock-label {
     display: none;
-    background: transparent;
-    border: none;
-    color: #1e293b;
-    font-size: 1.5rem;
-    cursor: pointer;
 }
-
-/* Responsive */
-@media (max-width: 1024px) {
-    .header-search {
-        width: 200px;
-    }
+.tech-dock-link.active .tech-dock-label {
+    display: inline;
 }
-
-@media (max-width: 768px) {
-    .tech-sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-    }
-
-    .tech-sidebar.open {
-        transform: translateX(0);
-    }
-
-    .tech-main-content {
-        margin-left: 0;
-    }
-
-    .mobile-toggle {
-        display: block;
-    }
-
-    .header-search {
-        display: none;
-        /* Hide search on small screens to save space */
-    }
-
-    .tech-page-wrapper {
-        padding: 20px;
+@media (min-width: 768px) {
+    .tech-dock-label {
+        display: inline;
     }
 }

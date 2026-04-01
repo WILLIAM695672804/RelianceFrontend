@@ -1,147 +1,253 @@
-import React, { useState } from 'react';
-import { 
-    FaClipboardList, 
-    FaCheckCircle, 
-    FaCalendarTimes, 
-    FaBalanceScale,
-    FaInfoCircle,
-    FaArrowDown,
-    FaArrowUp
-} from 'react-icons/fa';
-import './Reviews.css'; // Reuse some table/list styles from reviews or wallet
-
-interface AuditEvent {
-    id: string;
-    date: string;
-    type: 'sla_breach' | 'sla_bonus' | 'financial_penalty' | 'admin_warning';
-    missionId?: string;
-    description: string;
-    reputationImpact: number;
-    financialImpact?: number;
-    status: 'applied' | 'appealed' | 'reversed';
-}
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import './SlaAuditLog.css';
 
 const SlaAuditLog: React.FC = () => {
-    // V3: SLA Audit Mock Data
-    const [events] = useState<AuditEvent[]>([
-        {
-            id: 'AUD-004',
-            date: '10 Mars 2026',
-            type: 'sla_breach',
-            missionId: 'M-2680',
-            description: 'Retard sur site > 30 minutes sans notification au client via le chat.',
-            reputationImpact: -10,
-            status: 'applied'
-        },
-        {
-            id: 'AUD-003',
-            date: '05 Mars 2026',
-            type: 'financial_penalty',
-            missionId: 'M-2655',
-            description: 'Annulation abusive de la mission par le technicien moins de 2h avant l\'intervention.',
-            reputationImpact: -20,
-            financialImpact: -5000,
-            status: 'applied'
-        },
-        {
-            id: 'AUD-002',
-            date: '28 Fév 2026',
-            type: 'sla_bonus',
-            description: 'Bonus de performance : 10 missions consécutives sans retard et notées > 4 étoiles.',
-            reputationImpact: +50,
-            status: 'applied'
-        },
-        {
-            id: 'AUD-001',
-            date: '15 Fév 2026',
-            type: 'admin_warning',
-            description: 'Avertissement : Pièce d\'identité arrivée à expiration. Veuillez mettre à jour votre profil KYC.',
-            reputationImpact: 0,
-            status: 'applied'
-        }
-    ]);
-
-    const getEventIcon = (type: string) => {
-        switch (type) {
-            case 'sla_breach': return <FaCalendarTimes style={{ color: '#f59e0b' }} />;
-            case 'financial_penalty': return <FaBalanceScale style={{ color: '#ef4444' }} />;
-            case 'sla_bonus': return <FaCheckCircle style={{ color: '#10b981' }} />;
-            case 'admin_warning': return <FaInfoCircle style={{ color: '#3b82f6' }} />;
-            default: return <FaClipboardList />;
-        }
-    };
+    const navigate = useNavigate();
 
     return (
-        <div className="tech-page sla-audit-page">
-            <h1 className="page-title">Logs d'Audit & SLA</h1>
-            <p style={{ color: '#64748b', marginBottom: '24px' }}>
-                Journal officiel de vos performances, de vos infractions aux règles métiers (SLA), et de leurs impacts sur votre réputation et vos finances.
-            </p>
-
-            {/* SLA Dashboard Stats */}
-            <div className="reputation-dashboard" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: '32px' }}>
-                <div className="rep-score-card" style={{ background: 'linear-gradient(135deg, #10b981, #059669)'}}>
-                    <h2 style={{ fontSize: '1rem', opacity: 0.9 }}>Taux de Ponctualité</h2>
-                    <div className="rep-score-value" style={{ fontSize: '2rem' }}>92%</div>
-                    <p style={{ marginTop: '8px', fontSize: '0.85rem' }}>Objectif Reliance : &gt; 90%</p>
+        <div className="tech-sla-page">
+            {/* 1. Quality Score Header */}
+            <section className="tech-sla-header-section">
+                <div className="tech-sla-titles">
+                    <button 
+                        style={{ 
+                            display: 'inline-flex', 
+                            alignItems: 'center', 
+                            gap: '0.25rem', 
+                            padding: 0, 
+                            marginBottom: '0.5rem', 
+                            color: 'var(--tech-on-surface-variant)', 
+                            background: 'none', 
+                            border: 'none', 
+                            cursor: 'pointer',
+                            fontWeight: 600,
+                            fontSize: '0.875rem'
+                        }}
+                        onClick={() => navigate(-1)}
+                    >
+                        <span className="material-symbols-outlined" style={{ fontSize: '1.25rem' }}>arrow_back</span>
+                        Back to Profile
+                    </button>
+                    <h2>SLA Compliance Narrative</h2>
+                    <p>Your technical performance is monitored in real-time. Maintaining an 'Excellent' rating ensures priority mission allocation and reduced platform fees.</p>
                 </div>
                 
-                <div className="rep-score-card" style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)'}}>
-                    <h2 style={{ fontSize: '1rem', opacity: 0.9 }}>Taux d'Annulation</h2>
-                    <div className="rep-score-value" style={{ fontSize: '2rem' }}>2%</div>
-                    <p style={{ marginTop: '8px', fontSize: '0.85rem' }}>Objectif Reliance : &lt; 5%</p>
-                </div>
-
-                <div className="rep-score-card" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)'}}>
-                    <h2 style={{ fontSize: '1rem', opacity: 0.9 }}>Pénalités (30j)</h2>
-                    <div className="rep-score-value" style={{ fontSize: '2rem' }}>1</div>
-                    <p style={{ marginTop: '8px', fontSize: '0.85rem' }}>Attention au maintien de votre compte</p>
-                </div>
-            </div>
-
-            {/* Audit List */}
-            <div className="transactions-section">
-                <div className="section-header">
-                    <h2><FaClipboardList /> Registre des Événements</h2>
-                </div>
-
-                <div className="transactions-list">
-                    {events.map((event) => (
-                        <div key={event.id} className="transaction-card" style={{ borderLeft: event.reputationImpact < 0 ? '4px solid #ef4444' : event.reputationImpact > 0 ? '4px solid #10b981' : '4px solid #3b82f6' }}>
-                            <div className="tx-icon" style={{ background: '#f8fafc' }}>
-                                {getEventIcon(event.type)}
-                            </div>
-
-                            <div className="tx-info" style={{ flex: 2 }}>
-                                <h3>{event.type === 'sla_breach' ? 'Infraction SLA' : event.type === 'financial_penalty' ? 'Pénalité Financière' : event.type === 'sla_bonus' ? 'Bonus SLA' : 'Avertissement Système'} {event.missionId && `(Mission #${event.missionId})`}</h3>
-                                <p className="tx-date">{event.date} • {event.id}</p>
-                                <p style={{ fontSize: '0.9rem', color: '#334155', marginTop: '8px', lineHeight: '1.4' }}>
-                                    {event.description}
-                                </p>
-                            </div>
-
-                            <div className="tx-amount-col" style={{ flex: 1, alignItems: 'flex-end' }}>
-                                {event.reputationImpact !== 0 && (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 'bold', color: event.reputationImpact > 0 ? '#10b981' : '#ef4444', marginBottom: '8px' }}>
-                                        {event.reputationImpact > 0 ? <FaArrowUp /> : <FaArrowDown />} 
-                                        {Math.abs(event.reputationImpact)} Pts Réputation
-                                    </div>
-                                )}
-                                
-                                {event.financialImpact && (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 'bold', color: '#ef4444', fontSize: '0.9rem' }}>
-                                        <FaArrowDown /> {Math.abs(event.financialImpact)} FCFA
-                                    </div>
-                                )}
-
-                                {event.status === 'appealed' && (
-                                    <span style={{ marginTop: '8px', fontSize: '0.75rem', background: '#fef3c7', color: '#d97706', padding: '2px 8px', borderRadius: '12px' }}>Appel en cours</span>
-                                )}
+                <div className="tech-sla-score-wrapper">
+                    <div className="tech-sla-score-card">
+                        <div className="tech-sla-score-val">
+                            <div className="tech-score-number">94<span>/100</span></div>
+                            <div className="tech-score-badge-wrap">
+                                <span className="tech-score-badge">Excellent</span>
                             </div>
                         </div>
-                    ))}
+                        <div className="tech-sla-score-divider"></div>
+                        <div className="tech-sla-score-trend">
+                            <div className="tech-trend-val">
+                                <span className="material-symbols-outlined">trending_up</span>
+                                +2.4%
+                            </div>
+                            <div className="tech-trend-label">Last 30 Days</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </section>
+
+            {/* 2. Key Metrics Row */}
+            <section className="tech-sla-metrics-grid">
+                {/* Metric Card 1 */}
+                <div className="tech-metric-card">
+                    <div className="tech-metric-top">
+                        <span className="material-symbols-outlined" style={{color: 'var(--tech-secondary)'}}>schedule</span>
+                        <span className="tech-metric-title">Reliability</span>
+                    </div>
+                    <div className="tech-metric-value">98.2%</div>
+                    <div className="tech-metric-desc">Punctuality Rate</div>
+                </div>
+
+                {/* Metric Card 2 */}
+                <div className="tech-metric-card">
+                    <div className="tech-metric-top">
+                        <span className="material-symbols-outlined" style={{color: 'var(--tech-secondary)'}}>speed</span>
+                        <span className="tech-metric-title">Efficiency</span>
+                    </div>
+                    <div className="tech-metric-value">14m 20s</div>
+                    <div className="tech-metric-desc">Response Time</div>
+                </div>
+
+                {/* Metric Card 3 */}
+                <div className="tech-metric-card tech-metric-card-error">
+                    <div className="tech-metric-top">
+                        <span className="material-symbols-outlined" style={{color: 'var(--tech-error)'}}>cancel</span>
+                        <span className="tech-metric-title">Attrition</span>
+                    </div>
+                    <div className="tech-metric-value">1.4%</div>
+                    <div className="tech-metric-desc">Cancellation Rate</div>
+                </div>
+
+                {/* Metric Card 4 */}
+                <div className="tech-metric-card">
+                    <div className="tech-metric-top">
+                        <span className="material-symbols-outlined" style={{color: 'var(--tech-tertiary)'}}>task_alt</span>
+                        <span className="tech-metric-title">Quality</span>
+                    </div>
+                    <div className="tech-metric-value">99.1%</div>
+                    <div className="tech-metric-desc">Success Rate</div>
+                </div>
+            </section>
+
+            {/* Main Ledger & Sidebar Grid */}
+            <section className="tech-sla-main-grid">
+                
+                {/* 3. Audit Ledger Table */}
+                <div className="tech-sla-ledger">
+                    <div className="tech-ledger-header">
+                        <h3>Historical Audit Ledger</h3>
+                        <div className="tech-ledger-filters">
+                            <button className="tech-filter-active">All Events</button>
+                            <button className="tech-filter-inactive">Critical Only</button>
+                        </div>
+                    </div>
+
+                    <div className="tech-ledger-table-wrap">
+                        <table className="tech-ledger-table">
+                            <thead>
+                                <tr>
+                                    <th>Date / Time</th>
+                                    <th>Event Type</th>
+                                    <th>Impact</th>
+                                    <th>Reference</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div className="tech-ledger-date">Oct 24, 2023</div>
+                                        <div className="tech-ledger-time">14:22 PM</div>
+                                    </td>
+                                    <td>
+                                        <div className="tech-event-type">
+                                            <span className="tech-event-dot bg-tertiary"></span>
+                                            <span>Successful Completion</span>
+                                        </div>
+                                    </td>
+                                    <td className="tech-impact-positive">+2 pts</td>
+                                    <td className="tech-ledger-ref">#MS-9921</td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <div className="tech-ledger-date">Oct 23, 2023</div>
+                                        <div className="tech-ledger-time">09:15 AM</div>
+                                    </td>
+                                    <td>
+                                        <div className="tech-event-type">
+                                            <span className="tech-event-dot bg-error"></span>
+                                            <span>Late Arrival</span>
+                                        </div>
+                                    </td>
+                                    <td className="tech-impact-negative">-5 pts</td>
+                                    <td className="tech-ledger-ref">#MS-8812</td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <div className="tech-ledger-date">Oct 21, 2023</div>
+                                        <div className="tech-ledger-time">18:40 PM</div>
+                                    </td>
+                                    <td>
+                                        <div className="tech-event-type">
+                                            <span className="tech-event-dot bg-secondary"></span>
+                                            <span>Mission Refusal</span>
+                                        </div>
+                                    </td>
+                                    <td className="tech-impact-neutral">-1 pts</td>
+                                    <td className="tech-ledger-ref">#MS-7761</td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <div className="tech-ledger-date">Oct 20, 2023</div>
+                                        <div className="tech-ledger-time">11:05 AM</div>
+                                    </td>
+                                    <td>
+                                        <div className="tech-event-type">
+                                            <span className="tech-event-dot bg-tertiary"></span>
+                                            <span>Successful Completion</span>
+                                        </div>
+                                    </td>
+                                    <td className="tech-impact-positive">+2 pts</td>
+                                    <td className="tech-ledger-ref">#MS-7650</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div className="tech-ledger-footer">
+                            <button>Load Older Ledger Entries</button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 4. SLA Rules & AI recommendations */}
+                <div className="tech-sla-sidebar">
+                    
+                    {/* AI Recommendation */}
+                    <div className="tech-ai-card">
+                        <div className="tech-ai-bg-icon">
+                            <span className="material-symbols-outlined">psychology</span>
+                        </div>
+                        <div className="tech-ai-content">
+                            <div className="tech-ai-header">
+                                <span className="material-symbols-outlined">auto_awesome</span>
+                                <span>Reliance Insight</span>
+                            </div>
+                            <p>Your late-night response time is slowing down. Consider updating your schedule exceptions to maintain your 'Excellent' status.</p>
+                            <button>Apply Recommendations</button>
+                        </div>
+                    </div>
+
+                    {/* SLA Rules Reference */}
+                    <div className="tech-rules-card">
+                        <h4>Policy Reference</h4>
+                        <ul className="tech-rules-list">
+                            <li>
+                                <div className="tech-rule-dot bg-error"></div>
+                                <div className="tech-rule-text">
+                                    <span>Late Arrival &gt; 15m</span>
+                                    <p>-5 pts and manual review.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div className="tech-rule-dot bg-secondary"></div>
+                                <div className="tech-rule-text">
+                                    <span>Mission Refusal</span>
+                                    <p>-1 pt if within accepted availability.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div className="tech-rule-dot bg-tertiary"></div>
+                                <div className="tech-rule-text">
+                                    <span>Success Completion</span>
+                                    <p>+2 pts for verified resolution.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div className="tech-rule-dot bg-primary"></div>
+                                <div className="tech-rule-text">
+                                    <span>5-Star Rating</span>
+                                    <p>+1 pt bonus for technician excellence.</p>
+                                </div>
+                            </li>
+                        </ul>
+                        <div className="tech-rules-footer">
+                            <button>
+                                Full SLA Documentation
+                                <span className="material-symbols-outlined">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
         </div>
     );
 };

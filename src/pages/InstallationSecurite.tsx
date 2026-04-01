@@ -1,6 +1,5 @@
 import React from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
-import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import HeroCarousel from '../components/common/HeroCarousel';
 import '../styles/variables.css';
@@ -26,7 +25,6 @@ const securiteSlides = [
 const InstallationSecurite: React.FC = () => {
     return (
         <div className="page-installation">
-            <Header />
 
             {/* Hero Carousel */}
             <HeroCarousel

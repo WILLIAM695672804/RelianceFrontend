@@ -26,6 +26,29 @@
   --font-heading: 'Montserrat', sans-serif;
   --font-body: 'Roboto', sans-serif;
   
+  /* === TECHNICIAN DESIGN SYSTEM === */
+  --tech-primary: #29446c;
+  --tech-primary-container: #425b85;
+  --tech-secondary: #1960a3;
+  --tech-secondary-fixed: #d3e4ff;
+  --tech-on-secondary-fixed: #001c38;
+  --tech-tertiary: #004e2c;
+  --tech-tertiary-container: #00693d;
+  --tech-on-tertiary-container: #81e8a9;
+  
+  --tech-surface: #f7fafc;
+  --tech-surface-container-lowest: #ffffff;
+  --tech-surface-container-low: #f1f4f6;
+  --tech-surface-container-high: #e5e9eb;
+  --tech-surface-variant: #e0e3e5;
+  --tech-on-surface: #181c1e;
+  --tech-outline-variant: #c3c6d6;
+  
+  --tech-font-display: 'Manrope', sans-serif;
+  --tech-font-body: 'Inter', sans-serif;
+
+  --tech-shadow-ambient: 0px 12px 32px rgba(24, 28, 30, 0.05);
+  
   /* Font Sizes */
   --text-xs: 0.75rem;    /* 12px */
   --text-sm: 0.875rem;   /* 14px */

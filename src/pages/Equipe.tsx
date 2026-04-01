@@ -1,5 +1,4 @@
 import React from 'react';
-import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import '../styles/variables.css';
 import './Equipe.css';
@@ -7,7 +6,6 @@ import './Equipe.css';
 const Equipe: React.FC = () => {
     return (
         <div className="page-equipe">
-            <Header />
 
             {/* Section Titre */}
             <section className="eq-hero section">

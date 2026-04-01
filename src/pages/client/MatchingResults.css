@@ -1,0 +1,334 @@
+.matching-results-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding-bottom: 120px; /* Space for sticky footer */
+    animation: fadeUpIn 0.5s ease;
+}
+
+@keyframes fadeUpIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.matching-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.match-success-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ecfdf5;
+    color: #10b981;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+    border: 1px solid #a7f3d0;
+}
+
+.matching-header h1 {
+    font-size: 2.2rem;
+    color: #0f172a;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.5px;
+}
+
+.matching-header p {
+    color: #64748b;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+/* Tech Cards List */
+.tech-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.tech-profile-card {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.tech-profile-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px -5px rgba(14, 165, 233, 0.15);
+    border-color: #bae6fd;
+}
+
+.tech-profile-card.selected {
+    border-color: #0ea5e9;
+    background: #f0f9ff;
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+}
+
+/* Card Left - Info */
+.tech-card-left {
+    flex: 2;
+    min-width: 300px;
+    display: flex;
+    gap: 20px;
+}
+
+.avatar-wrapper {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+.tech-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    object-fit: cover;
+    border: 2px solid #e2e8f0;
+}
+
+.tech-profile-card.selected .tech-avatar {
+    border-color: #0ea5e9;
+}
+
+.verified-badge-small {
+    position: absolute;
+    bottom: -6px;
+    right: -6px;
+    background: #10b981;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    border: 3px solid white;
+}
+
+.tech-info-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tech-info-main h3 {
+    margin: 0 0 4px 0;
+    font-size: 1.3rem;
+    color: #1e293b;
+}
+
+.tech-specialty {
+    color: #64748b;
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
+.tech-meta-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.tech-rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    color: #0f172a;
+    background: #fffbeb;
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid #fde68a;
+}
+
+.tech-rating .star-icon {
+    color: #f59e0b;
+}
+
+.tech-rating span {
+    color: #64748b;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.tech-distance {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #475569;
+    font-weight: 500;
+    font-size: 0.95rem;
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 12px;
+}
+
+.tech-distance .pin-icon {
+    color: #ef4444;
+}
+
+/* Card Divider */
+.tech-card-divider {
+    width: 2px;
+    background: #e2e8f0;
+    border-radius: 1px;
+}
+
+/* Card Right - Price & Actions */
+.tech-card-right {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.tech-price-block {
+    text-align: right;
+}
+
+.price-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.price-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.tech-eta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #10b981;
+    font-weight: 600;
+    font-size: 0.95rem;
+    background: #ecfdf5;
+    padding: 4px 12px;
+    border-radius: 12px;
+}
+
+.btn-select-tech {
+    margin-top: auto;
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    color: #475569;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-select-tech:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+}
+
+.btn-select-tech.active {
+    background: #0ea5e9;
+    border-color: #0ea5e9;
+    color: white;
+}
+
+/* Sticky Action Footer */
+.matching-footer-action {
+    position: fixed;
+    bottom: 0;
+    left: 260px; /* Offset for sidebar */
+    right: 0;
+    background: white;
+    padding: 24px 40px;
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+}
+
+@media (max-width: 768px) {
+    .matching-footer-action {
+        left: 0; /* No sidebar on mobile */
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+        padding: 20px;
+    }
+}
+
+.matching-footer-action.visible {
+    transform: translateY(0);
+}
+
+.selected-summary {
+    color: #475569;
+    font-size: 1.05rem;
+}
+
+.selected-summary strong {
+    color: #0f172a;
+    font-size: 1.1rem;
+}
+
+.btn-confirm-match {
+    background: #0f172a;
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+}
+
+.btn-confirm-match:hover {
+    background: #0ea5e9;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(14, 165, 233, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .tech-card-divider {
+        width: 100%;
+        height: 2px;
+    }
+    
+    .tech-card-right {
+        align-items: flex-start;
+    }
+    
+    .tech-price-block {
+        text-align: left;
+    }
+}

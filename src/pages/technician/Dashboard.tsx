@@ -1,249 +1,306 @@
 import React from 'react';
-import {
-    FaCalendarAlt,
-    FaSyncAlt,
-    FaFilter,
-    FaDownload,
-    FaEllipsisV,
-    FaArrowUp,
-    FaArrowDown
-} from 'react-icons/fa';
 import './Dashboard.css';
 
 const Dashboard: React.FC = () => {
-
     return (
-        <div className="tech-page dashboard-page">
-
-            {/* Top Bar */}
-            <div className="dashboard-top-bar">
-                <div className="dashboard-controls">
-                    <div className="control-btn">
-                        <FaCalendarAlt color="#94a3b8" />
-                        <span>Fév 2026</span>
-                        <select className="control-select">
-                            <option>Mensuel</option>
-                            <option>Hebdo</option>
-                        </select>
+        <div className="tech-dashboard-container">
+            {/* Left & Center Main Content */}
+            <div className="tech-dashboard-main">
+                
+                {/* Welcome Header */}
+                <div className="tech-welcome-header">
+                    <div className="tech-welcome-title">
+                        <h1>Technician Dashboard</h1>
+                        <p>Welcome back, Marc. You have 3 interventions scheduled for today.</p>
                     </div>
-                    <button className="control-btn icon-btn" title="Actualiser">
-                        <FaSyncAlt color="#64748b" />
-                    </button>
-                    <button className="control-btn icon-btn" title="Filtres">
-                        <FaFilter color="#64748b" />
-                    </button>
-                </div>
-                <button className="export-btn">
-                    <FaDownload color="#64748b" /> Export Data
-                </button>
-            </div>
-
-            {/* KPI Cards */}
-            <div className="kpi-grid">
-                {/* Card 0:solde */}
-                <div className="kpi-card">
-                    <div className="kpi-header">
-                        <span className="kpi-title">Solde</span>
-                        <FaEllipsisV className="kpi-more" />
+                    <div>
+                        <button className="tech-online-btn">
+                            <span className="material-symbols-outlined" style={{ fontSize: '1.25rem' }}>bolt</span>
+                            Go Online
+                        </button>
                     </div>
-                    <div className="kpi-content">
-                        <span className="kpi-value">2 000 000 FCFA</span>
-                        <span className="kpi-trend negative"><FaArrowDown /> 5%</span>
-                    </div>
-                    <div className="kpi-footer">Depuis le mois dernier</div>
-                </div>
-                {/* Card 1: Revenues */}
-                <div className="kpi-card">
-                    <div className="kpi-header">
-                        <span className="kpi-title">Revenus (Mois)</span>
-                        <FaEllipsisV className="kpi-more" />
-                    </div>
-                    <div className="kpi-content">
-                        <span className="kpi-value">2 315K</span>
-                        <span className="kpi-trend positive"><FaArrowUp /> 5%</span>
-                    </div>
-                    <div className="kpi-footer">Depuis le mois dernier</div>
                 </div>
 
-                {/* Card 2: Missions */}
-                <div className="kpi-card">
-                    <div className="kpi-header">
-                        <span className="kpi-title">Missions Terminées</span>
-                        <FaEllipsisV className="kpi-more" />
-                    </div>
-                    <div className="kpi-content">
-                        <span className="kpi-value">154</span>
-                        <span className="kpi-trend positive"><FaArrowUp /> 12</span>
-                    </div>
-                    <div className="kpi-footer">Depuis le mois dernier</div>
-                </div>
-
-                {/* Card 3: Acceptance Rate */}
-                <div className="kpi-card">
-                    <div className="kpi-header">
-                        <span className="kpi-title">Taux d'Acceptation</span>
-                        <FaEllipsisV className="kpi-more" />
-                    </div>
-                    <div className="kpi-content">
-                        <span className="kpi-value">85%</span>
-                        <span className="kpi-trend negative"><FaArrowDown /> 5%</span>
-                    </div>
-                    <div className="kpi-footer">Depuis le mois dernier</div>
-                </div>
-
-                {/* Card 4: Rating */}
-                <div className="kpi-card">
-                    <div className="kpi-header">
-                        <span className="kpi-title">Note Moyenne</span>
-                        <FaEllipsisV className="kpi-more" />
-                    </div>
-                    <div className="kpi-content">
-                        <span className="kpi-value">4.8</span>
-                        <span className="kpi-trend positive"><FaArrowUp /> 0.1</span>
-                    </div>
-                    <div className="kpi-footer">Depuis le mois dernier</div>
-                </div>
-            </div>
-
-            {/* Charts Row */}
-            <div className="charts-row">
-                {/* Bar Chart: Engagement / Revenues */}
-                <div className="chart-card">
-                    <div className="chart-header">
-                        <h3 className="chart-title">Statistiques de Revenus</h3>
-                        <div className="chart-legend">
-                            <div className="legend-item">
-                                <span className="legend-dot purple"></span> Interventions
+                {/* KPI Cards Grid */}
+                <div className="tech-kpi-grid">
+                    {/* Wallet */}
+                    <div className="glass-panel">
+                        <div className="tech-kpi-header">
+                            <div className="tech-kpi-icon blue">
+                                <span className="material-symbols-outlined">account_balance_wallet</span>
                             </div>
-                            <div className="legend-item">
-                                <span className="legend-dot cyan"></span> Devis Suppl.
+                            <span className="tech-kpi-badge green">+12%</span>
+                        </div>
+                        <p className="tech-kpi-subtitle">Wallet Balance</p>
+                        <h3 className="tech-kpi-value">450,200 <span>XAF</span></h3>
+                    </div>
+
+                    {/* Monthly Earnings */}
+                    <div className="glass-panel">
+                        <div className="tech-kpi-header">
+                            <div className="tech-kpi-icon blue">
+                                <span className="material-symbols-outlined">payments</span>
+                            </div>
+                            <span className="tech-kpi-badge slate">Current Mo.</span>
+                        </div>
+                        <p className="tech-kpi-subtitle">Monthly Earnings</p>
+                        <h3 className="tech-kpi-value">1,280,000 <span>XAF</span></h3>
+                    </div>
+
+                    {/* Completion Rate */}
+                    <div className="glass-panel">
+                        <div className="tech-kpi-header">
+                            <div className="tech-kpi-icon green">
+                                <span className="material-symbols-outlined">task_alt</span>
+                            </div>
+                        </div>
+                        <p className="tech-kpi-subtitle">Completion Rate</p>
+                        <h3 className="tech-kpi-value">98.4<span>%</span></h3>
+                    </div>
+
+                    {/* Global Rating */}
+                    <div className="glass-panel">
+                        <div className="tech-kpi-header">
+                            <div className="tech-kpi-icon orange">
+                                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                            </div>
+                        </div>
+                        <p className="tech-kpi-subtitle">Global Rating</p>
+                        <h3 className="tech-kpi-value" style={{ display: 'flex', alignItems: 'flex-end', gap: '4px' }}>
+                            4.92 <span style={{ paddingBottom: '2px' }}>/ 5.0</span>
+                        </h3>
+                    </div>
+                </div>
+
+                {/* Main Charts & Map Bento Grid */}
+                <div className="tech-charts-grid">
+                    {/* Revenue Breakdown (Donut) */}
+                    <div className="tech-card-white">
+                        <h4 className="tech-card-title">Revenue Breakdown</h4>
+                        <div className="tech-donut-wrapper">
+                            <svg viewBox="0 0 160 160" style={{ transform: 'rotate(-90deg)', width: '10rem', height: '10rem' }}>
+                                <circle cx="80" cy="80" fill="transparent" r="70" stroke="#f1f5f9" strokeWidth="12"></circle>
+                                <circle cx="80" cy="80" fill="transparent" r="70" stroke="#1a365d" strokeDasharray="440" strokeDashoffset="110" strokeWidth="12"></circle>
+                                <circle cx="80" cy="80" fill="transparent" r="70" stroke="#003f23" strokeDasharray="440" strokeDashoffset="350" strokeWidth="12"></circle>
+                            </svg>
+                            <div className="tech-donut-text">
+                                <span className="tech-donut-percentage">75%</span>
+                                <span className="tech-donut-label">Installation</span>
+                            </div>
+                        </div>
+                        <div className="tech-legend-list">
+                            <div className="tech-legend-item">
+                                <div className="tech-legend-left">
+                                    <div className="tech-legend-dot blue"></div>
+                                    <span className="tech-legend-name">Installations</span>
+                                </div>
+                                <span className="tech-legend-amount">960k</span>
+                            </div>
+                            <div className="tech-legend-item">
+                                <div className="tech-legend-left">
+                                    <div className="tech-legend-dot green"></div>
+                                    <span className="tech-legend-name">Maintenance</span>
+                                </div>
+                                <span className="tech-legend-amount">320k</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="mock-bar-chart">
-                        <div className="y-axis">
-                            <span>15K</span>
-                            <span>10K</span>
-                            <span>5K</span>
-                            <span>0</span>
+                    {/* Intervention Zones (Map) */}
+                    <div className="tech-map-card">
+                        <div className="tech-map-overlay-title">
+                            <h4>Intervention Zones</h4>
+                            <p>4 active missions in Douala Nord</p>
                         </div>
-                        {/* Mock data bars representing weeks/days */}
+                        <img 
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0gBIJ9nTFD81hXqd_BbPM4BqdpeeMM334wXKQH4X027q_1TRB3_u2ZYqRCON_6PeBffErRyVm9NC4Xa8-6qMWogtNHkrpLhmHabXvKzfWV99VJ_14BMGOtXUidOzib5PyUWAU1LI7gOOOp-rxj_HBknyDKyo-cc2xYKkbzkO5Unz3P0zUmvZl5NIP4bwMvEBorTkGezE80v98g2Y_ncrbi5dhwDixomo4mWTB7W8v3n9xVjHdBS0mvyedBOsqBbX_ADK0_VcL9g" 
+                            alt="Map View" 
+                            className="tech-map-bg"
+                        />
+                        {/* Interactive Markers */}
+                        <div className="tech-map-marker" style={{ top: '33%', left: '25%' }}>
+                            <div className="tech-map-marker-pulse"></div>
+                            <div className="tech-map-marker-icon blue">
+                                <span className="material-symbols-outlined">electric_bolt</span>
+                            </div>
+                        </div>
+                        <div className="tech-map-marker" style={{ top: '50%', left: '66%' }}>
+                            <div className="tech-map-marker-icon green">
+                                <span className="material-symbols-outlined">home_repair_service</span>
+                            </div>
+                        </div>
+                        <div className="tech-map-marker" style={{ bottom: '25%', left: '50%' }}>
+                            <div className="tech-map-marker-icon orange">
+                                <span className="material-symbols-outlined">priority_high</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Field Performance Charts */}
+                <div className="tech-card-white">
+                    <div className="tech-bar-chart-header">
+                        <h4 className="tech-card-title" style={{ margin: 0 }}>Field Performance</h4>
+                        <div className="tech-bar-chart-legend">
+                            <div className="tech-bar-chart-legend-item">
+                                <div className="tech-bar-chart-legend-color" style={{ backgroundColor: '#1960a3' }}></div>
+                                <span className="tech-bar-chart-legend-text">Punctuality</span>
+                            </div>
+                            <div className="tech-bar-chart-legend-item">
+                                <div className="tech-bar-chart-legend-color" style={{ backgroundColor: '#e2e8f0' }}></div>
+                                <span className="tech-bar-chart-legend-text">Response Time</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="tech-bar-chart-area">
                         {[
-                            { x: '01', h1: '40%', h2: '20%' },
-                            { x: '02', h1: '50%', h2: '65%' },
-                            { x: '03', h1: '35%', h2: '45%' },
-                            { x: '04', h1: '15%', h2: '8%' },
-                            { x: '05', h1: '80%', h2: '60%' },
-                            { x: '06', h1: '35%', h2: '35%' },
-                            { x: '07', h1: '70%', h2: '30%' },
-                            { x: '08', h1: '75%', h2: '65%' },
-                        ].map((data, i) => (
-                            <div key={i} className="chart-group">
-                                <div className="bar purple" style={{ height: data.h1 }}></div>
-                                <div className="bar cyan" style={{ height: data.h2 }}></div>
-                                <div className="x-label">{data.x}</div>
+                            { day: 'MON', p: '80%', r: '40%' },
+                            { day: 'TUE', p: '95%', r: '30%' },
+                            { day: 'WED', p: '70%', r: '60%' },
+                            { day: 'THU', p: '85%', r: '45%' },
+                            { day: 'FRI', p: '90%', r: '20%' },
+                            { day: 'SAT', p: '60%', r: '15%' },
+                        ].map((item, idx) => (
+                            <div key={idx} className="tech-bar-group">
+                                <div className="tech-bars-wrapper">
+                                    <div className="tech-bar primary" style={{ height: item.p }}></div>
+                                    <div className="tech-bar secondary" style={{ height: item.r }}></div>
+                                </div>
+                                <span className="tech-bar-label">{item.day}</span>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                {/* Line Chart: Performance */}
-                <div className="chart-card">
-                    <div className="chart-header">
-                        <h3 className="chart-title">Performance</h3>
-                        <FaEllipsisV className="kpi-more" />
+                {/* Mission Status Table */}
+                <div className="tech-table-card-modern">
+                    <div className="tech-table-header-modern">
+                        <h4>Missions History</h4>
+                        <button>View All Missions</button>
                     </div>
-                    <div className="ads-metrics">
-                        <div className="ads-metric purple">
-                            <div className="ads-metric-value">92%</div>
-                            <div className="ads-metric-label">Ponctualité</div>
-                        </div>
-                        <div className="ads-metric cyan">
-                            <div className="ads-metric-value">14 min</div>
-                            <div className="ads-metric-label">Temps de réponse</div>
-                        </div>
-                    </div>
-
-                    <div className="mock-line-chart">
-                        <svg width="100%" height="100%" viewBox="0 0 400 140" preserveAspectRatio="none">
-                            {/* Purple Line */}
-                            <path d="M 0,100 C 50,90 100,50 150,70 C 200,90 250,110 300,80 C 350,50 400,20 400,20"
-                                fill="none" stroke="#7c3aed" strokeWidth="2" />
-                            <path d="M 0,100 C 50,90 100,50 150,70 C 200,90 250,110 300,80 C 350,50 400,20 400,20 L 400,140 L 0,140 Z"
-                                fill="rgba(124, 58, 237, 0.05)" stroke="none" />
-                            {/* Cyan Line */}
-                            <path d="M 0,120 C 50,110 100,80 150,80 C 200,80 250,90 300,100 C 350,110 400,40 400,40"
-                                fill="none" stroke="#06b6d4" strokeDasharray="4,4" strokeWidth="2" />
-                        </svg>
+                    <div className="tech-table-container">
+                        <table className="tech-table-modern">
+                            <thead>
+                                <tr>
+                                    <th>Mission ID</th>
+                                    <th>Client / Location</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Earnings</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td className="tech-table-id">#RX-4492</td>
+                                    <td>
+                                        <div className="tech-table-client-info">
+                                            <span className="tech-table-client-name">Avenue de Gaulle</span>
+                                            <span className="tech-table-client-loc">Bonapriso, Douala</span>
+                                        </div>
+                                    </td>
+                                    <td><span className="tech-table-type">Electrical</span></td>
+                                    <td><span className="tech-table-status progress">IN PROGRESS</span></td>
+                                    <td className="tech-table-price">25,000</td>
+                                    <td><button className="tech-table-action-btn"><span className="material-symbols-outlined">more_horiz</span></button></td>
+                                </tr>
+                                <tr>
+                                    <td className="tech-table-id">#RX-4481</td>
+                                    <td>
+                                        <div className="tech-table-client-info">
+                                            <span className="tech-table-client-name">Immeuble Krystal</span>
+                                            <span className="tech-table-client-loc">Akwa, Douala</span>
+                                        </div>
+                                    </td>
+                                    <td><span className="tech-table-type">HVAC</span></td>
+                                    <td><span className="tech-table-status closed">CLOSED</span></td>
+                                    <td className="tech-table-price">48,500</td>
+                                    <td><button className="tech-table-action-btn"><span className="material-symbols-outlined">more_horiz</span></button></td>
+                                </tr>
+                                <tr>
+                                    <td className="tech-table-id">#RX-4475</td>
+                                    <td>
+                                        <div className="tech-table-client-info">
+                                            <span className="tech-table-client-name">Total Station</span>
+                                            <span className="tech-table-client-loc">Yassa, Douala</span>
+                                        </div>
+                                    </td>
+                                    <td><span className="tech-table-type">Plumbing</span></td>
+                                    <td><span className="tech-table-status pending">PENDING</span></td>
+                                    <td className="tech-table-price">12,000</td>
+                                    <td><button className="tech-table-action-btn"><span className="material-symbols-outlined">more_horiz</span></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+
             </div>
 
-            {/* Bottom Row */}
-            <div className="bottom-row">
-                {/* Map Widget */}
-                <div className="map-card">
-                    <div className="chart-header">
-                        <h3 className="chart-title">Zone d'Intervention Active</h3>
-                        <FaEllipsisV className="kpi-more" />
+            {/* Right Sidebar (Pro Network) */}
+            <div className="tech-dashboard-sidebar">
+                <div className="tech-sidebar-container">
+                    <div className="tech-sidebar-header">
+                        <h4 className="tech-sidebar-title">Pro Network</h4>
+                        <span className="tech-sidebar-live">LIVE</span>
                     </div>
-                    <div className="mock-map">
-                        {/* Mock Markers */}
-                        <div className="map-marker" style={{ top: '30%', left: '25%' }}>
-                            <div className="marker-dot red"></div> Douala
-                        </div>
-                        <div className="map-marker" style={{ top: '60%', left: '60%' }}>
-                            <div className="marker-dot green"></div> Bonapriso
-                        </div>
-                        <div className="map-marker" style={{ top: '40%', right: '20%' }}>
-                            <div className="marker-dot green"></div> Akwa
-                        </div>
-                    </div>
-                </div>
 
-                {/* Table Widget */}
-                <div className="table-card">
-                    <div className="chart-header">
-                        <h3 className="chart-title">Dernières Missions</h3>
-                        <FaEllipsisV className="kpi-more" />
+                    <div className="tech-feed-list">
+                        <div className="tech-network-item">
+                            <div className="tech-network-avatar">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjB9F1sZRdipDtg-mBNo-7dkG7YMQNbLlYfIKmw8eqnte0_QynBX2JWKJv9LA6GD4mi6_qcQuf9dYZHu_i3o5dblotDEeRdvrOs6M3U6YR858QnEPdgenlvVt4SCvSnd4gZ0FQEA_jRD15B4iNgYoe1gIE_37tdzc5U-yGBquDQ-XS-eX9EzpSjb0_N2keubM0UgFzx_S4VmS48-Y8H3XmDu4S6YJCjSaJY1QE-sMKfcG6m-ZG3osAdRYT7qjYsS8APZxwLf4PqQ" alt="User" />
+                            </div>
+                            <div className="tech-network-content">
+                                <p><span>Jerome K.</span> just completed a Gold-tier maintenance.</p>
+                                <p className="tech-network-time">2 mins ago</p>
+                            </div>
+                        </div>
+
+                        <div className="tech-network-item">
+                            <div className="tech-network-avatar">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEqwlGcaa91KjbvREAedoHREv_icH9T1tGGNABKO5F6hxIYfUbQKp-y0qQp7No5xDB1r1G9_L8EGucuZdhbFM2tPJgJFbA1pB9A4YsWSjTPRLSMgZr7Vi3RTFKSILE13Wsqasdka3ydHDAfa2dJe1kg8rpfoKQpxk9VEGR3eHMs8PoORS3wZFrPHrjW5ah46bocm5u9xejD9daRtRdh_5BXwnkpyXAvvKoqgPyN5k8YnQ3z7ZiuMd7w7_wt4taeXKe5fiTGVHwJw" alt="User" />
+                            </div>
+                            <div className="tech-network-content">
+                                <p><span>Sandra M.</span> is now online in <span className="blue">Douala West</span>.</p>
+                                <p className="tech-network-time">15 mins ago</p>
+                            </div>
+                        </div>
+
+                        <div className="tech-network-item">
+                            <div className="tech-network-icon">
+                                <span className="material-symbols-outlined">workspace_premium</span>
+                            </div>
+                            <div className="tech-network-content">
+                                <p><span>New Badge!</span> You've unlocked the "Punctual Pro" status.</p>
+                                <p className="tech-network-time">1 hour ago</p>
+                            </div>
+                        </div>
                     </div>
-                    <table className="latest-traffic-table">
-                        <thead>
-                            <tr>
-                                <th>Mission ID</th>
-                                <th>Statut</th>
-                                <th>Quartier</th>
-                                <th>Modifié</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>M-2684</td>
-                                <td><div className="status-cell"><div className="status-dot online"></div> En cours</div></td>
-                                <td>Bonanjo</td>
-                                <td>Il y a 3 heures</td>
-                            </tr>
-                            <tr>
-                                <td>M-2683</td>
-                                <td><div className="status-cell"><div className="status-dot online"></div> En cours</div></td>
-                                <td>Deido</td>
-                                <td>Il y a 2 heures</td>
-                            </tr>
-                            <tr>
-                                <td>M-2680</td>
-                                <td><div className="status-cell"><div className="status-dot offline"></div> Clôturée</div></td>
-                                <td>Logpom</td>
-                                <td>Hier</td>
-                            </tr>
-                            <tr>
-                                <td>M-2685</td>
-                                <td><div className="status-cell"><div className="status-dot pending"></div> En attente</div></td>
-                                <td>Akwa</td>
-                                <td>Il y a 45 min</td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+                    <hr className="tech-sidebar-divider" />
+
+                    {/* Promo Card */}
+                    <div className="tech-promo-card">
+                        <div className="tech-promo-content">
+                            <h5 className="tech-promo-title">Reliance Premium</h5>
+                            <p className="tech-promo-desc">Boost your mission visibility and get exclusive priority support.</p>
+                            <button className="tech-promo-btn">Upgrade Now</button>
+                        </div>
+                        <span className="material-symbols-outlined bg-icon">verified_user</span>
+                    </div>
+
+                    {/* Helpful Links */}
+                    <div className="tech-helpful-links">
+                        <a href="#" className="tech-link-item">
+                            <span className="material-symbols-outlined">support_agent</span>
+                            Contact Tech Support
+                        </a>
+                        <a href="#" className="tech-link-item">
+                            <span className="material-symbols-outlined">menu_book</span>
+                            Resource Center
+                        </a>
+                    </div>
                 </div>
             </div>
 

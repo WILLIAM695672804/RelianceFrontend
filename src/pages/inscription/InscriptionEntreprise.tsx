@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaUser, FaEnvelope, FaPhone, FaLock, FaMapMarkerAlt, FaHome, FaInfo } from 'react-icons/fa';
-import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import '../../styles/variables.css';
 import './InscriptionEntreprise.css';
@@ -40,7 +39,6 @@ const InscriptionEntreprise: React.FC = () => {
 
     return (
         <div className="page-inscription-entreprise">
-            <Header />
 
             <section className="ie-section">
                 <div className="container">

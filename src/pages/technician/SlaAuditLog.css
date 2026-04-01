@@ -1,0 +1,485 @@
+/* SlaAuditLog CSS translated from Stitch generated Tailwind */
+.tech-sla-page {
+    font-family: var(--tech-font-body);
+    color: var(--tech-on-surface);
+    padding-bottom: var(--spacing-3xl);
+}
+
+/* 1. Quality Score Header */
+.tech-sla-header-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+}
+@media (min-width: 768px) {
+    .tech-sla-header-section {
+        flex-direction: row;
+        align-items: flex-end;
+    }
+}
+
+.tech-sla-titles {
+    max-width: 42rem;
+}
+.tech-sla-titles h2 {
+    font-size: 2.25rem;
+    font-family: var(--tech-font-display);
+    font-weight: 800;
+    color: var(--tech-primary);
+    letter-spacing: -0.025em;
+    margin: 0 0 0.5rem 0;
+}
+.tech-sla-titles p {
+    color: var(--tech-on-surface-variant);
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.tech-sla-score-wrapper {
+    position: relative;
+    /* group-hover effects could be applied here */
+}
+
+.tech-sla-score-card {
+    background-color: var(--tech-surface-container-lowest);
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-sm);
+    border-left: 8px solid var(--tech-tertiary-container);
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    transform: translateX(0.5rem); /* translate-x-2 */
+}
+
+.tech-sla-score-val {
+    text-align: center;
+}
+.tech-score-number {
+    font-size: 3rem;
+    font-family: var(--tech-font-display);
+    font-weight: 900;
+    color: var(--tech-primary);
+    line-height: 1;
+}
+.tech-score-number span {
+    font-size: 1.25rem;
+    color: var(--tech-outline);
+}
+.tech-score-badge-wrap {
+    margin-top: 0.25rem;
+}
+.tech-score-badge {
+    background-color: var(--tech-tertiary-container);
+    color: var(--tech-on-tertiary-container);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.tech-sla-score-divider {
+    height: 3rem;
+    width: 1px;
+    background-color: rgba(195, 198, 214, 0.3); /* outline-variant/30 */
+}
+
+.tech-sla-score-trend {
+    display: flex;
+    flex-direction: column;
+}
+.tech-trend-val {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--tech-tertiary);
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+.tech-trend-val .material-symbols-outlined {
+    font-size: 1.25rem;
+}
+.tech-trend-label {
+    font-size: 0.75rem;
+    color: var(--tech-on-surface-variant);
+}
+
+/* 2. Key Metrics Row */
+.tech-sla-metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+@media (min-width: 768px) {
+    .tech-sla-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+    .tech-sla-metrics-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.tech-metric-card {
+    background-color: var(--tech-surface-container-low);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+}
+.tech-metric-card:hover {
+    background-color: var(--tech-surface-container-high);
+}
+.tech-metric-card-error {
+    border-bottom: 2px solid rgba(186, 26, 26, 0.2); /* error/20 */
+}
+
+.tech-metric-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+.tech-metric-top .material-symbols-outlined {
+    font-size: 1.5rem;
+}
+.tech-metric-title {
+    font-size: 0.625rem;
+    font-weight: 700;
+    color: var(--tech-on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+}
+
+.tech-metric-value {
+    font-size: 1.5rem;
+    font-family: var(--tech-font-display);
+    font-weight: 700;
+    color: var(--tech-primary);
+}
+.tech-metric-desc {
+    font-size: 0.875rem;
+    color: var(--tech-on-surface-variant);
+    margin-top: 0.25rem;
+}
+
+/* Main Ledger & Sidebar Grid */
+.tech-sla-main-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+}
+@media (min-width: 1024px) {
+    .tech-sla-main-grid {
+        grid-template-columns: repeat(12, 1fr);
+    }
+}
+
+/* 3. Audit Ledger Table */
+.tech-sla-ledger {
+    grid-column: span 12;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+@media (min-width: 1024px) {
+    .tech-sla-ledger { grid-column: span 8; }
+}
+
+.tech-ledger-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.tech-ledger-header h3 {
+    font-size: 1.25rem;
+    font-family: var(--tech-font-display);
+    font-weight: 700;
+    color: var(--tech-primary);
+    margin: 0;
+}
+
+.tech-ledger-filters {
+    display: flex;
+    gap: 0.5rem;
+}
+.tech-filter-active {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--tech-secondary);
+    padding: 0.375rem 0.75rem;
+    background-color: var(--tech-secondary-fixed);
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+.tech-filter-inactive {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--tech-on-surface-variant);
+    padding: 0.375rem 0.75rem;
+    background: transparent;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.tech-filter-inactive:hover { background-color: var(--tech-surface-container-high); }
+
+.tech-ledger-table-wrap {
+    background-color: var(--tech-surface-container-lowest);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.tech-ledger-table {
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+}
+
+.tech-ledger-table th {
+    background-color: var(--tech-surface-container-low);
+    font-size: 0.625rem;
+    font-weight: 700;
+    color: var(--tech-on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 1rem 1.5rem;
+}
+
+.tech-ledger-table td {
+    padding: 1.25rem 1.5rem;
+    transition: background-color 0.2s;
+}
+.tech-ledger-table tr {
+    border-bottom: 1px solid var(--tech-surface-container-low);
+}
+.tech-ledger-table tr:last-child {
+    border-bottom: none;
+}
+.tech-ledger-table tr:hover {
+    background-color: rgba(247, 250, 252, 0.5); /* slate-50/50 approx */
+}
+
+.tech-ledger-date {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--tech-primary);
+}
+.tech-ledger-time {
+    font-size: 0.625rem;
+    color: var(--tech-on-surface-variant);
+}
+
+.tech-event-type {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.tech-event-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+}
+.tech-event-dot.bg-tertiary { background-color: var(--tech-tertiary); }
+.tech-event-dot.bg-error { background-color: var(--tech-error); }
+.tech-event-dot.bg-secondary { background-color: var(--tech-secondary); }
+
+.tech-event-type span:last-child {
+    font-size: 0.875rem;
+    color: var(--tech-on-surface);
+}
+
+.tech-impact-positive {
+    font-weight: 700;
+    color: var(--tech-tertiary);
+    font-size: 0.875rem;
+}
+.tech-impact-negative {
+    font-weight: 700;
+    color: var(--tech-error);
+    font-size: 0.875rem;
+}
+.tech-impact-neutral {
+    font-weight: 700;
+    color: var(--tech-on-surface-variant);
+    font-size: 0.875rem;
+}
+
+.tech-ledger-ref {
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: var(--tech-outline);
+}
+
+.tech-ledger-footer {
+    padding: 1rem;
+    background-color: var(--tech-surface-container-low);
+    text-align: center;
+}
+.tech-ledger-footer button {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--tech-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+.tech-ledger-footer button:hover { text-decoration: underline; }
+
+/* 4. SLA Rules & AI Recommendations */
+.tech-sla-sidebar {
+    grid-column: span 12;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+@media (min-width: 1024px) {
+    .tech-sla-sidebar { grid-column: span 4; }
+}
+
+.tech-ai-card {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--tech-primary);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    color: var(--color-bg-white);
+    box-shadow: 0 20px 25px -5px rgba(41, 68, 108, 0.2), 0 10px 10px -5px rgba(41, 68, 108, 0.1);
+}
+
+.tech-ai-bg-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1rem;
+    opacity: 0.1;
+}
+.tech-ai-bg-icon .material-symbols-outlined { font-size: 3.75rem; }
+
+.tech-ai-content {
+    position: relative;
+    z-index: 10;
+}
+
+.tech-ai-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.tech-ai-header .material-symbols-outlined { color: var(--tech-secondary-container); }
+.tech-ai-header span:last-child {
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--tech-on-primary-container);
+}
+
+.tech-ai-content p {
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.625;
+    margin: 0 0 1.5rem 0;
+}
+
+.tech-ai-content button {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-bg-white);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.tech-ai-content button:hover { background-color: rgba(255, 255, 255, 0.2); }
+
+.tech-rules-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.tech-rules-card h4 {
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--tech-primary);
+    border-bottom: 1px solid rgba(195, 198, 214, 0.3);
+    padding-bottom: 0.5rem;
+    margin: 0;
+}
+
+.tech-rules-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tech-rules-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.tech-rule-dot {
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    margin-top: 0.375rem;
+    flex-shrink: 0;
+}
+.tech-rule-dot.bg-error { background-color: var(--tech-error); }
+.tech-rule-dot.bg-secondary { background-color: var(--tech-secondary); }
+.tech-rule-dot.bg-tertiary { background-color: var(--tech-tertiary); }
+.tech-rule-dot.bg-primary { background-color: var(--tech-primary); }
+
+.tech-rule-text {
+    font-size: 0.75rem;
+    color: var(--tech-on-surface-variant);
+}
+.tech-rule-text span {
+    font-weight: 700;
+    color: var(--tech-on-surface);
+    display: block;
+    margin-bottom: 0.125rem;
+}
+.tech-rule-text p {
+    margin: 0;
+}
+
+.tech-rules-footer {
+    padding-top: 1rem;
+}
+.tech-rules-footer button {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--tech-secondary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0;
+}
+.tech-rules-footer button:hover { text-decoration: underline; }
+.tech-rules-footer button .material-symbols-outlined {
+    font-size: 0.75rem;
+    transition: transform 0.2s;
+}
+.tech-rules-footer button:hover .material-symbols-outlined { transform: translateX(0.25rem); }

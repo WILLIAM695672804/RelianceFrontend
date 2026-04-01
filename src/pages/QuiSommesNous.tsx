@@ -1,6 +1,5 @@
 import React from 'react';
 import { FaListUl, FaBullseye, FaHandPaper } from 'react-icons/fa';
-import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import '../styles/variables.css';
 import './QuiSommesNous.css';
@@ -8,7 +7,6 @@ import './QuiSommesNous.css';
 const QuiSommesNous: React.FC = () => {
     return (
         <div className="page-qui-sommes-nous">
-            <Header />
 
             {/* Section Introduction */}
             <section className="qsn-intro section">

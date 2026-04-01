@@ -1,6 +1,5 @@
 import React from 'react';
 import { FaArrowRight, FaUsers, FaFileAlt, FaShieldAlt, FaChartLine, FaHandshake, FaClock } from 'react-icons/fa';
-import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import HeroCarousel from '../components/common/HeroCarousel';
 import '../styles/variables.css';
@@ -26,7 +25,6 @@ const entrepriseSlides = [
 const Entreprises: React.FC = () => {
     return (
         <div className="page-entreprises">
-            <Header />
 
             {/* Hero Carousel */}
             <HeroCarousel

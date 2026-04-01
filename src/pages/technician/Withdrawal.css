@@ -1,214 +1,361 @@
-/* Withdrawal Marketive Style */
-.withdrawal-page {
-    max-width: 600px;
-    margin: 0 auto;
+/* Withdrawal CSS translated from Stitch generated Tailwind */
+.tech-withdraw-page {
+    font-family: var(--tech-font-body);
+    color: var(--tech-on-surface);
+    padding-bottom: var(--spacing-3xl);
 }
 
-.withdrawal-card {
-    background: white;
-    border-radius: 16px;
-    padding: 32px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+/* Header Section */
+.tech-withdraw-header {
+    margin-bottom: 3rem;
 }
-
-.available-balance-box {
-    background: #f8fafc;
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-    margin-bottom: 30px;
-    border: 1px solid #f1f5f9;
+.tech-withdraw-header h1 {
+    font-size: 2.25rem;
+    font-family: var(--tech-font-display);
+    font-weight: 800;
+    color: var(--tech-primary);
+    letter-spacing: -0.025em;
+    margin: 0 0 0.5rem 0;
 }
-
-.available-balance-box p {
-    margin: 0 0 8px 0;
-    color: #64748b;
-    font-size: 0.95rem;
+@media (min-width: 768px) {
+    .tech-withdraw-header h1 { font-size: 2.5rem; }
 }
-
-.available-balance-box h2 {
+.tech-withdraw-header p {
+    color: var(--tech-on-surface-variant);
+    max-width: 32rem;
+    line-height: 1.5;
     margin: 0;
-    color: #1e293b;
-    font-size: 2rem;
-    font-weight: 700;
 }
 
-.form-group {
-    margin-bottom: 24px;
-}
-
-.form-group label {
-    display: block;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #475569;
-    margin-bottom: 8px;
-}
-
-.amount-input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.amount-input-wrapper input {
-    width: 100%;
-    padding: 16px;
-    padding-right: 60px;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    border: 2px solid #e2e8f0;
-    border-radius: 10px;
-    background: white;
-    transition: all 0.2s;
-    outline: none;
-}
-
-.amount-input-wrapper input:focus {
-    border-color: #7c3aed;
-    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
-}
-
-.currency-symbol {
-    position: absolute;
-    right: 20px;
-    color: #94a3b8;
-    font-weight: 600;
-    font-size: 1.1rem;
-}
-
-.method-selector {
+/* Layout */
+.tech-withdraw-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+@media (min-width: 1024px) {
+    .tech-withdraw-grid {
+        grid-template-columns: repeat(12, 1fr);
+    }
 }
 
-.method-btn {
-    padding: 16px;
-    border: 2px solid #e2e8f0;
-    border-radius: 10px;
-    background: white;
-    color: #64748b;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
+.tech-withdraw-main {
+    grid-column: span 12;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+@media (min-width: 1024px) {
+    .tech-withdraw-main { grid-column: span 8; }
+}
+
+.tech-withdraw-sidebar {
+    grid-column: span 12;
+}
+@media (min-width: 1024px) {
+    .tech-withdraw-sidebar { grid-column: span 4; }
+}
+
+/* Step Cards */
+.tech-step-card {
+    background-color: var(--tech-surface-container-lowest);
+    padding: 2rem;
+    border-radius: 0.75rem;
+    border-left: 4px solid var(--tech-outline-variant);
+    transition: all 0.3s ease;
+}
+.tech-step-active {
+    border-left-color: var(--tech-secondary);
+}
+.tech-step-disabled {
+    opacity: 0.6;
+}
+
+.tech-step-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    transition: all 0.2s;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
 }
-
-.method-btn:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
-}
-
-.method-btn.active {
-    border-color: #7c3aed;
-    color: #7c3aed;
-    background: #f3e8ff;
-}
-
-/* Fee Summary */
-.withdrawal-summary {
-    background: #f8fafc;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 30px;
-}
-
-.summary-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    color: #64748b;
-    font-size: 0.95rem;
-}
-
-.summary-row:last-child {
-    margin-bottom: 0;
-    padding-top: 12px;
-    border-top: 1px solid #cbd5e1;
-    color: #1e293b;
-    font-weight: 700;
-    font-size: 1.1rem;
-}
-
-.btn-confirm-withdrawal {
-    width: 100%;
-    background: #7c3aed;
-    color: white;
-    border: none;
-    padding: 16px;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 6px rgba(124, 58, 237, 0.2);
-}
-
-.btn-confirm-withdrawal:hover {
-    background: #6d28d9;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(124, 58, 237, 0.3);
-}
-
-.btn-confirm-withdrawal:disabled {
-    background: #cbd5e1;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-/* Success State */
-.withdrawal-success {
-    text-align: center;
-    padding: 40px 20px;
-}
-
-.success-icon-large {
-    width: 80px;
-    height: 80px;
-    background: #dcfce7;
-    color: #10b981;
+.tech-step-number {
+    width: 2rem;
+    height: 2rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.5rem;
-    margin: 0 auto 24px auto;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--color-bg-white);
+}
+.tech-step-number.bg-secondary {
+    background-color: var(--tech-secondary);
+}
+.tech-step-inactive {
+    background-color: var(--tech-surface-container-highest);
+    color: var(--tech-on-surface-variant);
 }
 
-.withdrawal-success h2 {
-    margin: 0 0 12px 0;
-    color: #1e293b;
+.tech-step-header h2 {
+    font-size: 1.25rem;
+    font-family: var(--tech-font-display);
+    font-weight: 700;
+    color: var(--tech-primary);
+    margin: 0;
+}
+
+/* Step 1: Amount Input */
+.tech-amount-input-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--tech-outline);
+    margin-bottom: 0.5rem;
+}
+
+.tech-amount-field {
+    display: flex;
+    align-items: center;
+    background-color: var(--tech-surface-container-low);
+    border-radius: 0.5rem;
+    padding: 1rem 1rem;
+    transition: box-shadow 0.2s;
+}
+.tech-amount-field:focus-within {
+    box-shadow: 0 0 0 2px rgba(125, 182, 255, 0.4); /* ring-secondary/40 approx */
+}
+.tech-currency-symbol {
     font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--tech-primary);
+    margin-right: 0.5rem;
+}
+.tech-amount-field input {
+    background: transparent;
+    border: none;
+    font-size: 1.875rem;
+    font-family: var(--tech-font-display);
+    font-weight: 700;
+    color: var(--tech-primary);
+    width: 100%;
+    outline: none;
+}
+.tech-amount-field input::placeholder {
+    color: var(--tech-outline-variant);
 }
 
-.withdrawal-success p {
-    color: #64748b;
-    font-size: 1rem;
-    margin-bottom: 30px;
+.tech-quick-amounts {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+.tech-quick-amounts button {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background-color: var(--tech-surface-container-high);
+    color: var(--tech-on-surface);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.tech-quick-amounts button:hover {
+    background-color: var(--tech-surface-container-highest);
+}
+.tech-quick-amounts .tech-amt-max {
+    background-color: var(--tech-secondary);
+    color: var(--color-bg-white);
+}
+.tech-quick-amounts .tech-amt-max:hover {
+    filter: brightness(0.9);
+}
+
+/* Step 2: Method */
+.tech-methods-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+@media (min-width: 640px) {
+    .tech-methods-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.tech-method-card {
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background-color: var(--tech-surface-container-low);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.tech-method-card:hover { border-color: var(--tech-secondary); }
+
+.tech-method-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+}
+.bg-primary-container {
+    background-color: var(--tech-primary-container);
+}
+
+.tech-method-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--tech-primary);
+    display: block;
+}
+.tech-method-desc {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--tech-outline);
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* Step 3: Review */
+.tech-review-info {
+    padding: 1rem;
+    background-color: var(--tech-surface-container-low);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.tech-review-info .material-symbols-outlined { color: var(--tech-secondary); }
+.tech-review-info p {
+    font-size: 0.75rem;
+    color: var(--tech-on-surface-variant);
+    margin: 0;
     line-height: 1.5;
 }
 
-.btn-return-wallet {
-    background: white;
-    border: 1px solid #cbd5e1;
-    color: #475569;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: 600;
+.tech-btn-confirm {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--tech-outline-variant);
+    color: var(--tech-on-surface-variant);
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: not-allowed;
+}
+/* If it was active: */
+/* .tech-btn-confirm:not([disabled]) {
+    background-color: var(--tech-primary);
+    color: white;
     cursor: pointer;
-    transition: all 0.2s;
+} */
+
+/* Sidebar Summary */
+.tech-summary-card {
+    background-color: var(--tech-surface-container-low);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    position: sticky;
+    top: 6rem;
 }
 
-.btn-return-wallet:hover {
-    background: #f8fafc;
-    border-color: #94a3b8;
-    color: #1e293b;
+.tech-summary-card h3 {
+    font-size: 1.125rem;
+    font-family: var(--tech-font-display);
+    font-weight: 700;
+    color: var(--tech-primary);
+    margin: 0 0 1.5rem 0;
+}
+
+.tech-summary-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.tech-summary-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.tech-sum-label {
+    font-size: 0.875rem;
+    color: var(--tech-outline);
+}
+.tech-sum-value {
+    font-family: var(--tech-font-display);
+    font-weight: 700;
+}
+.text-primary { color: var(--tech-primary); }
+.text-secondary { color: var(--tech-secondary); }
+
+.tech-summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(195, 198, 214, 0.3);
+}
+.tech-sum-label-bold {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--tech-primary);
+}
+.tech-sum-total {
+    font-size: 1.25rem;
+    font-family: var(--tech-font-display);
+    font-weight: 800;
+}
+
+/* Security Box */
+.tech-secure-box {
+    background-color: var(--tech-surface-container-lowest);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border: 1px solid rgba(195, 198, 214, 0.2);
+}
+.tech-secure-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.tech-secure-header .material-symbols-outlined { color: var(--tech-tertiary); font-size: 1.125rem;}
+.tech-secure-header span:last-child {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--tech-tertiary);
+}
+.tech-secure-box p {
+    font-size: 10px;
+    color: var(--tech-outline);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.tech-security-visual {
+    margin-top: 2rem;
+}
+.tech-security-visual img {
+    width: 100%;
+    height: 6rem;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    filter: grayscale(100%);
+    opacity: 0.3;
+    mix-blend-mode: multiply;
 }

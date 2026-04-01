@@ -1,369 +1,525 @@
-/* Live Radar V2 Marketive Style */
-.radar-page {
-    max-width: 800px;
-    margin: 0 auto;
-    padding-bottom: 80px;
-}
-
-.page-subtitle {
-    color: #64748b;
-    margin-bottom: 24px;
-    font-size: 0.95rem;
-}
-
-/* Status Bar */
-.radar-status-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 24px;
-    border-radius: 16px;
-    margin-bottom: 24px;
-    transition: all 0.3s ease;
-}
-
-.radar-status-bar.active {
-    background: #ecfeff;
-    /* Cyan light */
-    border: 1px solid #cffafe;
-}
-
-.radar-status-bar.inactive {
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-}
-
-.status-indicator {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.status-indicator h2 {
-    margin: 0;
-    font-size: 1.1rem;
-    color: #1e293b;
-}
-
-.ping {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #94a3b8;
-}
-
-.ping.animate {
-    background: #06b6d4;
-    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
-    animation: ping-pulse 1.5s infinite;
-}
-
-@keyframes ping-pulse {
-    0% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
-    }
-
-    70% {
-        transform: scale(1);
-        box-shadow: 0 0 0 10px rgba(6, 182, 212, 0);
-    }
-
-    100% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(6, 182, 212, 0);
-    }
-}
-
-.btn-toggle-radar {
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-toggle-radar.start {
-    background: #06b6d4;
-    color: white;
-}
-
-.btn-toggle-radar.start:hover {
-    background: #0891b2;
-}
-
-.btn-toggle-radar.stop {
-    background: white;
-    color: #475569;
-    border: 1px solid #cbd5e1;
-}
-
-.btn-toggle-radar.stop:hover {
-    background: #f8fafc;
-}
-
-/* Radar Map Area */
-.radar-map-area {
-    height: 300px;
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/ec/OpenStreetMap_Douala.png');
-    background-size: cover;
-    background-position: center;
-    border-radius: 16px;
-    margin-bottom: 24px;
+/* LiveRadar CSS translated from Stitch generated Tailwind */
+.tech-liveradar-page {
     position: relative;
+    width: 100%;
+    /* Full viewport height minus the header (approximately 64px) */
+    height: calc(100vh - 64px);
     overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    background-color: #0f172a; /* Fallback dark bg */
+    border-radius: 1.5rem; /* Match other dashboard elements if inside a container, or 0 if full bleed */
+    font-family: var(--tech-font-body);
 }
 
-.map-overlay-layer {
+/* Map Background */
+.tech-liveradar-bg {
     position: absolute;
     inset: 0;
-    background: rgba(15, 23, 42, 0.4);
+    z-index: 0;
 }
 
-.technician-marker {
+.tech-map-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.6;
+    mix-blend-mode: luminosity; /* gives that dark tactical look */
+}
+
+.tech-radar-center {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.tech-icon {
-    font-size: 2.5rem;
-    color: #3b82f6;
-    position: relative;
-    z-index: 2;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-}
-
-.pulse-ring {
+.tech-radar-pulse {
     position: absolute;
-    width: 150px;
-    height: 150px;
-    border: 2px solid rgba(59, 130, 246, 0.8);
+    width: 200px;
+    height: 200px;
+    top: -100px;
+    left: -100px;
+    border: 2px solid rgba(25, 96, 163, 0.4);
     border-radius: 50%;
-    animation: radar-scan 3s infinite linear;
-    box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.2);
+    transform: scale(0);
+    animation: radarPulse 4s infinite;
 }
 
-@keyframes radar-scan {
-    0% {
-        transform: scale(0);
-        opacity: 1;
-    }
-
-    100% {
-        transform: scale(2);
-        opacity: 0;
-    }
+.tech-radar-dot {
+    position: absolute;
+    width: 1rem;
+    height: 1rem;
+    top: -0.5rem;
+    left: -0.5rem;
+    background-color: var(--tech-secondary);
+    border-radius: 50%;
+    border: 4px solid var(--color-bg-white);
+    box-shadow: 0 0 20px rgba(25, 96, 163, 0.8);
+    z-index: 10;
 }
 
-/* Incoming Feed */
-.incoming-feed {
+@keyframes radarPulse {
+    0% { transform: scale(0.1); opacity: 0.8; }
+    100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* UI Overlay */
+.tech-liveradar-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-}
-
-.empty-scan-state {
-    text-align: center;
-    padding: 40px;
-    color: #64748b;
-}
-
-.spin-icon {
-    font-size: 2rem;
-    color: #06b6d4;
-    margin-bottom: 16px;
-    animation: spin 2s linear infinite;
-}
-
-@keyframes spin {
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-/* Mission Card */
-.incoming-mission-card {
-    background: white;
-    border-radius: 16px;
-    border: 2px solid #7c3aed;
-    /* Highlight border */
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.15);
-    animation: slide-up 0.3s ease-out;
-}
-
-@keyframes slide-up {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.timer-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 4px;
-    background: #7c3aed;
-    transition: width 1s linear;
-}
-
-.card-header {
-    display: flex;
     justify-content: space-between;
-    padding: 16px 20px;
-    background: #f8fafc;
-    border-bottom: 1px solid #f1f5f9;
 }
 
-.match-score {
+/* Glass Panel Generic */
+.tech-glass-panel {
+    background: rgba(247, 250, 252, 0.85); /* Slightly brighter for contrast */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Top Status Bar */
+.tech-radar-top-status {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    pointer-events: auto;
+}
+
+.tech-status-bar {
     display: flex;
     align-items: center;
-    gap: 6px;
-    color: #06b6d4;
-    font-weight: 700;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-lg);
+    max-width: 28rem;
+    width: 100%;
 }
 
-.expires-text {
-    color: #ef4444;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.card-body {
-    padding: 20px;
-}
-
-.mission-title {
-    margin: 0 0 12px 0;
-    color: #1e293b;
-    font-size: 1.25rem;
-}
-
-.mission-location {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #475569;
-    font-size: 0.95rem;
-    margin-bottom: 16px;
-}
-
-.distance {
-    font-weight: 700;
-    color: #1e293b;
-}
-
-.route-link {
-    margin-left: auto;
-    color: #3b82f6;
-    text-decoration: none;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.problem-box {
-    background: #f1f5f9;
-    padding: 12px 16px;
-    border-radius: 8px;
-    margin-bottom: 16px;
-    color: #334155;
-    font-size: 0.95rem;
-    line-height: 1.5;
-}
-
-.ml-estimation-box {
-    border: 1px dashed #7c3aed;
-    background: #f3e8ff;
-    padding: 16px;
-    border-radius: 8px;
-}
-
-.ml-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #7c3aed;
-    font-weight: 700;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-}
-
-.ml-estimation-box p {
-    margin: 0 0 8px 0;
-    color: #475569;
-    font-size: 0.95rem;
-}
-
-.suggested-price {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: #1e293b;
-}
-
-.card-actions {
-    display: flex;
-    border-top: 1px solid #f1f5f9;
-}
-
-.btn-action {
-    flex: 1;
-    padding: 16px;
-    border: none;
-    font-size: 1.05rem;
-    font-weight: 600;
+.tech-status-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.5rem;
+    background-color: var(--tech-secondary-fixed);
+    color: var(--tech-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+}
+
+.tech-status-text {
+    flex: 1;
+}
+
+.tech-status-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--tech-outline);
+    margin: 0;
+}
+
+.tech-status-value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--tech-on-surface);
+    margin: 0;
+}
+
+.tech-status-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background-color: rgba(145, 248, 184, 0.3); /* tertiary-fixed with opacity */
+    color: var(--tech-tertiary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* Cards Container */
+.tech-radar-cards-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 1.5rem;
+    pointer-events: auto;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    /* Hide scrollbar for a cleaner look */
+    scrollbar-width: none; 
+}
+.tech-radar-cards-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Small Card */
+.tech-small-card {
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    min-width: 280px;
+    box-shadow: var(--shadow-xl);
+    transition: transform 0.2s;
     cursor: pointer;
-    transition: background 0.2s;
+}
+.tech-small-card:hover {
+    transform: scale(1.05);
 }
 
-.btn-action.reject {
-    background: white;
-    color: #64748b;
+.tech-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
 }
 
-.btn-action.reject:hover {
-    background: #f8fafc;
-    color: #ef4444;
+.tech-card-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--tech-outline);
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
 }
 
-.btn-action.accept {
-    background: #10b981;
-    color: white;
+.tech-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: #94a3b8; /* slate-400 */
 }
 
-.btn-action.accept:hover {
-    background: #059669;
+.tech-dot-pulse {
+    background-color: var(--tech-secondary);
+    animation: simplePulse 2s infinite;
 }
 
-@media (max-width: 600px) {
-    .radar-status-bar {
-        flex-direction: column;
-        gap: 16px;
-        text-align: center;
-    }
+@keyframes simplePulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
 
-    .btn-toggle-radar {
-        width: 100%;
-    }
+.tech-card-distance {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--tech-outline);
+}
+
+.tech-glass-card h4 {
+    font-family: var(--tech-font-display);
+    font-weight: 700;
+    color: var(--tech-on-surface);
+    margin: 0 0 0.25rem 0;
+}
+
+.tech-card-location {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--tech-outline);
+    margin-bottom: 1rem;
+}
+
+.tech-card-price {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--tech-secondary);
+}
+
+/* Active Mission Card */
+.tech-active-mission-card {
+    background-color: var(--tech-surface-container-lowest);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    min-width: 420px;
+    max-width: 28rem;
+    position: relative;
+    overflow: hidden;
+    /* Highlighting ring */
+    box-shadow: 0 0 0 4px rgba(25, 96, 163, 0.2); 
+    flex-shrink: 0;
+}
+
+.tech-ai-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: var(--tech-tertiary);
+    color: var(--color-bg-white);
+    padding: 0.5rem 1.5rem;
+    border-bottom-left-radius: 1rem;
+    font-family: var(--tech-font-display);
+    font-weight: 800;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    letter-spacing: -0.025em;
+}
+
+.tech-mission-header {
+    margin-bottom: 1.5rem;
+}
+
+.tech-mission-subtitle {
+    color: var(--tech-secondary);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.tech-mission-header h3 {
+    font-size: 1.5rem;
+    font-family: var(--tech-font-display);
+    font-weight: 800;
+    color: var(--tech-on-surface);
+    line-height: 1.25;
+    margin: 0;
+}
+
+.tech-mission-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+.tech-mission-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--tech-outline);
+    font-size: 0.875rem;
+}
+.tech-mission-meta .material-symbols-outlined {
+    font-size: 0.875rem;
+}
+
+/* AI Insight */
+.tech-ai-insight {
+    background-color: var(--tech-surface-container-low);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.tech-ai-icon {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    background-color: rgba(41, 68, 108, 0.1); /* primary with opacity */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tech-primary);
+}
+
+.tech-ai-label {
+    font-size: 0.625rem;
+    font-weight: 700;
+    color: var(--tech-outline);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 0.25rem 0;
+}
+
+.tech-ai-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--tech-on-surface);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.tech-mission-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+}
+
+.tech-price-label {
+    font-size: 0.75rem;
+    color: var(--tech-outline);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin: 0;
+}
+
+.tech-price-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--tech-on-surface);
+    margin: 0;
+}
+.tech-price-value span {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.tech-stars {
+    display: flex;
+    gap: 0.125rem;
+    color: var(--tech-tertiary-container);
+    margin-top: 0.25rem;
+}
+.tech-stars .material-symbols-outlined {
+    font-size: 0.875rem;
+}
+
+/* Action Area */
+.tech-mission-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.tech-btn-accept {
+    position: relative;
+    flex: 1;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    border-radius: 0.75rem;
+}
+
+.tech-btn-bg-blur {
+    position: absolute;
+    inset: 0;
+    background-color: var(--tech-primary);
+    opacity: 0.2;
+    filter: blur(10px);
+    border-radius: 0.75rem;
+    transition: opacity 0.2s;
+}
+
+.tech-btn-accept:hover .tech-btn-bg-blur {
+    opacity: 0.4;
+}
+
+.tech-btn-content {
+    position: relative;
+    background: linear-gradient(to bottom right, var(--tech-primary), var(--tech-primary-container));
+    color: var(--color-bg-white);
+    padding: 1rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    overflow: hidden;
+}
+
+/* Timer Circular */
+.tech-timer-container {
+    position: relative;
+    width: 4rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tech-timer-svg {
+    width: 4rem;
+    height: 4rem;
+    transform: rotate(-90deg);
+}
+
+.tech-timer-svg circle {
+    fill: transparent;
+    stroke-width: 4;
+}
+
+.tech-timer-bg {
+    stroke: var(--tech-surface-container);
+}
+
+.tech-timer-progress {
+    stroke: var(--tech-secondary);
+    stroke-linecap: round;
+    /* Circumference = 2 * pi * 28 ≈ 175.9 */
+    stroke-dasharray: 175.9;
+    /* 70% offset ≈ 52.7 */
+    stroke-dashoffset: 52.7;
+    transition: stroke-dashoffset 0.35s;
+}
+
+.tech-timer-text {
+    position: absolute;
+    font-size: 1.125rem;
+    font-weight: 700;
+    font-family: var(--tech-font-display);
+    color: var(--tech-on-surface);
+}
+
+/* Contextual Controls Map Overlay */
+.tech-radar-controls {
+    position: absolute;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    pointer-events: auto;
+    z-index: 20;
+}
+
+.tech-control-btn {
+    width: 3rem;
+    height: 3rem;
+    background-color: var(--tech-surface-container-lowest);
+    border-radius: 50%;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tech-outline);
+    border: 1px solid var(--tech-surface-variant);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.tech-control-btn:hover {
+    background-color: var(--tech-surface-container-low);
+}
+
+.tech-controls-divider {
+    height: 1px;
+    width: 2rem;
+    background-color: var(--tech-outline-variant);
+    margin: 0.5rem auto;
+}
+
+.tech-control-primary {
+    background-color: var(--tech-secondary);
+    color: var(--color-bg-white);
+    border: none;
+}
+.tech-control-primary:hover {
+    background-color: var(--tech-secondary);
+    opacity: 0.9;
 }

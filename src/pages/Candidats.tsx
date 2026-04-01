@@ -1,5 +1,4 @@
 import React from 'react';
-import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import HeroCarousel from '../components/common/HeroCarousel';
 import '../styles/variables.css';
@@ -104,7 +103,6 @@ const candidatSlides = [
 const Candidats: React.FC = () => {
     return (
         <div className="page-candidats">
-            <Header />
 
             {/* Hero Carousel */}
             <HeroCarousel
