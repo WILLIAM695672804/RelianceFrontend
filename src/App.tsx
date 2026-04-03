@@ -33,6 +33,7 @@ import RequestWizard from './pages/client/RequestWizard/RequestWizard';
 import MatchingResults from './pages/client/MatchingResults';
 import MissionTracking from './pages/client/MissionTracking';
 import ClientWallet from './pages/client/ClientWallet';
+import ProfileSettings from './pages/client/ProfileSettings';
 
 // Technician Space
 import TechnicianLayout from './layouts/TechnicianLayout';
@@ -101,7 +102,7 @@ function App() {
             <Route path="matching" element={<MatchingResults />} />
             <Route path="suivi" element={<MissionTracking />} />
             <Route path="wallet" element={<ClientWallet />} />
-            <Route path="profil" element={<div style={{padding: '30px'}}>Profil client en construction...</div>} />
+            <Route path="profil" element={<ProfileSettings />} />
           </Route>
 
           {/* Espace Technicien — Protégé par rôle */}

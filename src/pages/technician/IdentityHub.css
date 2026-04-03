@@ -775,3 +775,144 @@
     opacity: 0.9;
     transform: translateY(-1px);
 }
+
+/* Profile Edit Modal Specifics */
+.tech-edit-modal {
+    max-width: 550px;
+}
+
+.tech-avatar-edit-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.tech-avatar-edit-preview {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: visible;
+    border: 4px solid white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.tech-avatar-edit-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.tech-avatar-upload-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--tech-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 3px solid white;
+    transition: all 0.2s;
+}
+
+.tech-avatar-upload-btn:hover {
+    transform: scale(1.1);
+    background: var(--tech-primary-container);
+    color: var(--tech-primary);
+}
+
+.tech-avatar-edit-zone p {
+    font-size: 0.85rem;
+    color: var(--tech-on-surface-variant);
+}
+
+.tech-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.tech-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.tech-form-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.tech-form-item label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--tech-on-surface);
+}
+
+.tech-form-item input, 
+.tech-form-item textarea {
+    padding: 0.75rem;
+    border: 1px solid var(--tech-outline-variant);
+    border-radius: 0.75rem;
+    background: var(--tech-surface-container-low);
+    color: var(--tech-on-surface);
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.tech-form-item input:focus, 
+.tech-form-item textarea:focus {
+    outline: none;
+    border-color: var(--tech-primary);
+}
+
+.tech-form-item textarea {
+    resize: none;
+}
+
+/* Specialties Selection Grid (Edit Modal) */
+.tech-form-competences-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    padding-top: 0.5rem;
+}
+
+.tech-form-comp-tag {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: 2rem;
+    border: 1.5px solid var(--tech-outline-variant);
+    background: var(--tech-surface-container-low);
+    color: var(--tech-on-surface-variant);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tech-form-comp-tag:hover {
+    border-color: var(--tech-primary);
+    background: var(--tech-primary-container);
+    color: var(--tech-primary);
+    transform: translateY(-1px);
+}
+
+.tech-form-comp-tag.active {
+    background: linear-gradient(135deg, var(--tech-primary), var(--tech-primary-container));
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.tech-form-comp-tag.active:hover {
+    transform: scale(1.05);
+}

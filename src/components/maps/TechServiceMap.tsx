@@ -9,7 +9,7 @@ interface TechServiceMapProps {
     city?: string;
 }
 
-const TechServiceMap: React.FC<TechServiceMapProps> = ({ latitude, longitude, radiusInKm = 50, city }) => {
+const TechServiceMap: React.FC<TechServiceMapProps> = ({ latitude, longitude, radiusInKm = 5, city }) => {
     // Helper to generate a GeoJSON circle
     const createGeoJSONCircle = (center: [number, number], radiusInKm: number, points: number = 64) => {
         const coords = {

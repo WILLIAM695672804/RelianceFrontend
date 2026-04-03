@@ -12,6 +12,7 @@ const ClientModernLayout: React.FC = () => {
         if (path.includes('demande')) return 'Nouvelle Demande';
         if (path.includes('suivi')) return 'Suivi Live';
         if (path.includes('wallet')) return 'Portefeuille';
+        if (path.includes('profil')) return 'Mon Profil';
         return 'Espace Client';
     };
 
@@ -20,6 +21,7 @@ const ClientModernLayout: React.FC = () => {
         { to: "/espace-client/demande", icon: "build_circle", label: "Demande" },
         { to: "/espace-client/suivi", icon: "radar", label: "Suivi" },
         { to: "/espace-client/wallet", icon: "account_balance_wallet", label: "Wallet" },
+        { to: "/espace-client/profil", icon: "person", label: "Profil" },
     ];
 
     return (

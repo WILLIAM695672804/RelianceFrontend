@@ -5,8 +5,12 @@ export const getTechProfile = async () => {
     return response.data.data;
 };
 
-export const updateTechProfile = async (data: { bio?: string, phone?: string, languages?: string[] }) => {
-    const response = await api.put('/technician/profile', data);
+export const updateTechProfile = async (data: FormData) => {
+    // Note: We use POST with FormData. If the backend route is PUT, 
+    // we must ensure the FormData contains '_method': 'PUT'.
+    const response = await api.post('/technician/profile', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
     return response.data.data;
 };
 

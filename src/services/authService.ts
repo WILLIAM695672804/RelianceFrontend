@@ -75,6 +75,36 @@ const authService = {
         const response = await api.put('/auth/profile/password', data);
         return response.data;
     },
+
+    async updateAvatar(file: File): Promise<any> {
+        const formData = new FormData();
+        formData.append('avatar', file);
+        const response = await api.post('/auth/profile/avatar', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    },
+
+    // Location Management
+    async getLocations(): Promise<any[]> {
+        const response = await api.get('/locations');
+        return response.data;
+    },
+
+    async addLocation(data: { label: string; address: string; city?: string; is_default?: boolean }): Promise<any> {
+        const response = await api.post('/locations', data);
+        return response.data;
+    },
+
+    async deleteLocation(id: string): Promise<void> {
+        await api.delete(`/locations/${id}`);
+    },
+
+    async setDefaultLocation(id: string): Promise<void> {
+        await api.patch(`/locations/${id}/default`);
+    },
 };
 
 export default authService;

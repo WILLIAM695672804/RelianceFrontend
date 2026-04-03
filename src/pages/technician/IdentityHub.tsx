@@ -1,8 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTechProfile, updateTechLocation } from '../../services/technicianService';
+import { getTechProfile, updateTechLocation, updateTechProfile } from '../../services/technicianService';
 import TechServiceMap from '../../components/maps/TechServiceMap';
 import './IdentityHub.css';
+
+const competencesOptions = [
+    'Électricité',
+    'Plomberie',
+    'Climatisation / Froid',
+    'Vidéosurveillance (CCTV)',
+    'Alarme & Sécurité',
+    'Contrôle d\'accès',
+    'Réseau & Câblage',
+    'GPS & Tracking',
+    'Maintenance générale',
+    'Installation solaire',
+];
 
 interface ProfileData {
     id: string;
@@ -14,7 +27,7 @@ interface ProfileData {
     rating: number;
     num_reviews: number;
     bio: string;
-    languages: string[];
+    competences: string[];
     kyc_approved: boolean;
     service_perimeter: {
         city: string | null;
@@ -33,6 +46,18 @@ const IdentityHub: React.FC = () => {
     const [isUpdatingLocation, setIsUpdatingLocation] = useState(false);
     const [isRadiusModalOpen, setIsRadiusModalOpen] = useState(false);
     const [tempRadius, setTempRadius] = useState(50);
+    
+    // Edit Profile Logic
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editForm, setEditForm] = useState({
+        name: '',
+        phone: '',
+        bio: '',
+        competences: [] as string[]
+    });
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+    const [isSaving, setIsSaving] = useState(false);
     
     const navigate = useNavigate();
 
@@ -84,6 +109,65 @@ const IdentityHub: React.FC = () => {
     const handleUpdateArea = () => {
         setTempRadius(profile?.service_perimeter?.radius || 50);
         setIsRadiusModalOpen(true);
+    };
+
+    const openEditModal = () => {
+        setEditForm({
+            name: profile?.name || '',
+            phone: profile?.phone || '',
+            bio: profile?.bio || '',
+            competences: profile?.competences || []
+        });
+        setAvatarPreview(null);
+        setAvatarFile(null);
+        setIsEditModalOpen(true);
+    };
+
+    const handleCompetenceToggle = (comp: string) => {
+        setEditForm(prev => ({
+            ...prev,
+            competences: prev.competences.includes(comp)
+                ? prev.competences.filter(c => c !== comp)
+                : [...prev.competences, comp],
+        }));
+    };
+
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setAvatarFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setAvatarPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleEditProfileSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSaving(true);
+        try {
+            const formData = new FormData();
+            formData.append('_method', 'PUT'); // Laravel Spoofing
+            formData.append('name', editForm.name);
+            formData.append('phone', editForm.phone);
+            formData.append('bio', editForm.bio);
+            editForm.competences.forEach(comp => formData.append('competences[]', comp));
+            
+            if (avatarFile) {
+                formData.append('avatar', avatarFile);
+            }
+
+            const updatedProfile = await updateTechProfile(formData);
+            setProfile(updatedProfile);
+            setIsEditModalOpen(false);
+        } catch (error) {
+            console.error("Error updating profile", error);
+            alert('Could not update profile.');
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     if (isLoading) {
@@ -151,7 +235,7 @@ const IdentityHub: React.FC = () => {
                     <div className="tech-profile-card">
                         <div className="tech-card-header">
                             <h3>Personal Information</h3>
-                            <button className="tech-btn-text">
+                            <button className="tech-btn-text" onClick={openEditModal}>
                                 <span className="material-symbols-outlined text-sm">edit</span> Edit
                             </button>
                         </div>
@@ -169,12 +253,12 @@ const IdentityHub: React.FC = () => {
                                 <p>{profile?.phone || "Not provided"}</p>
                             </div>
                             <div className="tech-info-item">
-                                <label>Languages</label>
+                                <label>Specialties</label>
                                 <div className="tech-lang-tags">
-                                    {profile?.languages && profile.languages.length > 0 ? (
-                                        profile.languages.map((lang, idx) => <span key={idx}>{lang}</span>)
+                                    {profile?.competences && profile.competences.length > 0 ? (
+                                        profile.competences.map((comp, idx) => <span key={idx}>{comp}</span>)
                                     ) : (
-                                        <span>English</span>
+                                        <span>General Maintenance</span>
                                     )}
                                 </div>
                             </div>
@@ -249,6 +333,85 @@ const IdentityHub: React.FC = () => {
                         </div>
                     </div>
 
+                    {/* Edit Profile Modal */}
+                    {isEditModalOpen && (
+                        <div className="tech-radius-modal-overlay">
+                            <div className="tech-radius-modal tech-edit-modal">
+                                <div className="tech-radius-modal-header">
+                                    <h3>Edit Professional Profile</h3>
+                                    <button onClick={() => setIsEditModalOpen(false)}>×</button>
+                                </div>
+                                <form onSubmit={handleEditProfileSubmit} className="tech-edit-form">
+                                    <div className="tech-avatar-edit-zone">
+                                        <div className="tech-avatar-edit-preview">
+                                            <img 
+                                                src={avatarPreview || profile?.avatar_url || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"} 
+                                                alt="Avatar preview" 
+                                            />
+                                            <label className="tech-avatar-upload-btn">
+                                                <input type="file" onChange={handleAvatarChange} accept="image/*" hidden />
+                                                <span className="material-symbols-outlined">photo_camera</span>
+                                            </label>
+                                        </div>
+                                        <p>Click the camera to upload a professional photo</p>
+                                    </div>
+
+                                    <div className="tech-form-grid">
+                                        <div className="tech-form-item">
+                                            <label>Full Name</label>
+                                            <input 
+                                                type="text" 
+                                                value={editForm.name} 
+                                                onChange={(e) => setEditForm({...editForm, name: e.target.value})}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="tech-form-item">
+                                            <label>Phone Number</label>
+                                            <input 
+                                                type="text" 
+                                                value={editForm.phone} 
+                                                onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="tech-form-item">
+                                        <label>Professional Bio</label>
+                                        <textarea 
+                                            value={editForm.bio} 
+                                            onChange={(e) => setEditForm({...editForm, bio: e.target.value})}
+                                            rows={2}
+                                            placeholder="Write a brief professional introduction..."
+                                        />
+                                    </div>
+
+                                    <div className="tech-form-item">
+                                        <label>Professional Specialties</label>
+                                        <div className="tech-form-competences-grid">
+                                            {competencesOptions.map(comp => (
+                                                <button 
+                                                    key={comp} 
+                                                    type="button"
+                                                    className={`tech-form-comp-tag ${editForm.competences.includes(comp) ? 'active' : ''}`}
+                                                    onClick={() => handleCompetenceToggle(comp)}
+                                                >
+                                                    {comp}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="tech-radius-modal-footer">
+                                        <button type="button" className="tech-btn-cancel" onClick={() => setIsEditModalOpen(false)}>Cancel</button>
+                                        <button type="submit" className="tech-btn-confirm" disabled={isSaving}>
+                                            {isSaving ? 'Saving...' : 'Save Profile'}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Settings & Status (Side Column) */}

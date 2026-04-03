@@ -10,6 +10,7 @@ interface AuthUser {
     name: string;
     email: string;
     phone?: string;
+    avatar_url?: string;
     roles: { name: string }[];
     technician_profile?: any;
     agency_profile?: any;
