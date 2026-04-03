@@ -1,9 +1,115 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getTechSkills, getAllSkillsCatalog, addTechSkill, deleteTechSkill } from '../../services/technicianService';
 import './SkillMatrix.css';
+
+interface Skill {
+    id: string;
+    name: string;
+    category: string;
+    proficiency: number;
+    experience_years: number;
+}
+
+interface CatalogSkill {
+    id: string;
+    name: string;
+    category: string;
+}
 
 const SkillMatrix: React.FC = () => {
     const navigate = useNavigate();
+    
+    // States
+    const [skills, setSkills] = useState<Skill[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    
+    // Modal Form States
+    const [catalog, setCatalog] = useState<CatalogSkill[]>([]);
+    const [selectedSkillId, setSelectedSkillId] = useState('');
+    const [proficiency, setProficiency] = useState(3);
+    const [experience, setExperience] = useState(1);
+    const [isAdding, setIsAdding] = useState(false);
+
+    useEffect(() => {
+        fetchSkills();
+        fetchCatalog();
+    }, []);
+
+    const fetchSkills = async () => {
+        try {
+            const data = await getTechSkills();
+            setSkills(data);
+        } catch (error) {
+            console.error("Erreur chargement skills", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchCatalog = async () => {
+        try {
+            const data = await getAllSkillsCatalog();
+            setCatalog(data);
+        } catch (error) {
+            console.error("Erreur chargement catalogue", error);
+        }
+    };
+
+    const handleAddSkill = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedSkillId) return;
+
+        setIsAdding(true);
+        try {
+            await addTechSkill({
+                skill_id: selectedSkillId,
+                proficiency: proficiency,
+                experience_years: experience
+            });
+            setIsModalOpen(false);
+            fetchSkills(); // Refresh the list
+        } catch (error) {
+            console.error("Erreur ajout skill", error);
+            alert("Erreur lors de l'ajout.");
+        } finally {
+            setIsAdding(false);
+        }
+    };
+
+    const handleDeleteSkill = async (id: string) => {
+        if (!window.confirm("Remove this skill from your matrix?")) return;
+        try {
+            await deleteTechSkill(id);
+            fetchSkills();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const getProficiencyLabel = (level: number) => {
+        switch(level) {
+            case 1: return "Beginner (L1)";
+            case 2: return "Novice (L2)";
+            case 3: return "Intermediate (L3)";
+            case 4: return "Advanced (L4)";
+            case 5: return "Expert (L5)";
+            default: return "Unknown";
+        }
+    };
+
+    const getCategoryIcon = (category: string) => {
+        if(category.toLowerCase().includes('hvac')) return 'hvac';
+        if(category.toLowerCase().includes('electrical') || category.toLowerCase().includes('wiring')) return 'bolt';
+        if(category.toLowerCase().includes('smart')) return 'grid_view';
+        if(category.toLowerCase().includes('plumbing')) return 'plumbing';
+        return 'build';
+    };
+
+    if (isLoading) {
+        return <div className="tech-matrix-page" style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>Loading...</div>;
+    }
 
     return (
         <div className="tech-matrix-page">
@@ -39,7 +145,7 @@ const SkillMatrix: React.FC = () => {
                         <span className="material-symbols-outlined">upload_file</span>
                         Upload Cert
                     </button>
-                    <button className="tech-btn-primary">
+                    <button className="tech-btn-primary" onClick={() => setIsModalOpen(true)}>
                         <span className="material-symbols-outlined">add</span>
                         Add New Skill
                     </button>
@@ -106,87 +212,47 @@ const SkillMatrix: React.FC = () => {
                     <div className="tech-skills-section">
                         <div className="tech-skills-header">
                             <h2>Verified Technical Skills</h2>
-                            <span>6 Total Skills</span>
+                            <span>{skills.length} Total Skills</span>
                         </div>
                         
                         <div className="tech-skills-grid">
-                            {/* Skill Card 1 */}
-                            <div className="tech-skill-card">
-                                <div className="tech-skill-card-top">
-                                    <div className="tech-skill-icon">
-                                        <span className="material-symbols-outlined">hvac</span>
+                            
+                            {skills.map((skill) => (
+                                <div className="tech-skill-card" key={skill.id}>
+                                    <div className="tech-skill-card-top">
+                                        <div className="tech-skill-icon">
+                                            <span className="material-symbols-outlined">{getCategoryIcon(skill.category)}</span>
+                                        </div>
+                                        <span className="tech-verified-badge">
+                                            <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>verified</span>
+                                            Verified
+                                        </span>
                                     </div>
-                                    <span className="tech-verified-badge">
-                                        <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>verified</span>
-                                        Verified
-                                    </span>
+                                    <h4>{skill.name}</h4>
+                                    <p className="tech-skill-desc">{skill.category}</p>
+                                    <div className="tech-skill-stats">
+                                        <div>
+                                            <p className="tech-stat-label">Proficiency</p>
+                                            <p className="tech-stat-value">{getProficiencyLabel(skill.proficiency)}</p>
+                                        </div>
+                                        <div style={{textAlign: 'right'}}>
+                                            <p className="tech-stat-label">Experience</p>
+                                            <p className="tech-stat-value">{skill.experience_years} Years</p>
+                                        </div>
+                                    </div>
+                                    <div style={{marginTop: '1rem', textAlign: 'right'}}>
+                                        <button 
+                                            onClick={() => handleDeleteSkill(skill.id)}
+                                            style={{ color: '#ef4444', background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '4px'}}
+                                        >
+                                            <span className="material-symbols-outlined" style={{fontSize: '1rem'}}>delete</span> Remove
+                                        </button>
+                                    </div>
                                 </div>
-                                <h4>HVAC Maintenance</h4>
-                                <p className="tech-skill-desc">Industrial Grade Systems & Chilling Plants</p>
-                                <div className="tech-skill-stats">
-                                    <div>
-                                        <p className="tech-stat-label">Proficiency</p>
-                                        <p className="tech-stat-value">Expert (L5)</p>
-                                    </div>
-                                    <div style={{textAlign: 'right'}}>
-                                        <p className="tech-stat-label">Experience</p>
-                                        <p className="tech-stat-value">8 Years</p>
-                                    </div>
-                                </div>
-                            </div>
+                            ))}
 
-                            {/* Skill Card 2 */}
-                            <div className="tech-skill-card">
-                                <div className="tech-skill-card-top">
-                                    <div className="tech-skill-icon bg-secondary">
-                                        <span className="material-symbols-outlined">bolt</span>
-                                    </div>
-                                    <span className="tech-verified-badge">
-                                        <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>verified</span>
-                                        Verified
-                                    </span>
-                                </div>
-                                <h4>Industrial Wiring</h4>
-                                <p className="tech-skill-desc">High Voltage Control Panels & Layouts</p>
-                                <div className="tech-skill-stats">
-                                    <div>
-                                        <p className="tech-stat-label">Proficiency</p>
-                                        <p className="tech-stat-value">Intermediate (L3)</p>
-                                    </div>
-                                    <div style={{textAlign: 'right'}}>
-                                        <p className="tech-stat-label">Experience</p>
-                                        <p className="tech-stat-value">4 Years</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Skill Card 3 */}
-                            <div className="tech-skill-card">
-                                <div className="tech-skill-card-top">
-                                    <div className="tech-skill-icon bg-tertiary">
-                                        <span className="material-symbols-outlined">grid_view</span>
-                                    </div>
-                                    <span className="tech-verified-badge">
-                                        <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>verified</span>
-                                        Verified
-                                    </span>
-                                </div>
-                                <h4>Smart Grid Integration</h4>
-                                <p className="tech-skill-desc">IoT Sensor Deployment & Telemetry</p>
-                                <div className="tech-skill-stats">
-                                    <div>
-                                        <p className="tech-stat-label">Proficiency</p>
-                                        <p className="tech-stat-value">Expert (L4)</p>
-                                    </div>
-                                    <div style={{textAlign: 'right'}}>
-                                        <p className="tech-stat-label">Experience</p>
-                                        <p className="tech-stat-value">3 Years</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Skill Card 4 (Action) */}
-                            <div className="tech-skill-card-empty">
+                            {/* Action Card */}
+                            <div className="tech-skill-card-empty" onClick={() => setIsModalOpen(true)} style={{cursor: 'pointer'}}>
                                 <div className="tech-empty-icon">
                                     <span className="material-symbols-outlined">add_circle</span>
                                 </div>
@@ -279,6 +345,75 @@ const SkillMatrix: React.FC = () => {
 
                 </section>
             </div>
+
+            {/* Modal de création */}
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex justify-center items-center">
+                    <div className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl relative border border-slate-200">
+                        <button 
+                            className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-transparent"
+                            onClick={() => setIsModalOpen(false)}
+                            style={{ border: 'none', background: 'none', cursor: 'pointer' }}
+                        >
+                            <span className="material-symbols-outlined">close</span>
+                        </button>
+
+                        <h2 className="text-2xl font-bold mb-6 text-slate-900">Add New Skill</h2>
+                        
+                        <form onSubmit={handleAddSkill} className="flex flex-col gap-5">
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-700 mb-1">Select Skill</label>
+                                <select 
+                                    className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-slate-800"
+                                    value={selectedSkillId}
+                                    onChange={(e) => setSelectedSkillId(e.target.value)}
+                                    required
+                                >
+                                    <option value="" disabled>-- Choose from catalog --</option>
+                                    {catalog.map(cat => (
+                                        <option key={cat.id} value={cat.id}>{cat.name} ({cat.category})</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-700 mb-1">Proficiency Level (1-5)</label>
+                                <input 
+                                    type="range" 
+                                    min="1" 
+                                    max="5" 
+                                    value={proficiency}
+                                    onChange={(e) => setProficiency(Number(e.target.value))}
+                                    className="w-full"
+                                />
+                                <div className="text-center font-medium mt-1 text-slate-900">{getProficiencyLabel(proficiency)}</div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-700 mb-1">Years of Experience</label>
+                                <input 
+                                    type="number"
+                                    min="0"
+                                    max="50"
+                                    value={experience}
+                                    onChange={(e) => setExperience(Number(e.target.value))}
+                                    className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-slate-800"
+                                    required
+                                />
+                            </div>
+
+                            <button 
+                                type="submit" 
+                                className="mt-4 w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex justify-center items-center gap-2"
+                                disabled={isAdding || !selectedSkillId}
+                                style={{ border: 'none', cursor: isAdding ? 'wait' : 'pointer' }}
+                            >
+                                {isAdding ? "Adding..." : "Confirm & Add Skill"}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

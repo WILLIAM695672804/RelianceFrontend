@@ -37,7 +37,7 @@ const MissionTracking: React.FC = () => {
             {/* Background Map Layer */}
             <div className="mt-map-layer">
                 <img 
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDm36n7rgR8kElN9wqdt_3SEJ8UTWEOo9gU3oAJ8q2Vf-B1tx8x03Bh-rPEIEU0EuRMNP7kUQSVHuHVWeEPDMYBbG9dBZIETykA8PDZyH85pIWA1bwkhMhVafQe75b2HofDTyWrJGi-tv6lKg2Vb7UQ05LTgaQ-5qr7sQqK0X13fZMpb20IcoNUT_FK5ucnTEPQfE-AwUyq014d9gPZ8ywjVrGGRzcuQ39xEKueAW0D1b8RcByNc0Z6KnM7MsZjfzGBIMS93XtJQ"
+                    src="https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?auto=format&fit=crop&w=2000&q=80"
                     alt="Map Background"
                 />
                 

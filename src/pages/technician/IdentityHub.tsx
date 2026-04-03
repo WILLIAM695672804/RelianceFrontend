@@ -1,10 +1,94 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getTechProfile, updateTechLocation } from '../../services/technicianService';
+import TechServiceMap from '../../components/maps/TechServiceMap';
 import './IdentityHub.css';
+
+interface ProfileData {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    avatar_url: string | null;
+    verified: boolean;
+    rating: number;
+    num_reviews: number;
+    bio: string;
+    languages: string[];
+    kyc_approved: boolean;
+    service_perimeter: {
+        city: string | null;
+        address: string | null;
+        zones: string[];
+        latitude: number | null;
+        longitude: number | null;
+        radius: number;
+    };
+}
 
 const IdentityHub: React.FC = () => {
     const [isFabOpen, setIsFabOpen] = useState(false);
+    const [profile, setProfile] = useState<ProfileData | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isUpdatingLocation, setIsUpdatingLocation] = useState(false);
+    const [isRadiusModalOpen, setIsRadiusModalOpen] = useState(false);
+    const [tempRadius, setTempRadius] = useState(50);
+    
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const data = await getTechProfile();
+                setProfile(data);
+            } catch (error) {
+                console.error("Failed to load profile", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchProfile();
+    }, []);
+
+    const confirmUpdateArea = () => {
+        if (!navigator.geolocation) {
+            alert('Geolocation is not supported by your browser');
+            return;
+        }
+
+        setIsRadiusModalOpen(false);
+        setIsUpdatingLocation(true);
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                try {
+                    const { latitude, longitude } = position.coords;
+                    // Mocking city retrieval from coordinates for now
+                    const city = profile?.service_perimeter?.city || "Cameroon Sector"; 
+                    const updatedProfile = await updateTechLocation(latitude, longitude, city, tempRadius);
+                    setProfile(updatedProfile);
+                } catch (error) {
+                    console.error("Error updating location", error);
+                    alert('Could not update location.');
+                } finally {
+                    setIsUpdatingLocation(false);
+                }
+            },
+            (error) => {
+                console.error("Geolocation error", error);
+                alert('Could not retrieve your location.');
+                setIsUpdatingLocation(false);
+            }
+        );
+    };
+
+    const handleUpdateArea = () => {
+        setTempRadius(profile?.service_perimeter?.radius || 50);
+        setIsRadiusModalOpen(true);
+    };
+
+    if (isLoading) {
+        return <div className="tech-profile-page" style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>Loading Profile...</div>;
+    }
 
     return (
         <div className="tech-profile-page">
@@ -20,7 +104,7 @@ const IdentityHub: React.FC = () => {
                 <div className="tech-profile-avatar-wrapper">
                     <img 
                         className="tech-profile-avatar" 
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDApdzrtN2CY7S77Ae06vC61H1UTCsmCZMrTYTl7tQrRezWqxBN9NV9Vtezvji2jOiGOcZMRAmdh8lh5iFsWkgXW6ltEfqrfBN7-oqMJzX8mbLgXbwkA0XXANGkBn5p09BpYCZvwp26K2c3AXEK-pJ9_iLLycYP0EJadP26RWwfn-jmEK1hgkSyKHKG_MFsu2bSxl1KulTBBDJ1Ki_2JCSW26S3FdbYk9kwGtytV3dIhJ4hfBK8QnKmKJ68ioZkSO8ydn6-BjDonw" 
+                        src={profile?.avatar_url || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"} 
                         alt="Professional headshot" 
                     />
                     <div className="tech-profile-verified-badge">
@@ -30,16 +114,16 @@ const IdentityHub: React.FC = () => {
 
                 <div className="tech-profile-info">
                     <div className="tech-profile-name-row">
-                        <h2>Marcus T.</h2>
-                        <span className="tech-badge-verified">Verified Specialist</span>
+                        <h2>{profile?.name || "Professional"}</h2>
+                        {profile?.verified && <span className="tech-badge-verified">Verified Specialist</span>}
                     </div>
-                    <p className="tech-profile-id">Tech ID: 88291</p>
+                    <p className="tech-profile-id">Tech ID: {profile?.id.split('-')[0].toUpperCase()}</p>
                     
                     <div className="tech-profile-stats">
                         <div className="tech-stat-item">
                             <span className="material-symbols-outlined text-yellow-500" style={{fontVariationSettings: "'FILL' 1"}}>star</span>
-                            <span className="tech-stat-bold">4.9</span>
-                            <span className="tech-stat-muted">(124 Reviews)</span>
+                            <span className="tech-stat-bold">{(profile?.rating ?? 0) > 0 ? profile?.rating : 'New'}</span>
+                            <span className="tech-stat-muted">({profile?.num_reviews ?? 0} Reviews)</span>
                         </div>
                         <div className="tech-stat-divider"></div>
                         <div className="tech-stat-item text-muted">
@@ -74,27 +158,30 @@ const IdentityHub: React.FC = () => {
                         <div className="tech-info-grid">
                             <div className="tech-info-item">
                                 <label>Full Name</label>
-                                <p>Marcus Thompson</p>
+                                <p>{profile?.name}</p>
                             </div>
                             <div className="tech-info-item">
                                 <label>Email Address</label>
-                                <p>m.thompson@reliance.tech</p>
+                                <p>{profile?.email}</p>
                             </div>
                             <div className="tech-info-item">
                                 <label>Phone Number</label>
-                                <p>+237 670 000 000</p>
+                                <p>{profile?.phone || "Not provided"}</p>
                             </div>
                             <div className="tech-info-item">
                                 <label>Languages</label>
                                 <div className="tech-lang-tags">
-                                    <span>French</span>
-                                    <span>English</span>
+                                    {profile?.languages && profile.languages.length > 0 ? (
+                                        profile.languages.map((lang, idx) => <span key={idx}>{lang}</span>)
+                                    ) : (
+                                        <span>English</span>
+                                    )}
                                 </div>
                             </div>
                         </div>
                         <div className="tech-info-bio">
                             <label>Professional Bio</label>
-                            <p>Certified HVAC Specialist with over 8 years of experience in high-precision cooling systems and residential maintenance. Dedicated to providing efficient, long-lasting solutions for modern infrastructure. Specialist in advanced thermodynamic diagnostics and green energy installations.</p>
+                            <p>{profile?.bio || "No professional bio provided yet. Add one to increase your match rate!"}</p>
                         </div>
                     </div>
 
@@ -102,40 +189,63 @@ const IdentityHub: React.FC = () => {
                     <div className="tech-profile-card">
                         <div className="tech-card-header">
                             <h3>Service Perimeter</h3>
-                            <button className="tech-btn-text">
-                                <span className="material-symbols-outlined text-sm">map</span> Update Area
+                            <button className="tech-btn-text" onClick={handleUpdateArea} disabled={isUpdatingLocation}>
+                                <span className="material-symbols-outlined text-sm">map</span> 
+                                {isUpdatingLocation ? 'Locating...' : 'Update Area'}
                             </button>
                         </div>
                         
-                        <div className="tech-map-container">
-                            <img 
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-gHUd6twbBX2413_MezCAV3lIOOCxNuBFYLE5w5x7HWbILrIaMhpF66yxknjNKVWYIwhuNj_3VsXxDk-nMiHR3LP7qKtYjmGJvXllz8JZO2JyJGGz-oyxbbUM84RYL4DUm7rY3hFEauYyuf-jPAr7EgD7aaFRZwG4YnffT0vNb8VlKqtob3C3abMeQ1Kp7IwIrWycSVRTok1cfu3Y3IDITY_-trZxN-4IasC4J3C0LDnlfq0jo99bUktKLCudVk3QUJC68mcjrA" 
-                                alt="Service Zones" 
+                        <div className="tech-map-container" style={{ height: '300px' }}>
+                            <TechServiceMap 
+                                latitude={profile?.service_perimeter?.latitude || 4.0511} 
+                                longitude={profile?.service_perimeter?.longitude || 9.7679} 
+                                city={profile?.service_perimeter?.city || 'Cameroon Hub'}
+                                radiusInKm={profile?.service_perimeter?.radius || 50}
                             />
-                            <div className="tech-map-overlay-tint"></div>
-                            {/* Map Overlay UI */}
-                            <div className="tech-map-ui">
-                                <span className="material-symbols-outlined text-secondary">location_on</span>
-                                <div>
-                                    <p className="tech-map-ui-title">Active Hub</p>
-                                    <p className="tech-map-ui-desc">Douala Metropolitan Area</p>
-                                </div>
-                            </div>
                         </div>
 
+                        {/* Radius Selection Modal */}
+                        {isRadiusModalOpen && (
+                            <div className="tech-radius-modal-overlay">
+                                <div className="tech-radius-modal">
+                                    <div className="tech-radius-modal-header">
+                                        <h3>Service Perimeter</h3>
+                                        <button onClick={() => setIsRadiusModalOpen(false)}>×</button>
+                                    </div>
+                                    <div className="tech-radius-modal-body">
+                                        <p>Select your intervention radius to update your service area.</p>
+                                        <div className="tech-radius-options">
+                                            {[5, 10, 25, 50, 100].map((r) => (
+                                                <button 
+                                                    key={r} 
+                                                    className={`tech-radius-opt ${tempRadius === r ? 'active' : ''}`}
+                                                    onClick={() => setTempRadius(r)}
+                                                >
+                                                    {r} km
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="tech-radius-modal-footer">
+                                        <button className="tech-btn-cancel" onClick={() => setIsRadiusModalOpen(false)}>Cancel</button>
+                                        <button className="tech-btn-confirm" onClick={confirmUpdateArea}>
+                                            {isUpdatingLocation ? 'Updating...' : 'Update & Localize'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="tech-zone-tags">
-                            <span className="tech-zone-tag">
-                                <span className="material-symbols-outlined">check_circle</span> Akwa
-                            </span>
-                            <span className="tech-zone-tag">
-                                <span className="material-symbols-outlined">check_circle</span> Bonamoussadi
-                            </span>
-                            <span className="tech-zone-tag">
-                                <span className="material-symbols-outlined">check_circle</span> Bali
-                            </span>
-                            <span className="tech-zone-tag">
-                                <span className="material-symbols-outlined">check_circle</span> Deido
-                            </span>
+                            {profile?.service_perimeter?.zones && profile.service_perimeter.zones.length > 0 ? (
+                                profile.service_perimeter.zones.map((zone, idx) => (
+                                    <span className="tech-zone-tag" key={idx}>
+                                        <span className="material-symbols-outlined">check_circle</span> {zone}
+                                    </span>
+                                ))
+                            ) : (
+                                <span className="tech-zone-tag tech-zone-empty">Updating coordinates allows for {profile?.service_perimeter?.radius || 50}km radius matching.</span>
+                            )}
                         </div>
                     </div>
 
@@ -151,10 +261,10 @@ const IdentityHub: React.FC = () => {
                         </div>
                         <div className="z-10 relative">
                             <h4>KYC Status</h4>
-                            <p>Your identity documents are fully verified.</p>
+                            <p>{profile?.kyc_approved ? 'Your identity documents are fully verified.' : 'Your identity documents are pending reflection.'}</p>
                             <div className="tech-kyc-status">
-                                <span className="tech-kyc-dot"></span>
-                                <span className="tech-kyc-label">Fully Compliant</span>
+                                <span className={`tech-kyc-dot ${!profile?.kyc_approved ? 'pending' : ''}`}></span>
+                                <span className="tech-kyc-label">{profile?.kyc_approved ? 'Fully Compliant' : 'Pending KYC'}</span>
                             </div>
                             <button className="tech-btn-kyc">View Credentials</button>
                         </div>

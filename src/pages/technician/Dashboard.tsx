@@ -1,7 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { getTechProfile } from '../../services/technicianService';
+import TechServiceMap from '../../components/maps/TechServiceMap';
 import './Dashboard.css';
 
 const Dashboard: React.FC = () => {
+    const [profile, setProfile] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const data = await getTechProfile();
+                setProfile(data);
+            } catch (error) {
+                console.error("Failed to load profile on dashboard", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchProfile();
+    }, []);
+
+    if (isLoading) {
+        return <div className="tech-dashboard-container" style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>Loading Dashboard...</div>;
+    }
+
     return (
         <div className="tech-dashboard-container">
             {/* Left & Center Main Content */}
@@ -11,7 +34,7 @@ const Dashboard: React.FC = () => {
                 <div className="tech-welcome-header">
                     <div className="tech-welcome-title">
                         <h1>Technician Dashboard</h1>
-                        <p>Welcome back, Marc. You have 3 interventions scheduled for today.</p>
+                        <p>Welcome back, {profile?.name || 'Professional'}. You have 0 pending interventions.</p>
                     </div>
                     <div>
                         <button className="tech-online-btn">
@@ -106,34 +129,18 @@ const Dashboard: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Intervention Zones (Map) */}
-                    <div className="tech-map-card">
-                        <div className="tech-map-overlay-title">
+                    {/* Intervention Zones (MapLibre) */}
+                    <div className="tech-map-card" style={{ padding: 0, position: 'relative', overflow: 'hidden' }}>
+                        <div className="tech-map-overlay-title" style={{ zIndex: 5, pointerEvents: 'none' }}>
                             <h4>Intervention Zones</h4>
-                            <p>4 active missions in Douala Nord</p>
+                            <p>Live matching within your service radius</p>
                         </div>
-                        <img 
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0gBIJ9nTFD81hXqd_BbPM4BqdpeeMM334wXKQH4X027q_1TRB3_u2ZYqRCON_6PeBffErRyVm9NC4Xa8-6qMWogtNHkrpLhmHabXvKzfWV99VJ_14BMGOtXUidOzib5PyUWAU1LI7gOOOp-rxj_HBknyDKyo-cc2xYKkbzkO5Unz3P0zUmvZl5NIP4bwMvEBorTkGezE80v98g2Y_ncrbi5dhwDixomo4mWTB7W8v3n9xVjHdBS0mvyedBOsqBbX_ADK0_VcL9g" 
-                            alt="Map View" 
-                            className="tech-map-bg"
+                        <TechServiceMap 
+                            latitude={profile?.service_perimeter?.latitude || 4.0511} 
+                            longitude={profile?.service_perimeter?.longitude || 9.7679} 
+                            city={profile?.service_perimeter?.city || 'Cameroon Hub'}
+                            radiusInKm={50}
                         />
-                        {/* Interactive Markers */}
-                        <div className="tech-map-marker" style={{ top: '33%', left: '25%' }}>
-                            <div className="tech-map-marker-pulse"></div>
-                            <div className="tech-map-marker-icon blue">
-                                <span className="material-symbols-outlined">electric_bolt</span>
-                            </div>
-                        </div>
-                        <div className="tech-map-marker" style={{ top: '50%', left: '66%' }}>
-                            <div className="tech-map-marker-icon green">
-                                <span className="material-symbols-outlined">home_repair_service</span>
-                            </div>
-                        </div>
-                        <div className="tech-map-marker" style={{ bottom: '25%', left: '50%' }}>
-                            <div className="tech-map-marker-icon orange">
-                                <span className="material-symbols-outlined">priority_high</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
 

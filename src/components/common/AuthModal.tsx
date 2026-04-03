@@ -1,23 +1,23 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { FaTimes, FaGoogle, FaEnvelope, FaUserTie } from 'react-icons/fa';
+import { FaTimes, FaEnvelope, FaUserTie } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import './AuthModal.css';
 
 const AuthModal: React.FC = () => {
-    const { isAuthModalOpen, closeAuthModal, loginAsClient, loginAsTechnician } = useAuth();
+    const { isAuthModalOpen, closeAuthModal } = useAuth();
     const navigate = useNavigate();
 
     if (!isAuthModalOpen) return null;
 
     const handleLoginClient = () => {
-        loginAsClient();
-        navigate('/client/dashboard'); // Redirection ou maintien sur place
+        closeAuthModal();
+        navigate('/connexion');
     };
 
     const handleLoginTech = () => {
-        loginAsTechnician();
-        navigate('/technicien/dashboard');
+        closeAuthModal();
+        navigate('/connexion');
     };
 
     return (
@@ -31,11 +31,8 @@ const AuthModal: React.FC = () => {
                 <p className="auth-modal-subtitle">Connectez-vous pour interagir avec les artisans, aimer leurs réalisations et demander des interventions.</p>
 
                 <div className="auth-modal-actions">
-                    <button className="btn-auth-social google">
-                        <FaGoogle /> Continuer avec Google
-                    </button>
                     <button className="btn-auth-social email" onClick={handleLoginClient}>
-                        <FaEnvelope /> Continuer avec Email (Client)
+                        <FaEnvelope /> Se connecter / S'inscrire
                     </button>
 
                     <div className="auth-divider">

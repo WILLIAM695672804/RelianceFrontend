@@ -1,7 +1,67 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { getTechCalendar, removeScheduleException } from '../../services/scheduleService';
 import './Planning.css';
 
 const Planning: React.FC = () => {
+    const [calendarData, setCalendarData] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        fetchCalendar();
+    }, []);
+
+    const fetchCalendar = async () => {
+        try {
+            const data = await getTechCalendar();
+            setCalendarData(data);
+        } catch (error) {
+            console.error("Failed to fetch calendar", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleDeleteException = async (id: string) => {
+        if(!window.confirm("Delete this absence/exception?")) return;
+        try {
+            await removeScheduleException(id);
+            fetchCalendar();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    if (isLoading) {
+        return <div className="tech-planning-page" style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>Loading Calendar...</div>;
+    }
+
+    const data = calendarData || {};
+    const exceptions = data.exceptions || [];
+    const recurringSlots = data.recurring_slots || [];
+    const appointments = data.appointments || [];
+    const insights = data.insights || { capacity_percent: 0, booked_hours: 0, total_hours: 45 };
+
+    // Helper to get week days
+    const getWeekDays = () => {
+        const now = new Date();
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1)); // Start on Monday
+        
+        return Array.from({ length: 7 }).map((_, i) => {
+            const date = new Date(startOfWeek);
+            date.setDate(startOfWeek.getDate() + i);
+            return {
+                name: date.toLocaleDateString('en-US', { weekday: 'short' }),
+                number: date.getDate(),
+                isToday: date.toDateString() === now.toDateString(),
+                isWeekend: i >= 5
+            };
+        });
+    };
+
+    const weekDays = getWeekDays();
+    const weekRange = `${weekDays[0].name} ${weekDays[0].number} - ${weekDays[6].name} ${weekDays[6].number}, ${new Date().getFullYear()}`;
+
     return (
         <div className="tech-planning-page">
             {/* Header Section */}
@@ -22,7 +82,7 @@ const Planning: React.FC = () => {
                 <div className="tech-planning-calendar">
                     <div className="tech-cal-header">
                         <div className="tech-cal-nav">
-                            <h3>Oct 23 - Oct 29, 2023</h3>
+                            <h3>{weekRange}</h3>
                             <div className="tech-cal-buttons">
                                 <button><span className="material-symbols-outlined">chevron_left</span></button>
                                 <button><span className="material-symbols-outlined">chevron_right</span></button>
@@ -59,94 +119,25 @@ const Planning: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Mon */}
-                        <div className="tech-cal-day-col">
-                            <div className="tech-cal-day-header">
-                                <span className="tech-day-name">Mon</span>
-                                <span className="tech-day-number tech-day-active">23</span>
-                            </div>
-                            <div className="tech-cal-day-slots">
-                                <div className="tech-slot-available tech-slot-h32">
-                                    <p>Available</p>
+                        {/* Dynamic Days */}
+                        {weekDays.map((day, idx) => (
+                            <div className={`tech-cal-day-col ${day.isWeekend ? 'tech-day-disabled' : ''}`} key={idx}>
+                                <div className="tech-cal-day-header">
+                                    <span className="tech-day-name">{day.name}</span>
+                                    <span className={`tech-day-number ${day.isToday ? 'tech-day-active tech-color-secondary' : 'tech-day-active'}`}>
+                                        {day.number}
+                                    </span>
                                 </div>
-                                <div className="tech-slot-booked tech-slot-h20">
-                                    <p className="tech-slot-type">Booked</p>
-                                    <p className="tech-slot-title">HVAC Repair #402</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Tue */}
-                        <div className="tech-cal-day-col">
-                            <div className="tech-cal-day-header">
-                                <span className="tech-day-name">Tue</span>
-                                <span className="tech-day-number tech-day-active">24</span>
-                            </div>
-                            <div className="tech-cal-day-slots">
-                                <div className="tech-slot-available tech-slot-h48">
-                                    <p>Available</p>
+                                <div className="tech-cal-day-slots">
+                                    {/* For now, we show "Empty" or "Available" state if no specific appts are mapped to the grid */}
+                                    {day.isWeekend ? null : (
+                                        <div className="tech-slot-available tech-slot-hfull" style={{ height: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.4 }}>
+                                            <p style={{ fontSize: '0.75rem', textAlign: 'center' }}>Available<br/>(No Interventions)</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
-                        </div>
-
-                        {/* Wed */}
-                        <div className="tech-cal-day-col">
-                            <div className="tech-cal-day-header">
-                                <span className="tech-day-name">Wed</span>
-                                <span className="tech-day-number tech-day-active tech-color-secondary">25</span>
-                            </div>
-                            <div className="tech-cal-day-slots tech-slot-relative">
-                                <div className="tech-slot-ooo-bg">
-                                    <span className="tech-ooo-watermark">OUT OF OFFICE</span>
-                                </div>
-                                <div className="tech-slot-ooo-block">
-                                    <p>Personal Leave</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Thu */}
-                        <div className="tech-cal-day-col">
-                            <div className="tech-cal-day-header">
-                                <span className="tech-day-name">Thu</span>
-                                <span className="tech-day-number tech-day-active">26</span>
-                            </div>
-                            <div className="tech-cal-day-slots">
-                                <div className="tech-slot-available tech-slot-h24"></div>
-                                <div className="tech-slot-booked tech-slot-h24">
-                                    <p className="tech-slot-type">Booked</p>
-                                    <p className="tech-slot-title">Wiring Audit</p>
-                                </div>
-                                <div className="tech-slot-available tech-slot-h24"></div>
-                            </div>
-                        </div>
-
-                        {/* Fri */}
-                        <div className="tech-cal-day-col">
-                            <div className="tech-cal-day-header">
-                                <span className="tech-day-name">Fri</span>
-                                <span className="tech-day-number tech-day-active">27</span>
-                            </div>
-                            <div className="tech-cal-day-slots">
-                                <div className="tech-slot-available tech-slot-h64"></div>
-                            </div>
-                        </div>
-
-                        {/* Sat */}
-                        <div className="tech-cal-day-col tech-day-disabled">
-                            <div className="tech-cal-day-header">
-                                <span className="tech-day-name">Sat</span>
-                                <span className="tech-day-number tech-day-active">28</span>
-                            </div>
-                        </div>
-
-                        {/* Sun */}
-                        <div className="tech-cal-day-col tech-day-disabled">
-                            <div className="tech-cal-day-header">
-                                <span className="tech-day-name">Sun</span>
-                                <span className="tech-day-number tech-day-active">29</span>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
 
@@ -159,20 +150,21 @@ const Planning: React.FC = () => {
                             <h4>Recurring Slots</h4>
                         </div>
                         <div className="tech-panel-body">
-                            <div className="tech-slot-item">
-                                <div>
-                                    <p className="tech-slot-label">Weekdays</p>
-                                    <p className="tech-slot-time">08:00 — 17:00</p>
+                            {recurringSlots.length > 0 ? (
+                                recurringSlots.map((slot: any) => (
+                                    <div className="tech-slot-item" key={slot.id}>
+                                        <div>
+                                            <p className="tech-slot-label">{slot.day_of_week}</p>
+                                            <p className="tech-slot-time">{slot.start_time} — {slot.end_time}</p>
+                                        </div>
+                                        <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1", color: "var(--tech-tertiary)"}}>check_circle</span>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="py-4 text-center">
+                                    <p className="text-xs text-slate-500 mb-3">No recurring shifts defined.</p>
                                 </div>
-                                <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1", color: "var(--tech-tertiary)"}}>check_circle</span>
-                            </div>
-                            <div className="tech-slot-item tech-item-disabled">
-                                <div>
-                                    <p className="tech-slot-label">Saturdays</p>
-                                    <p className="tech-slot-time">Unavailable</p>
-                                </div>
-                                <button className="tech-btn-edit">Edit</button>
-                            </div>
+                            )}
                             <button className="tech-btn-add-shift">+ Add Shift</button>
                         </div>
                     </div>
@@ -181,28 +173,30 @@ const Planning: React.FC = () => {
                     <div className="tech-panel-card tech-panel-shadow">
                         <h4 className="tech-exceptions-title">Exceptions</h4>
                         <div className="tech-exceptions-list">
-                            <div className="tech-exception-item">
-                                <div className="tech-exc-icon" style={{backgroundColor: "rgba(186, 26, 26, 0.2)", color: "var(--tech-error)"}}>
-                                    <span className="material-symbols-outlined">event_busy</span>
-                                </div>
-                                <div>
-                                    <p className="tech-exc-title">Dental Appointment</p>
-                                    <p className="tech-exc-time">Oct 25, 09:00 - 12:00</p>
-                                    <span className="tech-exc-badge" style={{backgroundColor: "var(--tech-error-container)", color: "var(--tech-on-error-container)"}}>Personal</span>
-                                </div>
-                            </div>
-                            <div className="tech-exception-item">
-                                <div className="tech-exc-icon" style={{backgroundColor: "rgba(125, 182, 255, 0.2)", color: "var(--tech-secondary)"}}>
-                                    <span className="material-symbols-outlined">beach_access</span>
-                                </div>
-                                <div>
-                                    <p className="tech-exc-title">Annual Leave</p>
-                                    <p className="tech-exc-time">Nov 12 - Nov 19</p>
-                                    <span className="tech-exc-badge" style={{backgroundColor: "var(--tech-secondary-fixed)", color: "var(--tech-on-secondary-fixed-variant)"}}>Vacation</span>
-                                </div>
-                            </div>
+                            {exceptions.length > 0 ? (
+                                exceptions.map((exc: any) => (
+                                    <div className="tech-exception-item" key={exc.id}>
+                                        <div className="tech-exc-icon" style={{backgroundColor: "rgba(186, 26, 26, 0.2)", color: "var(--tech-error)"}}>
+                                            <span className="material-symbols-outlined">event_busy</span>
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            <p className="tech-exc-title">{exc.reason || 'Exception'}</p>
+                                            <p className="tech-exc-time">{new Date(exc.start_ts).toLocaleDateString()} - {new Date(exc.end_ts).toLocaleDateString()}</p>
+                                            <span className="tech-exc-badge" style={{backgroundColor: "var(--tech-error-container)", color: "var(--tech-on-error-container)"}}>Absent</span>
+                                        </div>
+                                        <button 
+                                            onClick={() => handleDeleteException(exc.id)}
+                                            style={{ color: '#ef4444', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', padding: 0 }}
+                                        >
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.25rem' }}>delete</span>
+                                        </button>
+                                    </div>
+                                ))
+                            ) : (
+                                <p style={{ fontSize: '0.875rem', color: 'var(--tech-on-surface-variant)' }}>No upcoming absences.</p>
+                            )}
                         </div>
-                        <button className="tech-btn-request-time">
+                        <button className="tech-btn-request-time" onClick={() => alert("Modal Add Exception not fully plugged in this sprint, use API (Postman)")}>
                             <span className="material-symbols-outlined">add</span> Request Time Off
                         </button>
                     </div>
@@ -213,14 +207,14 @@ const Planning: React.FC = () => {
                             <p className="tech-insights-subtitle">Weekly Capacity</p>
                             <div className="tech-insights-bar-wrapper">
                                 <div className="tech-insights-bar-labels">
-                                    <span>72% Booked</span>
-                                    <span>32 / 45 hrs</span>
+                                    <span>{insights.capacity_percent}% Booked</span>
+                                    <span>{insights.booked_hours} / {insights.total_hours} hrs</span>
                                 </div>
                                 <div className="tech-insights-bar-bg">
-                                    <div className="tech-insights-bar-fill" style={{width: '72%'}}></div>
+                                    <div className="tech-insights-bar-fill" style={{width: `${insights.capacity_percent}%`}}></div>
                                 </div>
                             </div>
-                            <p className="tech-insights-desc">You have 3 emergency slots remaining for the current period.</p>
+                            <p className="tech-insights-desc">You have {Math.max(0, insights.total_hours - insights.booked_hours)} free hours available this week.</p>
                         </div>
                         <div className="tech-insights-bg-icon">
                             <span className="material-symbols-outlined">query_stats</span>
@@ -236,31 +230,28 @@ const Planning: React.FC = () => {
                     <button>View All</button>
                 </div>
                 <div className="tech-upcoming-grid">
-                    <div className="tech-appt-card">
-                        <div className="tech-appt-card-header">
-                            <span className="tech-appt-time">Today • 14:30</span>
-                            <button className="tech-btn-more"><span className="material-symbols-outlined">more_vert</span></button>
+                    
+                    {appointments.length > 0 ? (
+                        appointments.map((appt: any) => (
+                            <div className="tech-appt-card" key={appt.id}>
+                                <div className="tech-appt-card-header">
+                                    <span className="tech-appt-time">{appt.scheduled_start}</span>
+                                    <button className="tech-btn-more"><span className="material-symbols-outlined">more_vert</span></button>
+                                </div>
+                                <h5>{appt.title}</h5>
+                                <p className="tech-appt-address">{appt.address}</p>
+                                <div className="tech-appt-client">
+                                    <img src="https://ui-avatars.com/api/?name=" alt="Client"/>
+                                    <span>{appt.client_name}</span>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="tech-appt-card" style={{ borderStyle: 'dashed', background: 'transparent', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
+                             <span className="material-symbols-outlined" style={{ fontSize: '2rem', color: 'var(--tech-on-surface-variant)', opacity: 0.5 }}>calendar_today</span>
+                             <p style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--tech-on-surface-variant)' }}>No upcoming interventions</p>
                         </div>
-                        <h5>HVAC Maintenance</h5>
-                        <p className="tech-appt-address">482 Oak Ridge Dr, Seattle</p>
-                        <div className="tech-appt-client">
-                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVw1Z9QfL4FQwVKXN-1O8w_OwxjAqyDikaPgedRtFZSeson0-0h1Qq2j0xaKDxc0T-4-BbMbVfeSL39lJZ5UV5Lx7vLX3wTmOvZ0T43qSirE6lIgyV1mjEwdifzW9_1PJapi6Ui7c34w-_QWpy-w8aMLSWe5S29Od0j9ANRCSARm4WO-y_gfJOsE9n3-DG9jx9zKNTHIm0AK_4mHaxldgpP6ZEqQcl3jyfMA46lQ8zxpNCdBfsLFjcj8HeEwwsJv4zmyicxIqqLA" alt="Client"/>
-                            <span>Marcus Thorne</span>
-                        </div>
-                    </div>
-
-                    <div className="tech-appt-card">
-                        <div className="tech-appt-card-header">
-                            <span className="tech-appt-time">Oct 26 • 09:00</span>
-                            <button className="tech-btn-more"><span className="material-symbols-outlined">more_vert</span></button>
-                        </div>
-                        <h5>Smart Panel Install</h5>
-                        <p className="tech-appt-address">901 Pine St, Vancouver</p>
-                        <div className="tech-appt-client">
-                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhmE0tjyW-2yw-hDWOsMCBbXo3SLXqjNRFW3HUVGs5FBKyrwk1GRRqGt989yQ7BfKIzXDXmRsBV3M8SjB2WTx4C35hpuINvqDVbmaQAmEpyisjg-zqd3Gh04W2tteeWVbBxXfLeL7zPcSq41nZ_h3U_OXk5jRg4Sq3s2wS9nvVDm0VZFMphj_-tQfd7_gi19ZZCzB5iPtKkM4QyaEPIEJ9djNTNqW9z0BKYlG319If3aKcK0DYHksjdA00xVZICRy5pzchjn3tgQ" alt="Client"/>
-                            <span>Elena Vance</span>
-                        </div>
-                    </div>
+                    )}
 
                     <div className="tech-appt-card-empty">
                         <span className="material-symbols-outlined">add_circle</span>

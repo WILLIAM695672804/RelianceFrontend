@@ -49,6 +49,7 @@
 }
 
 .dm-card h3 {
+    color: rgba(255, 255, 255, 0.85);
     font-size: var(--text-lg);
     font-weight: 700;
     margin-bottom: var(--spacing-md);

@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import UserAccountMenu from '../components/layout/UserAccountMenu';
 import './ClientModernLayout.css';
 
 const ClientModernLayout: React.FC = () => {
@@ -31,9 +32,7 @@ const ClientModernLayout: React.FC = () => {
                     <div className="tech-topbar-actions">
                         <span className="material-symbols-outlined">notifications</span>
                         <span className="material-symbols-outlined">settings</span>
-                        <div className="tech-topbar-avatar">
-                            <span className="material-symbols-outlined">account_circle</span>
-                        </div>
+                        <UserAccountMenu />
                     </div>
                 </div>
             </header>

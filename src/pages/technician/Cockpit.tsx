@@ -1,4 +1,5 @@
 import React from 'react';
+import TechServiceMap from '../../components/maps/TechServiceMap';
 import './Cockpit.css';
 
 const Cockpit: React.FC = () => {
@@ -77,10 +78,11 @@ const Cockpit: React.FC = () => {
                             <h3>Active Journey</h3>
                             <button>Details</button>
                         </div>
-                        <div className="tech-journey-map">
-                            <img 
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPFRNenKddq33CGxXf-1L0wqscdIWB3SC5ixwMSa7ZjYyXrB37KLV5mzIQrk36--R1ggLyQ26LIMPfyEQuxv-KSSBMdDBUghII6Lds-n5q_A0ua50tTBcZRcq-BTyomdMQZBP41dhPwjM7M4-N-Hip572-vKAtx507-85JvN0cnu6FTKLFgcO4UxMm6mwk9y_XwPAO9ElMVDKFLjjl9bK4BT1_wtWxAkCAVmV1tvR6NgVpAZl8kBlb1vrZpLy0vaB-lrFPW4v2_A" 
-                                alt="Map view" 
+                        <div className="tech-journey-map" style={{ height: '300px' }}>
+                            <TechServiceMap 
+                                latitude={4.0511} // Fixed for Cockpit demo
+                                longitude={9.7679}
+                                radiusInKm={5} 
                             />
                             <div className="tech-journey-route">
                                 <span className="material-symbols-outlined" style={{fontVariationSettings:"'FILL' 1", color: '#2563eb'}}>location_on</span>

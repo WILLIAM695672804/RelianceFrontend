@@ -26,9 +26,7 @@ import InscriptionEntreprise from './pages/inscription/InscriptionEntreprise';
 import PublicLayout from './layouts/PublicLayout';
 
 // Client Space
-import ClientLayout from './layouts/ClientLayout';
 import ClientModernLayout from './layouts/ClientModernLayout';
-import ClientDashboard from './pages/client/ClientDashboard';
 import ClientDashboardModern from './pages/client/ClientDashboardModern';
 import Auth2FA from './pages/client/Auth2FA';
 import RequestWizard from './pages/client/RequestWizard/RequestWizard';
@@ -57,6 +55,10 @@ import IdentityHub from './pages/technician/IdentityHub';
 // import SocialWall from './pages/technician/SocialWall';
 // import Trophies from './pages/technician/Trophies';
 import SlaAuditLog from './pages/technician/SlaAuditLog';
+
+// Auth Guard
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import LogoutConfirmModal from './components/auth/LogoutConfirmModal';
 
 function App() {
   return (
@@ -87,29 +89,27 @@ function App() {
             <Route path="/artisan/:id" element={<PublicTechProfile />} />
           </Route>
 
-          {/* Espace Client (Unsecured for testing) */}
-          <Route path="/client" element={<ClientLayout />}>
-            <Route path="dashboard" element={<ClientDashboard />} />
-            <Route path="demande" element={<RequestWizard />} />
-            <Route path="suivi" element={<MissionTracking />} />
-            <Route path="wallet" element={<ClientWallet />} />
-            {/* Placeholders for upcoming sprints */}
-            <Route path="profil" element={<div style={{padding: '30px'}}>Profil client en construction...</div>} />
-          </Route>
-
-          {/* NOUVEL Espace Client (Modern Aesthetic - Route Séparée) */}
-          <Route path="/espace-client" element={<ClientModernLayout />}>
+          {/* Espace Client — Protégé par rôle */}
+          <Route path="/espace-client" element={
+            <ProtectedRoute allowedRoles={['client']}>
+              <ClientModernLayout />
+            </ProtectedRoute>
+          }>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<ClientDashboardModern />} />
             <Route path="demande" element={<RequestWizard />} />
             <Route path="matching" element={<MatchingResults />} />
-            {/* Using old components temporarily until they are modernized */}
             <Route path="suivi" element={<MissionTracking />} />
             <Route path="wallet" element={<ClientWallet />} />
+            <Route path="profil" element={<div style={{padding: '30px'}}>Profil client en construction...</div>} />
           </Route>
 
-          {/* Espace Technicien (Unsecured for testing) */}
-          <Route path="/technicien" element={<TechnicianLayout />}>
+          {/* Espace Technicien — Protégé par rôle */}
+          <Route path="/technicien" element={
+            <ProtectedRoute allowedRoles={['technicien']}>
+              <TechnicianLayout />
+            </ProtectedRoute>
+          }>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="competences" element={<SkillMatrix />} />
             {/* <Route path="zone" element={<ZoneIntervention />} />
@@ -130,10 +130,10 @@ function App() {
             <Route path="audit-sla" element={<SlaAuditLog />} />
             {/* <Route path="social" element={<SocialWall />} />
             <Route path="trophees" element={<Trophies />} /> */}
-            {/* Add other routes here as we build them */}
           </Route>
         </Routes>
         <AuthModal />
+        <LogoutConfirmModal />
       </AuthProvider>
     </Router>
   );

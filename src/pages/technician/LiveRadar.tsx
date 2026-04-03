@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import TechServiceMap from '../../components/maps/TechServiceMap';
 import './LiveRadar.css';
 
 const LiveRadar: React.FC = () => {
@@ -9,10 +10,10 @@ const LiveRadar: React.FC = () => {
         <div className="tech-liveradar-page">
             {/* Map Background with Radar Effects */}
             <div className="tech-liveradar-bg">
-                <img 
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqHpc662YF-Vfzi000xYXvWl4QgzICZdDv8GsDp06Y6GkWL3axhISPkj_bv-WMNgNQAZDd8TUswihU1JqQynztR4GjfTNGKerU37dSE_C0sYK6pUSZvcpXPPBYL895l15zj2-FWkvdLyCEk7sC90digjswN5GLU2BI496JHgScCaa15hcRGwD8-BuQDu8WLoaVl3oEsVYfjobpNkycYktfaVXUun1qqXnwbMuNkdaVhrlvgRiPEnoGpyFqQc-jYG_k7n0Ks7u_FA" 
-                    alt="Map Background" 
-                    className="tech-map-img"
+                <TechServiceMap 
+                    latitude={3.8480} // Default Yaoundé
+                    longitude={11.5021}
+                    radiusInKm={10} 
                 />
                 <div className="tech-radar-center">
                     <div className="tech-radar-pulse" style={{ animationDelay: '0s' }}></div>
