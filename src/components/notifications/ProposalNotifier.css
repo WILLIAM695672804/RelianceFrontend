@@ -1,0 +1,102 @@
+/* ProposalNotifier Toast */
+.pn-toast {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 9999;
+    animation: pnSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pn-toast-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1.25rem;
+    background: rgba(26, 54, 93, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 16px;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(99, 102, 241, 0.15);
+    min-width: 300px;
+    max-width: 420px;
+}
+
+.pn-toast-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #fff;
+    animation: pnPulse 1.5s ease infinite;
+}
+
+.pn-toast-content { flex: 1; }
+
+.pn-toast-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 2px;
+}
+
+.pn-toast-sub {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+}
+
+.pn-toast-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.pn-toast-btn {
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    border: none;
+    color: #fff;
+    padding: 0.4rem 0.85rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.pn-toast-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+}
+
+.pn-toast-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+.pn-toast-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+@keyframes pnSlideIn {
+    from { opacity: 0; transform: translateX(40px) scale(0.95); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes pnPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
+}

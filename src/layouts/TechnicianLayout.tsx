@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import UserAccountMenu from '../components/layout/UserAccountMenu';
+import ProposalNotifier from '../components/notifications/ProposalNotifier';
 import './TechnicianLayout.css';
 
 const TechnicianLayout: React.FC = () => {
@@ -45,6 +46,9 @@ const TechnicianLayout: React.FC = () => {
             <main className="tech-layout-main">
                 <Outlet />
             </main>
+
+            {/* Global proposal notifications for technician */}
+            <ProposalNotifier />
 
             {/* Floating Horizontal NavBar — Centered at bottom */}
             <nav className="tech-floating-nav">

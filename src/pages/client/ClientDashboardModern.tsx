@@ -1,13 +1,22 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import authService from '../../services/authService';
 import './ClientDashboardModern.css';
 
 const ClientDashboardModern: React.FC = () => {
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
     const { user } = useAuth();
     const [resendStatus, setResendStatus] = React.useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [showVerifiedModal, setShowVerifiedModal] = React.useState(searchParams.get('verified') === '1');
+
+    // Clear the query param when modal is dismissed
+    const dismissVerifiedModal = () => {
+        setShowVerifiedModal(false);
+        searchParams.delete('verified');
+        setSearchParams(searchParams, { replace: true });
+    };
 
     const handleResendEmail = async () => {
         setResendStatus('loading');
@@ -266,6 +275,30 @@ const ClientDashboardModern: React.FC = () => {
             <button className="sm-fab" onClick={() => navigate('/espace-client/demande')}>
                 <span className="material-symbols-outlined">add</span>
             </button>
+
+            {/* Email Verified Confirmation Modal */}
+            {showVerifiedModal && (
+                <div className="verified-modal-overlay" onClick={dismissVerifiedModal}>
+                    <div className="verified-modal glass-card" onClick={e => e.stopPropagation()}>
+                        <div className="verified-modal-icon">
+                            <span className="material-symbols-outlined" style={{ fontSize: '48px', color: 'var(--ds-primary)', fontVariationSettings: "'FILL' 1" }}>
+                                verified
+                            </span>
+                        </div>
+                        <h3 style={{ margin: '16px 0 8px', fontSize: '1.25rem', fontWeight: 600 }}>E-mail verifie !</h3>
+                        <p style={{ color: 'var(--ds-on-surface-variant)', marginBottom: '24px', fontSize: '0.9rem' }}>
+                            Votre adresse e-mail a ete confirmee avec succes. Toutes les fonctionnalites sont maintenant accessibles.
+                        </p>
+                        <button
+                            className="btn-primary"
+                            style={{ width: '100%', padding: '12px', borderRadius: '12px', fontSize: '0.95rem' }}
+                            onClick={dismissVerifiedModal}
+                        >
+                            Continuer
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

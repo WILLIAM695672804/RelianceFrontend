@@ -1,30 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TechServiceMap from '../../components/maps/TechServiceMap';
 import './LiveRadar.css';
 import matchingService from '../../services/matchingService';
 import type { Proposal } from '../../services/matchingService';
 
+const SSE_URL = 'http://127.0.0.1:8000/api/v1/proposals/stream';
+
 const LiveRadar: React.FC = () => {
     const navigate = useNavigate();
     const [proposals, setProposals] = useState<Proposal[]>([]);
     const [acting, setActing] = useState<string | null>(null);
 
-    const fetchProposals = async () => {
+    const fetchProposals = useCallback(async () => {
         try {
             const result = await matchingService.getProposals();
             const data = result?.data?.data ?? result?.data ?? [];
-            setProposals(Array.isArray(data) ? data.filter((p: Proposal) => p.status === 'pending') : []);
-        } catch (err) {
-            // Silent fail — map still renders
+            const pending = Array.isArray(data) ? data.filter((p: Proposal) => p.status === 'pending') : [];
+            setProposals(pending);
+        } catch {
+            // Silent fail
         }
-    };
+    }, []);
 
+    // Initial load + SSE for real-time updates
     useEffect(() => {
         fetchProposals();
-        const interval = setInterval(fetchProposals, 30000); // Poll every 30s
-        return () => clearInterval(interval);
-    }, []);
+
+        const token = localStorage.getItem('auth_token');
+        if (!token) return;
+
+        const es = new EventSource(`${SSE_URL}?token=${encodeURIComponent(token)}`);
+
+        es.addEventListener('new_proposal', () => {
+            // Re-fetch proposals when a new one arrives
+            fetchProposals();
+        });
+
+        es.onerror = () => {
+            es.close();
+            // Fallback: retry connection after 5s
+            const timeout = setTimeout(() => {
+                // Component may have unmounted, just let useEffect re-run
+            }, 5000);
+            return () => clearTimeout(timeout);
+        };
+
+        return () => es.close();
+    }, [fetchProposals]);
 
     const handleAccept = async (proposalId: string) => {
         setActing(proposalId);
@@ -190,7 +213,7 @@ const LiveRadar: React.FC = () => {
                     <span className="material-symbols-outlined" style={{fontVariationSettings:"'FILL' 1"}}>my_location</span>
                 </button>
             </div>
-            
+
         </div>
     );
 };

@@ -57,6 +57,13 @@ import IdentityHub from './pages/technician/IdentityHub';
 // import Trophies from './pages/technician/Trophies';
 import SlaAuditLog from './pages/technician/SlaAuditLog';
 
+// Admin Space
+import AdminLayout from './layouts/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminTechnicians from './pages/admin/AdminTechnicians';
+import AdminKyc from './pages/admin/AdminKyc';
+
 // Auth Guard
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import LogoutConfirmModal from './components/auth/LogoutConfirmModal';
@@ -131,6 +138,18 @@ function App() {
             <Route path="audit-sla" element={<SlaAuditLog />} />
             {/* <Route path="social" element={<SocialWall />} />
             <Route path="trophees" element={<Trophies />} /> */}
+          </Route>
+          {/* Espace Admin — Protege par role */}
+          <Route path="/admin" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminLayout />
+            </ProtectedRoute>
+          }>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="technicians" element={<AdminTechnicians />} />
+            <Route path="kyc" element={<AdminKyc />} />
           </Route>
         </Routes>
         <AuthModal />

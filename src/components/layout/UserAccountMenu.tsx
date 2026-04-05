@@ -27,7 +27,7 @@ const UserAccountMenu: React.FC = () => {
     }, []);
 
     // Format du rôle pour l'affichage
-    const displayRole = role === 'client' ? 'Client' : role === 'technicien' ? 'Technicien' : role === 'agence' ? 'Agence' : 'Utilisateur';
+    const displayRole = role === 'client' ? 'Client' : role === 'technicien' ? 'Technicien' : role === 'agence' ? 'Agence' : role === 'admin' ? 'Administrateur' : 'Utilisateur';
 
     return (
         <div className="user-account-menu-container" ref={dropdownRef}>

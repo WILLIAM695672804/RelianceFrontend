@@ -33,6 +33,7 @@ interface AuthContextType {
     login: (data: LoginData) => Promise<{ requires_2fa?: boolean; user?: AuthUser }>;
     register: (data: RegisterData) => Promise<void>;
     logout: () => Promise<void>;
+    refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -102,6 +103,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setIsAuthModalOpen(false);
     }, []);
 
+    const refreshUser = useCallback(async (): Promise<void> => {
+        try {
+            const data = await authService.getMe();
+            setUser(data.user);
+        } catch {
+            // silently fail
+        }
+    }, []);
+
     const logout = useCallback(async (): Promise<void> => {
         try {
             await authService.logout();
@@ -129,6 +139,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             login,
             register,
             logout,
+            refreshUser,
         }}>
             {children}
         </AuthContext.Provider>

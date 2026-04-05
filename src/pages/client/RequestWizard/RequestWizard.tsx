@@ -63,12 +63,23 @@ const RequestWizard: React.FC = () => {
         else navigate('/espace-client/dashboard');
     };
 
+    const [scanCount, setScanCount] = useState(0);
+    const [matchRequestId, setMatchRequestId] = useState<string | null>(null);
+    const [matchData, setMatchData] = useState<any>(null);
+
     const startAiAnalysis = async () => {
         setIsSubmitting(true);
         setStep(4);
-        
+        setAnalysisPhase(0);
+        setRealMatchedTechnicians([]);
+        setScanCount(0);
+
         try {
-            // Step 1: Create the request with the new API contract
+            // Phase 0 -> 1 : Diagnostic (2s)
+            await delay(2000);
+            setAnalysisPhase(1);
+
+            // Create the request during phase 1 animation
             const createResponse = await requestService.create({
                 title: formData.title,
                 description: formData.description,
@@ -79,34 +90,56 @@ const RequestWizard: React.FC = () => {
             });
 
             const requestId = createResponse?.data?.id ?? createResponse?.id;
+            setMatchRequestId(requestId);
 
-            // Animation de l'IA (phases visuelles pendant l'appel matching)
-            setTimeout(() => setAnalysisPhase(1), 800);
-            setTimeout(() => setAnalysisPhase(2), 2000);
+            // Phase 1 -> 2 : Evaluation (2.5s)
+            await delay(2500);
+            setAnalysisPhase(2);
 
-            // Step 2: Trigger the matching engine
+            // Trigger matching during phase 2
             const matchResult = await requestService.match(requestId);
-            if (matchResult?.data?.technicians) {
-                setRealMatchedTechnicians(matchResult.data.technicians);
+            const technicians = matchResult?.data?.technicians || [];
+            setMatchData(matchResult?.data);
+
+            // Phase 2 -> 3 : Recherche de techniciens - reveal them progressively
+            await delay(2000);
+            setAnalysisPhase(3);
+
+            // Reveal technicians one by one with delay
+            for (let i = 0; i < technicians.length; i++) {
+                await delay(800);
+                setScanCount(prev => prev + 1);
+                setRealMatchedTechnicians(prev => [...prev, technicians[i]]);
             }
 
-            setTimeout(() => setAnalysisPhase(3), 500);
-            setTimeout(() => setAnalysisPhase(4), 1500);
+            // If no technicians found, wait a bit to show scanning effect
+            if (technicians.length === 0) {
+                // Simulate scanning for 4 more seconds
+                for (let i = 0; i < 8; i++) {
+                    await delay(500);
+                    setScanCount(prev => prev + 1);
+                }
+            }
 
-            setTimeout(() => {
-                // Navigate to matching results with real data
-                navigate('/espace-client/matching', {
-                    state: { matchResult: matchResult.data, requestId },
-                });
-            }, 2000);
-            
+            // Final phase - results ready
+            await delay(1500);
+            setAnalysisPhase(4);
+
+            // Wait then navigate
+            await delay(1000);
+            navigate('/espace-client/matching', {
+                state: { matchResult: matchResult.data, requestId },
+            });
+
         } catch (error) {
-            console.error("Erreur lors de la création de la demande:", error);
+            console.error("Erreur lors de la creation de la demande:", error);
             setIsSubmitting(false);
             setStep(2);
-            alert("Une erreur est survenue lors de l'envoi de votre demande. Veuillez réessayer.");
+            alert("Une erreur est survenue lors de l'envoi de votre demande. Veuillez reessayer.");
         }
     };
+
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
     // Helper for sidebar items
     const renderSidebarItem = (itemStep: number, label: string, icon: string) => {
@@ -542,10 +575,10 @@ const RequestWizard: React.FC = () => {
                                         </div>
                                         
                                         <div className="rw-radar-core">
-                                            <div className="rw-radar-pct">{Math.min(92, Math.max(12, analysisPhase * 30))}%</div>
-                                            <div className="rw-radar-label">Analyse Profonde</div>
+                                            <div className="rw-radar-pct">{analysisPhase >= 4 ? '100' : analysisPhase >= 3 ? Math.min(95, 60 + scanCount * 5) : Math.min(55, analysisPhase * 25)}%</div>
+                                            <div className="rw-radar-label">{analysisPhase < 3 ? 'Analyse Profonde' : analysisPhase < 4 ? `Scan zone... (${scanCount})` : 'Termine !'}</div>
                                             <div className="w-full bg-surface-variant h-1 rounded-full mt-3 overflow-hidden">
-                                                <div className="bg-primary h-full transition-all duration-1000" style={{width: `${Math.min(92, Math.max(12, analysisPhase * 30))}%`}}></div>
+                                                <div className="bg-primary h-full transition-all duration-1000" style={{width: `${analysisPhase >= 4 ? 100 : analysisPhase >= 3 ? Math.min(95, 60 + scanCount * 5) : Math.min(55, analysisPhase * 25)}%`}}></div>
                                             </div>
                                         </div>
 
@@ -573,8 +606,12 @@ const RequestWizard: React.FC = () => {
                                                 <span className="rw-metric-value">{formData.latitude ? "Géolocalisée" : "Par défaut"}</span>
                                             </div>
                                             <div className="rw-metric-row">
-                                                <span className="rw-metric-label">Techniciens actifs</span>
-                                                <span className="rw-metric-value">{analysisPhase >= 2 && realMatchedTechnicians.length > 0 ? realMatchedTechnicians.length : "Scan..."}</span>
+                                                <span className="rw-metric-label">Profils scannes</span>
+                                                <span className="rw-metric-value">{analysisPhase >= 3 ? scanCount : "..."}</span>
+                                            </div>
+                                            <div className="rw-metric-row">
+                                                <span className="rw-metric-label">Matches trouves</span>
+                                                <span className="rw-metric-value">{realMatchedTechnicians.length}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -584,25 +621,29 @@ const RequestWizard: React.FC = () => {
                                         <div className="space-y-3 overflow-y-auto max-h-60 pr-2">
                                             {realMatchedTechnicians.length > 0 ? (
                                                 realMatchedTechnicians.map((tech, idx) => (
-                                                    <div key={idx} className="rw-candidate-card" style={{opacity: analysisPhase >= 2 ? 1 : 0.2, transition: 'opacity 0.5s', display: 'flex', alignItems: 'center', gap: '10px'}}>
+                                                    <div key={idx} className="rw-candidate-card" style={{opacity: 1, animation: 'fadeSlideIn 0.5s ease', display: 'flex', alignItems: 'center', gap: '10px'}}>
                                                         <div className="rw-candidate-avatar" style={{
-                                                            backgroundImage: tech.technician?.user?.avatar_url ? `url(${tech.technician.user.avatar_url})` : 'none',
+                                                            backgroundImage: tech.avatar_url ? `url(${tech.avatar_url})` : 'none',
                                                             backgroundSize: 'cover',
                                                             backgroundPosition: 'center',
                                                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                             color: '#fff', fontWeight: 'bold'
                                                         }}>
-                                                            {!tech.technician?.user?.avatar_url && tech.technician?.user?.name?.charAt(0)}
+                                                            {!tech.avatar_url && (tech.name?.charAt(0) || 'T')}
                                                         </div>
                                                         <div className="flex-1">
-                                                            <div className="rw-candidate-name text-sm font-bold text-white">{tech.technician?.user?.name || "Technicien"}</div>
-                                                            <div className="rw-candidate-score" style={{color: 'var(--primary)', fontSize: '0.75rem', marginTop: '2px'}}>Score: {Math.round(tech.match_score * 100)}%</div>
+                                                            <div className="rw-candidate-name text-sm font-bold text-white">{tech.name || "Technicien"}</div>
+                                                            <div style={{display: 'flex', gap: '8px', alignItems: 'center', marginTop: '2px'}}>
+                                                                <span style={{color: '#10b981', fontSize: '0.75rem', fontWeight: 600}}>{tech.match_score}%</span>
+                                                                <span style={{color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem'}}>{tech.distance_km} km</span>
+                                                                <span style={{color: '#fbbf24', fontSize: '0.7rem'}}>★ {tech.rating}</span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 ))
                                             ) : (
                                                 <div className="text-sm" style={{color: 'rgba(255,255,255,0.4)', textAlign: 'center', padding: '20px 0'}}>
-                                                    Balayage de la zone en cours...
+                                                    {analysisPhase >= 3 ? 'Scan des profils en cours...' : 'En attente du diagnostic...'}
                                                 </div>
                                             )}
                                         </div>

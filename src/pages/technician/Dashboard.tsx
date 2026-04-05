@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { getTechProfile } from '../../services/technicianService';
 import TechServiceMap from '../../components/maps/TechServiceMap';
 import matchingService from '../../services/matchingService';
 import './Dashboard.css';
 
 const Dashboard: React.FC = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
     const [profile, setProfile] = useState<any>(null);
     const [pendingProposals, setPendingProposals] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [showVerifiedModal, setShowVerifiedModal] = useState(searchParams.get('verified') === '1');
+
+    const dismissVerifiedModal = () => {
+        setShowVerifiedModal(false);
+        searchParams.delete('verified');
+        setSearchParams(searchParams, { replace: true });
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -351,6 +360,39 @@ const Dashboard: React.FC = () => {
                 </div>
             </div>
 
+            {/* Email Verified Confirmation Modal */}
+            {showVerifiedModal && (
+                <div style={{
+                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+                    backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center',
+                    justifyContent: 'center', zIndex: 9999
+                }} onClick={dismissVerifiedModal}>
+                    <div className="glass-panel" style={{
+                        maxWidth: '380px', width: '90%', padding: '32px 24px',
+                        textAlign: 'center', borderRadius: '20px'
+                    }} onClick={e => e.stopPropagation()}>
+                        <div style={{
+                            width: '72px', height: '72px', borderRadius: '50%',
+                            background: 'rgba(99, 102, 241, 0.1)', display: 'flex',
+                            alignItems: 'center', justifyContent: 'center', margin: '0 auto'
+                        }}>
+                            <span className="material-symbols-outlined" style={{
+                                fontSize: '48px', color: '#6366f1',
+                                fontVariationSettings: "'FILL' 1"
+                            }}>verified</span>
+                        </div>
+                        <h3 style={{ margin: '16px 0 8px', fontSize: '1.25rem', fontWeight: 600 }}>E-mail verifie !</h3>
+                        <p style={{ color: '#64748b', marginBottom: '24px', fontSize: '0.9rem' }}>
+                            Votre adresse e-mail a ete confirmee avec succes. Toutes les fonctionnalites sont maintenant accessibles.
+                        </p>
+                        <button className="tech-btn-sm-solid" style={{
+                            width: '100%', padding: '12px', borderRadius: '12px', fontSize: '0.95rem'
+                        }} onClick={dismissVerifiedModal}>
+                            Continuer
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

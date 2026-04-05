@@ -1,0 +1,189 @@
+/* ===== AdminLayout — Floating Dock Navigation ===== */
+
+.admin-layout-root {
+    display: block;
+    min-height: 100vh;
+    position: relative;
+    background: #f1f5f9;
+    color: #181c1e;
+}
+
+/* ---- Top App Bar ---- */
+.admin-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.admin-topbar-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+}
+
+.admin-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-logo .material-symbols-outlined {
+    font-size: 26px;
+    color: #6366f1;
+}
+
+.admin-logo-text {
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #1e293b;
+}
+
+.admin-topbar-separator {
+    width: 1px;
+    height: 24px;
+    background: #e2e8f0;
+}
+
+.admin-topbar-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #475569;
+    margin: 0;
+}
+
+.admin-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-topbar-actions .material-symbols-outlined {
+    font-size: 22px;
+    color: #64748b;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.admin-topbar-actions .material-symbols-outlined:hover {
+    color: #6366f1;
+}
+
+/* ---- Main Content ---- */
+.admin-layout-main {
+    padding-top: 5rem;
+    padding-bottom: 7rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    max-width: 1760px;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+@media (min-width: 768px) {
+    .admin-layout-main {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+/* ---- Floating Dock NavBar (Bottom Center) ---- */
+.admin-floating-nav {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    border-radius: 9999px;
+    box-shadow:
+        0 8px 32px rgba(99, 102, 241, 0.10),
+        0 2px 8px rgba(0, 0, 0, 0.04);
+}
+@media (min-width: 768px) {
+    .admin-floating-nav {
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+}
+
+/* ---- Nav Link (Pill Button) ---- */
+.admin-dock-link {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #64748b;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+}
+@media (min-width: 768px) {
+    .admin-dock-link {
+        padding: 0.6rem 1.1rem;
+        font-size: 0.82rem;
+    }
+}
+
+.admin-dock-link:hover {
+    color: #6366f1;
+    background: rgba(241, 245, 249, 0.8);
+}
+
+/* Active state — filled pill */
+.admin-dock-link.active {
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.30);
+    transform: scale(1.05);
+}
+
+.admin-dock-link .material-symbols-outlined {
+    font-size: 20px;
+}
+@media (min-width: 768px) {
+    .admin-dock-link .material-symbols-outlined {
+        font-size: 22px;
+    }
+}
+
+/* Hide label text on small screens for inactive links */
+.admin-dock-label {
+    display: none;
+}
+.admin-dock-link.active .admin-dock-label {
+    display: inline;
+}
+@media (min-width: 768px) {
+    .admin-dock-label {
+        display: inline;
+    }
+}

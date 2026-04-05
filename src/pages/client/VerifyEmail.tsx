@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import authService from '../../services/authService';
-import './Auth2FA.css'; // Re-using existing auth styles for consistency
+import './Auth2FA.css';
 
 const VerifyEmail: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { user, refreshUser } = useAuth();
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-    const [message, setMessage] = useState('Vérification de votre adresse e-mail en cours...');
+    const [message, setMessage] = useState('Verification de votre adresse e-mail en cours...');
 
     useEffect(() => {
         const verify = async () => {
@@ -16,27 +18,35 @@ const VerifyEmail: React.FC = () => {
 
             if (!verificationUrl) {
                 setStatus('error');
-                setMessage('Lien de vérification invalide ou manquant.');
+                setMessage('Lien de verification invalide ou manquant.');
                 return;
             }
 
             try {
                 const response = await authService.verifyEmail(verificationUrl);
                 setStatus('success');
-                setMessage(response.message || 'Votre e-mail a été vérifié avec succès !');
-                
-                // Redirect to dashboard after 3 seconds
+                setMessage(response.message || 'Votre e-mail a ete verifie avec succes !');
+
+                // Refresh user data so email_verified_at is updated
+                await refreshUser();
+
+                // Redirect to the appropriate dashboard with verified flag
+                const role = user?.roles?.[0]?.name;
+                const dashboardPath = role === 'technicien'
+                    ? '/technicien/dashboard'
+                    : '/espace-client/dashboard';
+
                 setTimeout(() => {
-                    navigate('/espace-client/dashboard');
-                }, 3000);
+                    navigate(`${dashboardPath}?verified=1`, { replace: true });
+                }, 1500);
             } catch (error: any) {
                 setStatus('error');
-                setMessage(error.response?.data?.message || 'Le lien de vérification a expiré ou est invalide.');
+                setMessage(error.response?.data?.message || 'Le lien de verification a expire ou est invalide.');
             }
         };
 
         verify();
-    }, [location, navigate]);
+    }, [location, navigate, refreshUser, user]);
 
     return (
         <div className="auth-2fa-container">
@@ -47,7 +57,7 @@ const VerifyEmail: React.FC = () => {
                             {status === 'loading' ? 'sync' : (status === 'success' ? 'verified' : 'error')}
                         </span>
                     </div>
-                    <h2 className="auth-2fa-title">Vérification E-mail</h2>
+                    <h2 className="auth-2fa-title">Verification E-mail</h2>
                     <p className="auth-2fa-subtitle">{message}</p>
                 </div>
 
@@ -61,24 +71,21 @@ const VerifyEmail: React.FC = () => {
                     {status === 'success' && (
                         <div key="success" className="text-center py-4">
                             <p className="text-on-surface-variant mb-6">
-                                Votre adresse e-mail a été confirmée. Redirection vers votre tableau de bord...
+                                Redirection vers votre tableau de bord...
                             </p>
-                            <Link to="/espace-client/dashboard" className="btn-primary w-full inline-block py-3 rounded-xl text-center">
-                                Aller au Dashboard
-                            </Link>
                         </div>
                     )}
 
                     {status === 'error' && (
                         <div key="error" className="text-center py-4">
-                            <button 
+                            <button
                                 onClick={() => navigate('/connexion')}
                                 className="btn-primary w-full py-3 rounded-xl mb-4"
                             >
-                                Retour à la connexion
+                                Retour a la connexion
                             </button>
                             <p className="text-sm text-on-surface-variant">
-                                Si le problème persiste, demandez un nouveau lien depuis votre profil.
+                                Si le probleme persiste, demandez un nouveau lien depuis votre profil.
                             </p>
                         </div>
                     )}

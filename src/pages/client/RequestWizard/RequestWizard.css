@@ -1653,3 +1653,15 @@ body .material-symbols-outlined {
     max-width: 48rem;
     margin: 0 auto;
 }
+
+/* Candidate reveal animation */
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
