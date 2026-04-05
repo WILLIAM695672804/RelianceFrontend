@@ -737,3 +737,86 @@ h1, h2, h3, h4, .font-headline {
 }
 .sm-fab:hover { transform: scale(1.1); }
 .sm-fab:active { transform: scale(0.95); }
+
+/* Email Verification Banner */
+.verification-banner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-radius: 2rem;
+    background: linear-gradient(135deg, rgba(25, 96, 163, 0.1) 0%, rgba(255, 255, 255, 0.8) 100%);
+    border: 1px solid rgba(25, 96, 163, 0.2);
+    margin-bottom: 2rem;
+    gap: 1.5rem;
+}
+
+.v-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex: 1;
+}
+
+.v-icon {
+    font-size: 2.5rem;
+    color: var(--ds-secondary);
+    background: white;
+    padding: 0.75rem;
+    border-radius: 1.25rem;
+    box-shadow: 0 10px 15px -3px rgba(25, 96, 163, 0.1);
+}
+
+.v-text strong {
+    display: block;
+    font-size: 1.125rem;
+    color: var(--ds-primary);
+    margin-bottom: 0.25rem;
+}
+
+.v-text p {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--ds-on-surface-variant);
+    line-height: 1.5;
+}
+
+.v-resend-btn {
+    background-color: var(--ds-primary);
+    color: white;
+    padding: 0.875rem 1.75rem;
+    border-radius: 1rem;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.v-resend-btn:hover:not(:disabled) {
+    background-color: var(--ds-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.v-resend-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.v-resend-btn.loading {
+    background-color: var(--ds-on-surface-variant);
+}
+
+@media (max-width: 640px) {
+    .verification-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.25rem;
+    }
+    .v-resend-btn {
+        width: 100%;
+    }
+}

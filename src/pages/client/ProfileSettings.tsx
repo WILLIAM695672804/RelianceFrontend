@@ -88,8 +88,8 @@ const ProfileSettings: React.FC = () => {
     };
 
     const favorites = [
-        { id: 1, name: 'Jean Dupont', role: 'Plumbing Expert', avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBuapD3_IQG8Wurh-g4q1yJmdPLtSbM0UatJx7mhH_nr3AdqwDl3pwsG0TZshBjErJrgatG1ERmkPEK5q_N6B2RMZ_fg_FTAKiMqi_SG3SbsLd-ixcBDZOvqiGaKtlPqhD1TY1Dh63mV3igO5RD2zhrXS7uGc-PefJt0L-tsH4v9LBMTqOnWkwcbLYtfi7Ng1As_Is_FrqMftiffNdj3QW8vB-QDUoeUxzZCajXkYONu5y4NU1pcQF2ttoQzdfCNSDjjiHbok95Ew' },
-        { id: 2, name: "Marcus N'go", role: 'Master Electrician', avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAUjySWGcu9-v8En8dJsZRHvrAWmTgAXWi2X8rMxCih_GdBvY9sCVhjpWL6PLYasp6UYc3BGY_49ygnSbDHWFZTG2cu8DhrOCo_WLJ7RGx9mMALmUD8A5urg7vvD3JXNCpeDVOvQw7cWdWNEOeP6r1fL9JYHDyoNb7ueT7qh_0Qdd3_1gsvYQdaKqmCyH_sunbdxVMxP1Fp8MgkSWge6eI5XF4gl5FlWQ00LFUVbvJrLW7FH1OxTPyc57b_zNYrCWMI-9T3FPXgFA' }
+        { id: 1, name: 'Jean Dupont', role: 'Plumbing Expert', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance' },
+        { id: 2, name: "Marcus N'go", role: 'Master Electrician', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance' }
     ];
 
     return (
@@ -99,13 +99,13 @@ const ProfileSettings: React.FC = () => {
                 <section className="ps-hero">
                     <div 
                         className="ps-hero-bg" 
-                        style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCgCW3UepSKqW7b1c1MKS86vaiJ_7pMBeVEU91Amz8Z_T1YDIB6XDRB9qwejzK8T_nyHIaFydZ79Ij-Qwcq7Q2Do2WB6Gw7shqjfNk3_KtqLiCL_ACdZVbJzDePuOxELmmlJMj7J_VAR1gfHM-_8hu4QWP_XWP_lio8nt7lPfDm5U_UYG03e53qLQyt7VEK17pbKvvLDh7Q_9CpWUvkgCd11qw7PmDWwzD83y3ecIXLd7mOzt6wf4QN0hgTvSwbYwvBIQ3hYjG9Ww')" }}
+                        style={{ backgroundImage: "url('https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance')" }}
                     />
                     <div className="ps-hero-content">
                         <div className="ps-avatar-wrap">
                             <img 
                                 className="ps-avatar" 
-                                src={user?.avatar_url || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBj3EX_WIl_dTvv47kFEcje6SZKLUpIEQ1O1cp7xQo4s5Y8Qx9KIDPSSIo9B4FC5LKZB3IRddG6fX5MHEVHVkL4aS3LUE2TXq0RQoUkS-PeDAwjRdRMVcEgj6f19cVgHiaZAH-ozWm2sJqdOrDmE3-uEr6ce9QbyrmzRIN_oAmTIdKXgQw4QL6y5pcBxZdsJq-6Y6AwKjZKsNl5TEs6GrF9itp21yzVOdvL__00Ksi0AyRdKxrAPv6pG5z0ZO3R1u6tKHxBkLihSg'} 
+                                src={user?.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance'} 
                                 alt={user?.name || 'Profile'} 
                             />
                             <div className="ps-verified-badge">
@@ -316,7 +316,7 @@ const ProfileSettings: React.FC = () => {
                             <div className="ps-modal-avatar-section">
                                 <div className="ps-modal-avatar-preview">
                                     <img 
-                                        src={avatarPreview || user?.avatar_url || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBj3EX_WIl_dTvv47kFEcje6SZKLUpIEQ1O1cp7xQo4s5Y8Qx9KIDPSSIo9B4FC5LKZB3IRddG6fX5MHEVHVkL4aS3LUE2TXq0RQoUkS-PeDAwjRdRMVcEgj6f19cVgHiaZAH-ozWm2sJqdOrDmE3-uEr6ce9QbyrmzRIN_oAmTIdKXgQw4QL6y5pcBxZdsJq-6Y6AwKjZKsNl5TEs6GrF9itp21yzVOdvL__00Ksi0AyRdKxrAPv6pG5z0ZO3R1u6tKHxBkLihSg'} 
+                                        src={avatarPreview || user?.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance'} 
                                         alt="Avatar preview" 
                                     />
                                     <label className="ps-modal-avatar-upload">

@@ -21,6 +21,7 @@ import InscriptionClient from './pages/inscription/InscriptionClient';
 import InscriptionTechnicien from './pages/inscription/InscriptionTechnicien';
 import InscriptionAgence from './pages/inscription/InscriptionAgence';
 import InscriptionEntreprise from './pages/inscription/InscriptionEntreprise';
+import VerifyEmail from './pages/client/VerifyEmail';
 
 // Public Layout
 import PublicLayout from './layouts/PublicLayout';
@@ -37,9 +38,8 @@ import ProfileSettings from './pages/client/ProfileSettings';
 
 // Technician Space
 import TechnicianLayout from './layouts/TechnicianLayout';
-import SkillMatrix from './pages/technician/SkillMatrix';
 // import ZoneIntervention from './pages/technician/ZoneIntervention';
-// import KYCStatus from './pages/technician/KYCStatus';
+import KYCStatus from './pages/technician/KYCStatus';
 import Dashboard from './pages/technician/Dashboard';
 import Planning from './pages/technician/Planning';
 import LiveRadar from './pages/technician/LiveRadar';
@@ -84,6 +84,7 @@ function App() {
             <Route path="/inscription/agence" element={<InscriptionAgence />} />
             <Route path="/inscription/entreprise" element={<InscriptionEntreprise />} />
             <Route path="/auth/2fa" element={<Auth2FA />} />
+            <Route path="/auth/verify-email" element={<VerifyEmail />} />
 
             {/* Social Feed (Hybrid Base) */}
             <Route path="/actualites" element={<SocialFeed />} />
@@ -112,9 +113,8 @@ function App() {
             </ProtectedRoute>
           }>
             <Route index element={<Navigate to="dashboard" replace />} />
-            <Route path="competences" element={<SkillMatrix />} />
-            {/* <Route path="zone" element={<ZoneIntervention />} />
-            <Route path="verification" element={<KYCStatus />} /> */}
+            <Route path="verification" element={<KYCStatus />} />
+            {/* <Route path="zone" element={<ZoneIntervention />} /> */}
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="cockpit" element={<Cockpit />} />
             <Route path="radar" element={<LiveRadar />} />

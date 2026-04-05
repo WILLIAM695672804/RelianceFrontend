@@ -494,10 +494,10 @@ const IdentityHub: React.FC = () => {
                 <div className={`tech-fab-menu ${isFabOpen ? 'open' : ''}`}>
                     <button 
                         className="tech-fab-item"
-                        onClick={() => navigate('/technicien/competences')}
+                        onClick={() => navigate('/technicien/verification')}
                     >
-                        <span className="material-symbols-outlined">workspace_premium</span>
-                        Certification
+                        <span className="material-symbols-outlined">folder_shared</span>
+                        Documents KYC
                     </button>
                     <button 
                         className="tech-fab-item"

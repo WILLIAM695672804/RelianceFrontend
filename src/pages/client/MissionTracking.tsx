@@ -124,7 +124,7 @@ const MissionTracking: React.FC = () => {
                         <img 
                             className="mt-profile-avatar"
                             alt="Jean-Luc"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBo8WSFPZ1MtFtZ1BD6tBTl9w91TOSas52ZqDloWcw4NP3t_lbraL_an-_RlFciP-Ao_hboOWaNRZwtLVF7kkZdX_rBW-g41K6jC-lXm0H-beC1f7qadD6XRntqr11-bqxZhzRhiIHQDDjVeAUy9VhPlkkgL7AWtJCy6NmwbvZyofgY8TWzdrj-Gk81unAQZPCjJPULbpNeBHbIa1ABib7isrZAW0gBFlSazqFWaxH0YGi6Qlh-PaR1DFq20_sc79cf1h2PJBBVaA" 
+                            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance" 
                         />
                         <div className="mt-profile-info">
                             <h3 className="mt-profile-name">Jean-Luc M.</h3>
@@ -220,7 +220,7 @@ const MissionTracking: React.FC = () => {
                                 <div key={msg.id} className={`mt-chat-bubble-wrapper ${msg.user === 'client' ? 'mine' : 'theirs'}`}>
                                     {msg.user === 'tech' && (
                                         <img 
-                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBo8WSFPZ1MtFtZ1BD6tBTl9w91TOSas52ZqDloWcw4NP3t_lbraL_an-_RlFciP-Ao_hboOWaNRZwtLVF7kkZdX_rBW-g41K6jC-lXm0H-beC1f7qadD6XRntqr11-bqxZhzRhiIHQDDjVeAUy9VhPlkkgL7AWtJCy6NmwbvZyofgY8TWzdrj-Gk81unAQZPCjJPULbpNeBHbIa1ABib7isrZAW0gBFlSazqFWaxH0YGi6Qlh-PaR1DFq20_sc79cf1h2PJBBVaA" 
+                                            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance" 
                                             alt="Tech" 
                                             className="mt-chat-avatar" 
                                         />

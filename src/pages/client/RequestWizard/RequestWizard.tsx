@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './RequestWizard.css';
+import requestService from '../../../services/requestService';
 
 const RequestWizard: React.FC = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
     const [analysisPhase, setAnalysisPhase] = useState(0);
     const [showStepNav, setShowStepNav] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -17,6 +19,8 @@ const RequestWizard: React.FC = () => {
         longitude: 0,
         files: [] as File[] // For UI simulation purposes
     });
+
+    const [realMatchedTechnicians, setRealMatchedTechnicians] = useState<any[]>([]);
 
     // Auto-detect location on mount
     useEffect(() => {
@@ -59,15 +63,49 @@ const RequestWizard: React.FC = () => {
         else navigate('/espace-client/dashboard');
     };
 
-    const startAiAnalysis = () => {
-        setStep(4); // AI Analysis triggers automatically
-        setTimeout(() => setAnalysisPhase(1), 1500);
-        setTimeout(() => setAnalysisPhase(2), 3000);
-        setTimeout(() => setAnalysisPhase(3), 4500);
-        setTimeout(() => setAnalysisPhase(4), 5500);
-        setTimeout(() => {
-            navigate('/espace-client/matching');
-        }, 7000);
+    const startAiAnalysis = async () => {
+        setIsSubmitting(true);
+        setStep(4);
+        
+        try {
+            // Step 1: Create the request with the new API contract
+            const createResponse = await requestService.create({
+                title: formData.title,
+                description: formData.description,
+                category_slug: formData.category || undefined,
+                latitude: formData.latitude,
+                longitude: formData.longitude,
+                photos: formData.files.length > 0 ? formData.files : undefined,
+            });
+
+            const requestId = createResponse?.data?.id ?? createResponse?.id;
+
+            // Animation de l'IA (phases visuelles pendant l'appel matching)
+            setTimeout(() => setAnalysisPhase(1), 800);
+            setTimeout(() => setAnalysisPhase(2), 2000);
+
+            // Step 2: Trigger the matching engine
+            const matchResult = await requestService.match(requestId);
+            if (matchResult?.data?.technicians) {
+                setRealMatchedTechnicians(matchResult.data.technicians);
+            }
+
+            setTimeout(() => setAnalysisPhase(3), 500);
+            setTimeout(() => setAnalysisPhase(4), 1500);
+
+            setTimeout(() => {
+                // Navigate to matching results with real data
+                navigate('/espace-client/matching', {
+                    state: { matchResult: matchResult.data, requestId },
+                });
+            }, 2000);
+            
+        } catch (error) {
+            console.error("Erreur lors de la création de la demande:", error);
+            setIsSubmitting(false);
+            setStep(2);
+            alert("Une erreur est survenue lors de l'envoi de votre demande. Veuillez réessayer.");
+        }
     };
 
     // Helper for sidebar items
@@ -140,59 +178,59 @@ const RequestWizard: React.FC = () => {
                             <div className="rw-categories-grid">
                                 
                                 <div 
-                                    className={`rw-cat-card ${formData.category === 'plomberie' ? 'is-selected' : 'is-default'}`}
-                                    onClick={() => updateForm('category', 'plomberie')}
+                                    className={`rw-cat-card ${formData.category === 'plomberie-generale' ? 'is-selected' : 'is-default'}`}
+                                    onClick={() => updateForm('category', 'plomberie-generale')}
                                 >
-                                    {formData.category === 'plomberie' && (
+                                    {formData.category === 'plomberie-generale' && (
                                         <div className="rw-cat-check text-sm"><span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>done</span></div>
                                     )}
                                     <div className="rw-cat-icon-wrap bg-blue-tint">
                                         <span className="material-symbols-outlined rw-icon-primary">plumbing</span>
                                     </div>
-                                    <h3 className="rw-cat-title text-primary-color">Plumbing</h3>
-                                    <p className="rw-cat-desc">Fix leaks, install new fixtures, or resolve complex drainage and piping issues in residential or commercial settings.</p>
+                                    <h3 className="rw-cat-title text-primary-color">Plomberie</h3>
+                                    <p className="rw-cat-desc">Fuites d'eau, canalisations bouchées, installation sanitaire, chauffe-eau.</p>
                                 </div>
 
                                 <div 
-                                    className={`rw-cat-card ${formData.category === 'electricite' ? 'is-selected' : 'is-default'}`}
-                                    onClick={() => updateForm('category', 'electricite')}
+                                    className={`rw-cat-card ${formData.category === 'electricite-generale' ? 'is-selected' : 'is-default'}`}
+                                    onClick={() => updateForm('category', 'electricite-generale')}
                                 >
-                                    {formData.category === 'electricite' && (
+                                    {formData.category === 'electricite-generale' && (
                                         <div className="rw-cat-check text-sm"><span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>done</span></div>
                                     )}
                                     <div className="rw-cat-icon-wrap bg-yellow-tint">
                                         <span className="material-symbols-outlined rw-icon-yellow">electrical_services</span>
                                     </div>
-                                    <h3 className="rw-cat-title text-on-surface-color">Electricity</h3>
-                                    <p className="rw-cat-desc">Wiring repairs, lighting installation, fuse box upgrades, and comprehensive electrical safety inspections.</p>
+                                    <h3 className="rw-cat-title text-on-surface-color">Électricité</h3>
+                                    <p className="rw-cat-desc">Pannes électriques, disjoncteurs, câblages, installation d'éclairage.</p>
                                 </div>
 
                                 <div 
-                                    className={`rw-cat-card ${formData.category === 'mecanique' ? 'is-selected' : 'is-default'}`}
-                                    onClick={() => updateForm('category', 'mecanique')}
+                                    className={`rw-cat-card ${formData.category === 'mecanique-auto' ? 'is-selected' : 'is-default'}`}
+                                    onClick={() => updateForm('category', 'mecanique-auto')}
                                 >
-                                    {formData.category === 'mecanique' && (
+                                    {formData.category === 'mecanique-auto' && (
                                         <div className="rw-cat-check text-sm"><span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>done</span></div>
                                     )}
                                     <div className="rw-cat-icon-wrap bg-red-tint">
                                         <span className="material-symbols-outlined rw-icon-red">car_repair</span>
                                     </div>
-                                    <h3 className="rw-cat-title text-on-surface-color">Car Mechanics</h3>
-                                    <p className="rw-cat-desc">Engine diagnostics, brake service, transmission repair, and routine maintenance for all vehicle makes and models.</p>
+                                    <h3 className="rw-cat-title text-on-surface-color">Mécanique Auto</h3>
+                                    <p className="rw-cat-desc">Pannes moteurs, freins, batteries, ou visite complète de votre véhicule.</p>
                                 </div>
 
                                 <div 
-                                    className={`rw-cat-card ${formData.category === 'electronique' ? 'is-selected' : 'is-default'}`}
-                                    onClick={() => updateForm('category', 'electronique')}
+                                    className={`rw-cat-card ${formData.category === 'maintenance-informatique' ? 'is-selected' : 'is-default'}`}
+                                    onClick={() => updateForm('category', 'maintenance-informatique')}
                                 >
-                                    {formData.category === 'electronique' && (
+                                    {formData.category === 'maintenance-informatique' && (
                                         <div className="rw-cat-check text-sm"><span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>done</span></div>
                                     )}
                                     <div className="rw-cat-icon-wrap bg-green-tint">
                                         <span className="material-symbols-outlined rw-icon-green">devices</span>
                                     </div>
-                                    <h3 className="rw-cat-title text-on-surface-color">Electronics</h3>
-                                    <p className="rw-cat-desc">Smart home setups, device repairs, hardware upgrades, and specialized micro-soldering for circuit boards.</p>
+                                    <h3 className="rw-cat-title text-on-surface-color">Informatique</h3>
+                                    <p className="rw-cat-desc">Ordinateurs, réseaux Wi-Fi, box internet, et réparation électronique simple.</p>
                                 </div>
                             </div>
 
@@ -200,7 +238,7 @@ const RequestWizard: React.FC = () => {
                             <div className="rw-promo-grid">
                                 <div className="rw-promo-image-card group-hover-trigger">
                                     <img 
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8SEJfzRWe7laPxlk9GCTnsVpcIJqN-VQc3qpfpuiGE4p238f4WlZOWPD6KYFIUUnD0kAd1hueBq6E52VGgK14J1eHg1JLX0dtC8TPvJSV_B0-qTUnX--HIg6GKC0rhMoXeRuYwXbyKYDsa8bDIlKycYwzCCQBNHO6TASZnnaMLfNbtY_keaIGx0wO2d2ZZJvDOlSbnTdXDoqIY7FkfN4fW0hneN3h6-9J3lMA7WCIKxsE_3sKMw7ELamIeZa1xZDNLm_LfOAIFA" 
+                                        src="https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance" 
                                         alt="Technician at work" 
                                         className="rw-promo-img"
                                     />
@@ -339,7 +377,12 @@ const RequestWizard: React.FC = () => {
                                     <label className="rw-btn-upload cursor-pointer">
                                         <span className="material-symbols-outlined">file_upload</span>
                                         Parcourir
-                                        <input type="file" multiple accept="image/*" style={{display: 'none'}} />
+                                        <input type="file" multiple accept="image/*" style={{display: 'none'}} onChange={(e) => {
+                                            if (e.target.files) {
+                                                const newFiles = Array.from(e.target.files);
+                                                updateForm('files', [...formData.files, ...newFiles]);
+                                            }
+                                        }} />
                                     </label>
                                 </div>
 
@@ -372,46 +415,29 @@ const RequestWizard: React.FC = () => {
 
                                 {/* Uploaded Thumbnails (Visual Feedback) */}
                                 <div className="rw-thumbnails-section">
-                                    <h4 className="rw-thumbnails-title">Fichiers téléversés (3)</h4>
-                                    <div className="rw-thumbnails-grid">
-                                        {/* File 1 */}
-                                        <div className="rw-thumbnail-card">
-                                            <img 
-                                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4kQZTF7PCMV9MiAzxdvxkPVpQqz8l56Ly7VLYbSXDnChnAqFSWHTQZ7f10YiL4PwTjraLnTyf2IJ_rw4tMh7-r_H0022VU29As7uZqBjVLQ5qsq4fOyKS0-_cxpZVPnk9hicNmk3watMxWubXhUNMI105E8TVE3_sYh1jw-rvnfHgsxNh-I0L5azJNuLI8kOcqxGLM5wCx3XSXohJOS_9kYNtHNx4aKeiZRHtLbjl8eJ_T-Eo1RgHCHZvORF22TamFzYVkrI49g" 
-                                                alt="Technical issue 1" 
-                                                className="rw-thumb-img"
-                                            />
-                                            <div className="rw-thumb-overlay">
-                                                <button className="rw-thumb-action-view" type="button"><span className="material-symbols-outlined">visibility</span></button>
-                                                <button className="rw-thumb-action-delete" type="button"><span className="material-symbols-outlined">delete</span></button>
-                                            </div>
-                                            <div className="rw-thumb-label-wrap">
-                                                <div className="rw-thumb-label">Mainboard_Fault.jpg</div>
-                                            </div>
+                                    <h4 className="rw-thumbnails-title">Fichiers téléversés ({formData.files.length})</h4>
+                                    {formData.files.length > 0 && (
+                                        <div className="rw-thumbnails-grid">
+                                            {formData.files.map((file, idx) => (
+                                                <div key={idx} className="rw-thumbnail-card">
+                                                    <img 
+                                                        src={URL.createObjectURL(file)} 
+                                                        alt={`File ${idx + 1}`} 
+                                                        className="rw-thumb-img"
+                                                    />
+                                                    <div className="rw-thumb-overlay">
+                                                        <button className="rw-thumb-action-delete" type="button" onClick={() => {
+                                                            const updated = formData.files.filter((_, i) => i !== idx);
+                                                            updateForm('files', updated);
+                                                        }}><span className="material-symbols-outlined">delete</span></button>
+                                                    </div>
+                                                    <div className="rw-thumb-label-wrap">
+                                                        <div className="rw-thumb-label">{file.name}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-
-                                        {/* File 2 */}
-                                        <div className="rw-thumbnail-card">
-                                            <img 
-                                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNQqHmdj1h8eBzhxV6qju46fjttbwo8KcYdqxckNKp2wf7CmkkdI5S-aA3kv-B0RKaLPvLH-R4CumARcaZkpToFVDs1rkRGeUQL156Vyygh_PSCkPnEhkAhonZV_hrxkHZc2ViBSVzOn6qzSOqPW4YsX3D1WywEvDJkA8JqWKE3gyA9frfi7SKve1cwtCRGDCfVWqslaGrgX7ltFbWgAwDA9ImfQSj2N0wcsXnNw2bp_5p3CA3G64dzz180qPCBMDEK0UHxGAffA" 
-                                                alt="Technical issue 2" 
-                                                className="rw-thumb-img"
-                                            />
-                                            <div className="rw-thumb-overlay">
-                                                <button className="rw-thumb-action-view" type="button"><span className="material-symbols-outlined">visibility</span></button>
-                                                <button className="rw-thumb-action-delete" type="button"><span className="material-symbols-outlined">delete</span></button>
-                                            </div>
-                                            <div className="rw-thumb-label-wrap">
-                                                <div className="rw-thumb-label">Wiring_Context.jpg</div>
-                                            </div>
-                                        </div>
-
-                                        {/* File 3 (Uploading State) */}
-                                        <div className="rw-thumbnail-card-uploading">
-                                            <div className="rw-spinner"></div>
-                                            <span className="rw-upload-pct">Téléversement 72%</span>
-                                        </div>
-                                    </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -534,52 +560,51 @@ const RequestWizard: React.FC = () => {
                                 <div className="rw-ai-metrics-col">
                                     <div className="rw-glass-panel rw-metric-panel">
                                         <div className="rw-metric-header">
-                                            <span>Métriques Système</span>
+                                            <span>Métriques de recherche</span>
                                             <span className="rw-metric-dot"></span>
                                         </div>
                                         <div className="space-y-3">
                                             <div className="rw-metric-row">
-                                                <span className="rw-metric-label">Latence</span>
-                                                <span className="rw-metric-value">12ms</span>
+                                                <span className="rw-metric-label">Rayon d'action</span>
+                                                <span className="rw-metric-value">50 km</span>
                                             </div>
                                             <div className="rw-metric-row">
-                                                <span className="rw-metric-label">Complexité IA</span>
-                                                <span className="rw-metric-value">Élevée (0.84)</span>
+                                                <span className="rw-metric-label">Zone</span>
+                                                <span className="rw-metric-value">{formData.latitude ? "Géolocalisée" : "Par défaut"}</span>
                                             </div>
                                             <div className="rw-metric-row">
-                                                <span className="rw-metric-label">Modèles Scannés</span>
-                                                <span className="rw-metric-value">{300 + analysisPhase * 1150}</span>
+                                                <span className="rw-metric-label">Techniciens actifs</span>
+                                                <span className="rw-metric-value">{analysisPhase >= 2 && realMatchedTechnicians.length > 0 ? realMatchedTechnicians.length : "Scan..."}</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="rw-glass-panel rw-metric-panel flex-1">
-                                        <h4 className="rw-candidates-title">Techniciens Candidats</h4>
+                                        <h4 className="rw-candidates-title">Techniciens Candidats ({realMatchedTechnicians.length})</h4>
                                         <div className="space-y-3 overflow-y-auto max-h-60 pr-2">
-                                            {/* Candidate 1 */}
-                                            <div className="rw-candidate-card" style={{opacity: analysisPhase >= 2 ? 1 : 0.2, transition: 'opacity 0.5s'}}>
-                                                <div className="rw-candidate-avatar"></div>
-                                                <div className="flex-1">
-                                                    <div className="rw-candidate-line1"></div>
-                                                    <div className="rw-candidate-line2"></div>
+                                            {realMatchedTechnicians.length > 0 ? (
+                                                realMatchedTechnicians.map((tech, idx) => (
+                                                    <div key={idx} className="rw-candidate-card" style={{opacity: analysisPhase >= 2 ? 1 : 0.2, transition: 'opacity 0.5s', display: 'flex', alignItems: 'center', gap: '10px'}}>
+                                                        <div className="rw-candidate-avatar" style={{
+                                                            backgroundImage: tech.technician?.user?.avatar_url ? `url(${tech.technician.user.avatar_url})` : 'none',
+                                                            backgroundSize: 'cover',
+                                                            backgroundPosition: 'center',
+                                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                            color: '#fff', fontWeight: 'bold'
+                                                        }}>
+                                                            {!tech.technician?.user?.avatar_url && tech.technician?.user?.name?.charAt(0)}
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <div className="rw-candidate-name text-sm font-bold text-white">{tech.technician?.user?.name || "Technicien"}</div>
+                                                            <div className="rw-candidate-score" style={{color: 'var(--primary)', fontSize: '0.75rem', marginTop: '2px'}}>Score: {Math.round(tech.match_score * 100)}%</div>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="text-sm" style={{color: 'rgba(255,255,255,0.4)', textAlign: 'center', padding: '20px 0'}}>
+                                                    Balayage de la zone en cours...
                                                 </div>
-                                            </div>
-                                            {/* Candidate 2 */}
-                                            <div className="rw-candidate-card" style={{opacity: analysisPhase >= 3 ? 0.6 : 0.2, transition: 'opacity 0.5s'}}>
-                                                <div className="rw-candidate-avatar"></div>
-                                                <div className="flex-1">
-                                                    <div className="rw-candidate-line1" style={{width: '3rem'}}></div>
-                                                    <div className="rw-candidate-line2" style={{width: '3.5rem'}}></div>
-                                                </div>
-                                            </div>
-                                            {/* Candidate 3 */}
-                                            <div className="rw-candidate-card" style={{opacity: analysisPhase >= 3 ? 0.4 : 0.1, transition: 'opacity 0.5s'}}>
-                                                <div className="rw-candidate-avatar"></div>
-                                                <div className="flex-1">
-                                                    <div className="rw-candidate-line1" style={{width: '4.5rem'}}></div>
-                                                    <div className="rw-candidate-line2" style={{width: '2rem'}}></div>
-                                                </div>
-                                            </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

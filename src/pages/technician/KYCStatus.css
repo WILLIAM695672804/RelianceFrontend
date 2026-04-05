@@ -1,0 +1,347 @@
+.tech-kyc-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Inter', sans-serif;
+    color: var(--on-surface);
+}
+
+.tech-kyc-header {
+    margin-bottom: 3rem;
+}
+
+.tech-kyc-back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--outline);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+}
+
+.tech-kyc-back:hover {
+    color: var(--primary);
+}
+
+.tech-kyc-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Manrope', sans-serif;
+    margin-bottom: 0.5rem;
+}
+
+.tech-kyc-header p {
+    color: var(--on-surface-variant);
+    max-width: 600px;
+}
+
+.tech-kyc-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+    .tech-kyc-grid {
+        grid-template-columns: 300px 1fr;
+    }
+}
+
+.tech-kyc-score-panel {
+    background: var(--surface-container-lowest);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 1px solid rgba(196, 198, 207, 0.3);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    height: fit-content;
+}
+
+.tech-kyc-score-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tech-score-progress {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tech-score-inner {
+    width: 140px;
+    height: 140px;
+    background: var(--surface-container-lowest);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.tech-score-inner h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.tech-kyc-score-panel h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--on-surface);
+}
+
+.tech-kyc-score-panel p {
+    font-size: 0.875rem;
+    color: var(--on-surface-variant);
+    line-height: 1.5;
+}
+
+.tech-kyc-docs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.tech-kyc-docs-list h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+}
+
+.tech-kyc-doc-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: var(--surface-container-lowest);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(196, 198, 207, 0.4);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+}
+
+.tech-kyc-doc-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--outline);
+}
+
+.tech-kyc-doc-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    background: var(--surface-container);
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.tech-kyc-doc-info {
+    flex-grow: 1;
+}
+
+.tech-kyc-doc-info h4 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--on-surface);
+    margin-bottom: 0.25rem;
+}
+
+.tech-kyc-doc-info p {
+    font-size: 0.875rem;
+    color: var(--on-surface-variant);
+}
+
+.tech-kyc-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.tech-kyc-doc-actions {
+    flex-shrink: 0;
+}
+
+.tech-kyc-btn-upload {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--primary);
+    color: var(--on-primary);
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tech-kyc-btn-upload:hover {
+    background: var(--primary-container);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+.tech-kyc-btn-view {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--surface-container);
+    color: var(--primary);
+    border: none;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tech-kyc-btn-view:hover {
+    background: var(--surface-variant);
+}
+
+.tech-kyc-info-box {
+    margin-top: 1rem;
+    background: rgba(43, 108, 203, 0.05);
+    border: 1px solid rgba(43, 108, 203, 0.2);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.tech-kyc-info-box h4 {
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.25rem;
+}
+
+.tech-kyc-info-box p {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--on-surface-variant);
+}
+
+/* Status Popup Styles */
+.tech-kyc-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1.5rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.tech-kyc-popup {
+    background: var(--surface-container-lowest);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(196, 198, 207, 0.3);
+}
+
+.tech-kyc-popup-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.25rem;
+}
+
+.tech-kyc-popup-content .material-symbols-outlined {
+    font-size: 4rem;
+}
+
+.tech-kyc-popup-text h4 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: var(--on-surface);
+}
+
+.tech-kyc-popup-text p {
+    font-size: 0.9375rem;
+    color: var(--on-surface-variant);
+    line-height: 1.5;
+}
+
+.tech-kyc-popup-close {
+    width: 100%;
+    margin-top: 1rem;
+    background: var(--surface-container-high);
+    color: var(--on-surface);
+    border: none;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.tech-kyc-popup-close:hover {
+    background: var(--surface-container-highest);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.scale-in {
+    animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.shake {
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+

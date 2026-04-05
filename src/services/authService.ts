@@ -105,6 +105,16 @@ const authService = {
     async setDefaultLocation(id: string): Promise<void> {
         await api.patch(`/locations/${id}/default`);
     },
+
+    async verifyEmail(verificationUrl: string): Promise<any> {
+        const response = await api.get(verificationUrl);
+        return response.data;
+    },
+
+    async resendVerificationEmail(): Promise<any> {
+        const response = await api.post('/auth/email/verification-notification');
+        return response.data;
+    },
 };
 
 export default authService;

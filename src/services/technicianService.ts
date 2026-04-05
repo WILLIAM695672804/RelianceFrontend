@@ -38,3 +38,20 @@ export const deleteTechSkill = async (id: string) => {
     const response = await api.delete(`/technician/skills/${id}`);
     return response.data;
 };
+
+// KYC ENDPOINTS
+export const fetchKycDocuments = async () => {
+    const response = await api.get('/auth/kyc/mine');
+    return response.data;
+};
+
+export const uploadKycDocument = async (type: string, file: File) => {
+    const formData = new FormData();
+    formData.append('type', type);
+    formData.append('document', file);
+
+    const response = await api.post('/auth/kyc/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+};

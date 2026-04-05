@@ -151,7 +151,7 @@ const Withdrawal: React.FC = () => {
                         </div>
 
                         <div className="tech-security-visual">
-                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7MfXLhDZrYtF7BWEYz3H-LCBE2STR_d7G2AtQuLW_irQiqDCeKGKKJ8dc4m-dVyUhj1FArmt9VsWFx8bXPylEXje5XNTO9wblxsjR1RT2QTGmIzzLHaBIFOqy8RyKBYDxbSKhSYJVGiEXiLhIIoBg0R7THe2QdvxPQnzYh5BymhFGzuMuUTc6kDThK3gBiBGOHyjwQkOySTNSsBjsFahjrbV2SmhAr7sYJs0Rk6AHt47jMLhtLJE95mZp8UUfBhkpgOwJ428L4A" alt="Security visual"/>
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance" alt="Security visual"/>
                         </div>
                     </div>
                 </div>

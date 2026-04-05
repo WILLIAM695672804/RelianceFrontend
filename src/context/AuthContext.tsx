@@ -12,6 +12,7 @@ interface AuthUser {
     phone?: string;
     avatar_url?: string;
     roles: { name: string }[];
+    email_verified_at?: string;
     technician_profile?: any;
     agency_profile?: any;
     two_factor_enabled?: boolean;

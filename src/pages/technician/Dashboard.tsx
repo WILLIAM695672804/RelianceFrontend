@@ -1,24 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { getTechProfile } from '../../services/technicianService';
 import TechServiceMap from '../../components/maps/TechServiceMap';
+import matchingService from '../../services/matchingService';
 import './Dashboard.css';
 
 const Dashboard: React.FC = () => {
     const [profile, setProfile] = useState<any>(null);
+    const [pendingProposals, setPendingProposals] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const fetchProfile = async () => {
+        const fetchData = async () => {
             try {
-                const data = await getTechProfile();
-                setProfile(data);
+                const profileData = await getTechProfile();
+                setProfile(profileData);
+                
+                const proposalsData = await matchingService.getTechnicianProposals();
+                setPendingProposals(proposalsData.data || proposalsData);
             } catch (error) {
-                console.error("Failed to load profile on dashboard", error);
+                console.error("Failed to load data on dashboard", error);
             } finally {
                 setIsLoading(false);
             }
         };
-        fetchProfile();
+        fetchData();
     }, []);
 
     if (isLoading) {
@@ -34,7 +39,7 @@ const Dashboard: React.FC = () => {
                 <div className="tech-welcome-header">
                     <div className="tech-welcome-title">
                         <h1>Technician Dashboard</h1>
-                        <p>Welcome back, {profile?.name || 'Professional'}. You have 0 pending interventions.</p>
+                        <p>Welcome back, {profile?.name || 'Professional'}. You have {pendingProposals.length} new matching opportunities.</p>
                     </div>
                     <div>
                         <button className="tech-online-btn">
@@ -43,6 +48,41 @@ const Dashboard: React.FC = () => {
                         </button>
                     </div>
                 </div>
+
+                {/* AI Matching Opportunities */}
+                {pendingProposals.length > 0 && (
+                    <div className="tech-opportunities-section mb-8">
+                        <div className="flex items-center justify-between mb-4">
+                            <h4 className="tech-card-title flex items-center">
+                                <span className="material-symbols-outlined mr-2 text-blue-500">psychology</span>
+                                IA Matching Opportunities
+                            </h4>
+                            <span className="tech-kpi-badge blue">NEW</span>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {pendingProposals.map((prop) => (
+                                <div key={prop.id} className="glass-panel p-4 flex flex-col justify-between border-l-4 border-blue-500">
+                                    <div>
+                                        <div className="flex justify-between items-start mb-2">
+                                            <span className="tech-table-type">{prop.client_request?.category || 'Intervention'}</span>
+                                            <span className="tech-tech-match text-sm font-bold text-blue-600">{Math.round(prop.score)}% Match</span>
+                                        </div>
+                                        <h5 className="font-bold text-slate-800">{prop.client_request?.title}</h5>
+                                        <p className="text-sm text-slate-500 mb-3 line-clamp-2">{prop.client_request?.description}</p>
+                                        <div className="flex items-center text-xs text-slate-400 gap-3">
+                                            <span className="flex items-center"><span className="material-symbols-outlined text-xs mr-1">location_on</span> {Math.round(prop.distance)} km</span>
+                                            <span className="flex items-center"><span className="material-symbols-outlined text-xs mr-1">payments</span> {prop.estimated_price || 'A négocier'} XAF</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2 mt-4">
+                                        <button className="tech-btn-sm-outline flex-1">Décliner</button>
+                                        <button className="tech-btn-sm-solid flex-1">Accepter</button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {/* KPI Cards Grid */}
                 <div className="tech-kpi-grid">
@@ -256,7 +296,7 @@ const Dashboard: React.FC = () => {
                     <div className="tech-feed-list">
                         <div className="tech-network-item">
                             <div className="tech-network-avatar">
-                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjB9F1sZRdipDtg-mBNo-7dkG7YMQNbLlYfIKmw8eqnte0_QynBX2JWKJv9LA6GD4mi6_qcQuf9dYZHu_i3o5dblotDEeRdvrOs6M3U6YR858QnEPdgenlvVt4SCvSnd4gZ0FQEA_jRD15B4iNgYoe1gIE_37tdzc5U-yGBquDQ-XS-eX9EzpSjb0_N2keubM0UgFzx_S4VmS48-Y8H3XmDu4S6YJCjSaJY1QE-sMKfcG6m-ZG3osAdRYT7qjYsS8APZxwLf4PqQ" alt="User" />
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance" alt="User" />
                             </div>
                             <div className="tech-network-content">
                                 <p><span>Jerome K.</span> just completed a Gold-tier maintenance.</p>
@@ -266,7 +306,7 @@ const Dashboard: React.FC = () => {
 
                         <div className="tech-network-item">
                             <div className="tech-network-avatar">
-                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEqwlGcaa91KjbvREAedoHREv_icH9T1tGGNABKO5F6hxIYfUbQKp-y0qQp7No5xDB1r1G9_L8EGucuZdhbFM2tPJgJFbA1pB9A4YsWSjTPRLSMgZr7Vi3RTFKSILE13Wsqasdka3ydHDAfa2dJe1kg8rpfoKQpxk9VEGR3eHMs8PoORS3wZFrPHrjW5ah46bocm5u9xejD9daRtRdh_5BXwnkpyXAvvKoqgPyN5k8YnQ3z7ZiuMd7w7_wt4taeXKe5fiTGVHwJw" alt="User" />
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance" alt="User" />
                             </div>
                             <div className="tech-network-content">
                                 <p><span>Sandra M.</span> is now online in <span className="blue">Douala West</span>.</p>

@@ -47,9 +47,7 @@ const TechServiceMap: React.FC<TechServiceMapProps> = ({ latitude, longitude, ra
                 initialViewState={{
                     longitude: longitude || 11.5021, // Default Yaoundé if null
                     latitude: latitude || 3.8480,
-                    zoom: 9,
-                    pitch: 45, // 3D Tilt for landmarks
-                    bearing: 0
+                    zoom: 11
                 }}
                 mapStyle="https://tiles.openfreemap.org/styles/liberty" // Pro-grade detailed OSM style
                 style={{ width: '100%', height: '100%' }}
