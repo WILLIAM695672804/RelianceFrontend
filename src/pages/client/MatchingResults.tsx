@@ -143,6 +143,16 @@ const MatchingResults: React.FC = () => {
                                                     <span key={idx} className="mr-skill-badge">{skill.name}</span>
                                                 ))}
                                             </div>
+                                            {tech.badges && tech.badges.length > 0 && (
+                                                <div className="mr-tech-badges">
+                                                    {tech.badges.map((badge, bIdx) => (
+                                                        <span key={bIdx} className="mr-badge-pill">
+                                                            <span className="material-symbols-outlined" style={{ fontSize: '0.75rem', fontVariationSettings: "'FILL' 1" }}>{badge.icon_ref}</span>
+                                                            {badge.title}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
                                             <div className="mr-tech-meta">
                                                 <div className="mr-meta-item"><span className="material-symbols-outlined">location_on</span> {tech.distance_km} km away</div>
                                                 <div className="mr-meta-item"><span className="material-symbols-outlined">star</span> {tech.rating} ({tech.num_reviews} avis)</div>

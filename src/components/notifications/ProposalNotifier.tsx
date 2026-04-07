@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import api from '../../services/api';
 import './ProposalNotifier.css';
-
-const SSE_URL = 'http://127.0.0.1:8000/api/v1/proposals/stream';
 
 const ProposalNotifier: React.FC = () => {
     const [toast, setToast] = useState<{ title: string; price?: number } | null>(null);
     const navigate = useNavigate();
     const location = useLocation();
-    const eventSourceRef = useRef<EventSource | null>(null);
-    const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     const playSound = useCallback(() => {
         try {
@@ -33,60 +31,34 @@ const ProposalNotifier: React.FC = () => {
         }
     }, []);
 
-    const connectSSE = useCallback(() => {
-        // Close existing connection
-        if (eventSourceRef.current) {
-            eventSourceRef.current.close();
-        }
-
-        const token = localStorage.getItem('auth_token');
-        if (!token) return;
-
-        // EventSource doesn't support headers natively, pass token as query param
-        const url = `${SSE_URL}?token=${encodeURIComponent(token)}`;
-        const es = new EventSource(url);
-        eventSourceRef.current = es;
-
-        es.addEventListener('new_proposal', (event) => {
-            try {
-                const data = JSON.parse(event.data);
+    const checkForNotifications = useCallback(async () => {
+        try {
+            const res = await api.get('/proposals/check-new');
+            const data = res.data;
+            if (data.has_new && data.data) {
                 playSound();
                 setToast({
-                    title: data.title ?? 'Nouvelle mission',
-                    price: data.price,
+                    title: data.data.title ?? 'Nouvelle mission',
+                    price: data.data.price,
                 });
-                // Auto-dismiss after 8 seconds
                 setTimeout(() => setToast(null), 8000);
-            } catch {
-                // Parse error
             }
-        });
-
-        es.addEventListener('connected', () => {
-            // Connection established
-        });
-
-        es.onerror = () => {
-            es.close();
-            // Reconnect after 5 seconds
-            reconnectTimeoutRef.current = setTimeout(connectSSE, 5000);
-        };
+        } catch {
+            // Silent
+        }
     }, [playSound]);
 
     useEffect(() => {
-        connectSSE();
+        // Check immediately then every 3 seconds
+        checkForNotifications();
+        intervalRef.current = setInterval(checkForNotifications, 3000);
 
         return () => {
-            if (eventSourceRef.current) {
-                eventSourceRef.current.close();
-            }
-            if (reconnectTimeoutRef.current) {
-                clearTimeout(reconnectTimeoutRef.current);
-            }
+            if (intervalRef.current) clearInterval(intervalRef.current);
         };
-    }, [connectSSE]);
+    }, [checkForNotifications]);
 
-    // Hide on radar/matching page — technician already sees proposals there
+    // Hide on radar/cockpit pages
     const isOnRadarPage = location.pathname.includes('/radar') || location.pathname.includes('/cockpit');
     if (isOnRadarPage || !toast) return null;
 
@@ -99,7 +71,7 @@ const ProposalNotifier: React.FC = () => {
                 <div className="pn-toast-content">
                     <p className="pn-toast-title">Nouvelle proposition !</p>
                     <p className="pn-toast-sub">
-                        {toast.title}{toast.price ? ` — ${toast.price.toLocaleString()} XAF` : ''}
+                        {toast.title}{toast.price ? ` — ${Number(toast.price).toLocaleString()} XAF` : ''}
                     </p>
                 </div>
                 <div className="pn-toast-actions">

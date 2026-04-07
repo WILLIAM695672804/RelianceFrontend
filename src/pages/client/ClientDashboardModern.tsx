@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import authService from '../../services/authService';
+import ClientLocationMap from '../../components/maps/ClientLocationMap';
 import './ClientDashboardModern.css';
 
 const ClientDashboardModern: React.FC = () => {
@@ -134,39 +135,10 @@ const ClientDashboardModern: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Center Column: Map & Tech Profile */}
+                    {/* Center Column: Map — Client Live Position */}
                     <div className="sm-col-map">
                         <div className="sm-map-container">
-                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Maker" alt="Map" className="sm-map-img" />
-
-                            <div className="sm-map-marker">
-                                <div className="sm-marker-avatar">
-                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Maker" alt="Marker" />
-                                </div>
-                                <div className="sm-marker-label">Jean-Marc T.</div>
-                            </div>
-
-                            <div className="sm-floating-tech">
-                                <div className="sm-tech-glass glass-card">
-                                    <div className="sm-tech-img-box">
-                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Maker" alt="Jean-Marc T." />
-                                    </div>
-                                    <div className="sm-tech-info">
-                                        <div className="sm-tech-header">
-                                            <h4>Jean-Marc T.</h4>
-                                            <span className="sm-tech-rating">
-                                                <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                                                4.9
-                                            </span>
-                                        </div>
-                                        <p className="sm-tech-desc">Expert Electrician • 12km away</p>
-                                        <div className="sm-tech-actions">
-                                            <button className="sm-btn-primary" onClick={() => navigate('/espace-client/demande')}>Request Now</button>
-                                            <button className="sm-btn-outline">View Profile</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <ClientLocationMap />
                         </div>
                     </div>
 

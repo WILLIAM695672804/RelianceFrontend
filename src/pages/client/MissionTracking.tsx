@@ -1,5 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import matchingService from '../../services/matchingService';
+import RouteMap from '../../components/maps/RouteMap';
+import ReviewModal from '../../components/reviews/ReviewModal';
 import './MissionTracking.css';
+
+interface MissionData {
+    request: {
+        id: string;
+        title: string;
+        description: string;
+        status: string;
+        category: string | null;
+        created_at: string;
+    };
+    address: {
+        label: string;
+        city: string;
+        address: string;
+        latitude: number | null;
+        longitude: number | null;
+    } | null;
+    proposal: {
+        id: string;
+        price: number;
+        status: string;
+    } | null;
+    technician: {
+        id: string;
+        name: string;
+        phone: string;
+        avatar: string | null;
+        rating: number;
+        num_reviews: number;
+    } | null;
+}
 
 interface ChatMessage {
     id: number;
@@ -9,237 +43,311 @@ interface ChatMessage {
 }
 
 const MissionTracking: React.FC = () => {
-    // Chat states
-    const [messages, setMessages] = useState<ChatMessage[]>([
-        { id: 1, user: 'tech', text: "Bonjour, je suis en route. J'arrive dans 14 minutes.", timestamp: '12:30' },
-        { id: 2, user: 'client', text: 'Super, merci. Vous trouverez facilement avec le GPS.', timestamp: '12:32' },
-        { id: 3, user: 'tech', text: 'Je suis sur place. Je vais couper l\'arrivée d\'eau pour commencer le diagnostic.', timestamp: '12:45' }
-    ]);
+    const [mission, setMission] = useState<MissionData | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [myPosition, setMyPosition] = useState<{ latitude: number; longitude: number } | null>(null);
+    const [techPosition, setTechPosition] = useState<{ latitude: number; longitude: number } | null>(null);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [showChatModal, setShowChatModal] = useState(false);
+    const [showReviewModal, setShowReviewModal] = useState(false);
+    const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
-    // Chat handler
+    // Fetch mission data
+    useEffect(() => {
+        const fetchMission = async () => {
+            try {
+                const res = await matchingService.getClientActiveMission();
+                setMission(res.data);
+            } catch { /* silent */ }
+            finally { setLoading(false); }
+        };
+        fetchMission();
+        const interval = setInterval(fetchMission, 15000);
+        return () => clearInterval(interval);
+    }, []);
+
+    // Client geolocation
+    useEffect(() => {
+        if (!navigator.geolocation) return;
+        const watchId = navigator.geolocation.watchPosition(
+            (pos) => setMyPosition({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+            () => {},
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
+        );
+        return () => navigator.geolocation.clearWatch(watchId);
+    }, []);
+
+    // Fetch technician live position
+    const fetchTechPosition = useCallback(async () => {
+        try {
+            const res = await matchingService.getTechnicianPosition();
+            if (res.data) {
+                setTechPosition({ latitude: res.data.latitude, longitude: res.data.longitude });
+            }
+        } catch { /* silent */ }
+    }, []);
+
+    useEffect(() => {
+        fetchTechPosition();
+        const interval = setInterval(fetchTechPosition, 8000);
+        return () => clearInterval(interval);
+    }, [fetchTechPosition]);
+
     const handleSendMessage = (e: React.FormEvent) => {
         e.preventDefault();
         if (!newMessage.trim()) return;
-
-        setMessages([
-            ...messages,
+        setMessages(prev => [
+            ...prev,
             { id: Date.now(), user: 'client', text: newMessage, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
         ]);
         setNewMessage('');
-        
-        // Auto-scroll logic could be added here in a real app
     };
+
+    const getStatusLabel = () => {
+        if (!mission) return '';
+        if (mission.proposal?.status === 'accepted' || mission.request.status === 'assigned') return 'Technicien assigné';
+        if (mission.proposal?.status === 'pending') return 'En attente de réponse';
+        return 'Mission en cours';
+    };
+
+    const getStatusStep = () => {
+        if (!mission) return 0;
+        if (mission.proposal?.status === 'pending') return 1;
+        if (mission.proposal?.status === 'accepted') return 2;
+        return 1;
+    };
+
+    if (loading) {
+        return (
+            <div className="mt-page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
+                <div style={{ textAlign: 'center', color: '#64748b' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: '48px', animation: 'spin 1s linear infinite' }}>progress_activity</span>
+                    <p style={{ marginTop: '1rem' }}>Chargement de votre mission...</p>
+                    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                </div>
+            </div>
+        );
+    }
+
+    if (!mission) {
+        return (
+            <div className="mt-page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
+                <div style={{ textAlign: 'center', color: '#64748b' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: '48px' }}>search_off</span>
+                    <p style={{ marginTop: '1rem' }}>Aucune mission active pour le moment.</p>
+                </div>
+            </div>
+        );
+    }
+
+    const step = getStatusStep();
+    const tech = mission.technician;
 
     return (
         <div className="mt-page">
-            {/* Background Map Layer */}
+            {/* Background Map Layer with Route */}
             <div className="mt-map-layer">
-                <img 
-                    src="https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?auto=format&fit=crop&w=2000&q=80"
-                    alt="Map Background"
+                <RouteMap
+                    origin={myPosition}
+                    destination={techPosition}
+                    originLabel="Vous"
+                    destinationLabel={tech?.name.split(' ')[0] ?? 'Technicien'}
+                    originType="client"
                 />
-                
-                {/* Technician Marker Pulse */}
-                <div className="mt-map-marker tech-marker">
-                    <div className="marker-pulse"></div>
-                    <div className="marker-icon-container">
-                        <span className="material-symbols-outlined">local_shipping</span>
-                    </div>
-                    <div className="marker-label">Jean-Luc (En Route)</div>
-                </div>
-
-                {/* Destination Marker */}
-                <div className="mt-map-marker dest-marker">
-                    <div className="marker-icon-container primary">
-                        <span className="material-symbols-outlined">home_pin</span>
-                    </div>
-                </div>
             </div>
 
-            {/* Main Content Layout Overlay */}
-            <div className="mt-content-overlay">
-                
-                {/* Left Info Panel */}
-                <div className="mt-left-panel">
-                    
+            {/* Left Info Panel */}
+            <div className="mt-left-panel">
+
                     {/* Status Card */}
                     <div className="mt-glass-card">
                         <div className="mt-card-header">
-                            <span className="mt-mission-id">Mission ID: #REL-4829</span>
-                            <div className="mt-live-badge">LIVE</div>
+                            <span className="mt-mission-id">Mission #{mission.request.id.substring(0, 8).toUpperCase()}</span>
+                            <div className="mt-live-badge">{mission.proposal?.status === 'accepted' ? 'ASSIGNÉ' : 'EN ATTENTE'}</div>
                         </div>
-                        <h1 className="mt-main-title">Technician En Route</h1>
-                        <p className="mt-subtitle">Repairing: HVAC System Maintenance</p>
-                        
+                        <h1 className="mt-main-title">{getStatusLabel()}</h1>
+                        <p className="mt-subtitle">{mission.request.title}</p>
+
                         {/* ETA Wrapper */}
                         <div className="mt-eta-wrapper">
                             <div className="mt-eta-icon">
-                                <span className="material-symbols-outlined">schedule</span>
+                                <span className="material-symbols-outlined">payments</span>
                             </div>
                             <div className="mt-eta-details">
-                                <p className="mt-eta-label">Estimated Arrival</p>
-                                <p className="mt-eta-time">12:45 <span className="mt-eta-meridiem">PM</span></p>
+                                <p className="mt-eta-label">Prix estimé</p>
+                                <p className="mt-eta-time">{mission.proposal ? `${Number(mission.proposal.price).toLocaleString()} XAF` : '—'}</p>
                             </div>
                             <div className="mt-eta-countdown">
-                                <p className="mt-eta-label text-right">ETA</p>
-                                <p className="mt-eta-min">14 min</p>
+                                <p className="mt-eta-label text-right">Catégorie</p>
+                                <p className="mt-eta-min">{mission.request.category ?? '—'}</p>
                             </div>
                         </div>
 
                         {/* Timeline */}
                         <div className="mt-timeline">
-                            <div className="mt-timeline-step completed">
+                            <div className={`mt-timeline-step ${step >= 1 ? 'completed' : 'pending'}`}>
                                 <div className="mt-step-icon"><span className="material-symbols-outlined">check</span></div>
                                 <div className="mt-step-info">
-                                    <p className="mt-step-title">Job Accepted</p>
-                                    <p className="mt-step-time">12:15 PM</p>
+                                    <p className="mt-step-title">Demande envoyée</p>
+                                    <p className="mt-step-time">{new Date(mission.request.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                                 </div>
                             </div>
-                            <div className="mt-timeline-step active">
-                                <div className="mt-step-icon pulse"><span className="material-symbols-outlined">navigation</span></div>
+                            <div className={`mt-timeline-step ${step >= 2 ? 'completed' : step === 1 ? 'active' : 'pending'}`}>
+                                <div className={`mt-step-icon ${step === 1 ? 'pulse' : ''}`}><span className="material-symbols-outlined">{step >= 2 ? 'check' : 'hourglass_top'}</span></div>
                                 <div className="mt-step-info">
-                                    <p className="mt-step-title">Traveling</p>
-                                    <p className="mt-step-desc">Jean-Luc is on his way</p>
+                                    <p className="mt-step-title">{step >= 2 ? 'Technicien a accepté' : 'En attente de réponse'}</p>
+                                    {tech && step < 2 && <p className="mt-step-desc">Proposition envoyée à {tech.name}</p>}
+                                </div>
+                            </div>
+                            <div className={`mt-timeline-step ${techPosition ? 'active' : 'pending'}`}>
+                                <div className={`mt-step-icon ${techPosition ? 'pulse' : ''}`}>
+                                    {techPosition && <span className="material-symbols-outlined">navigation</span>}
+                                </div>
+                                <div className="mt-step-info">
+                                    <p className="mt-step-title">En route</p>
+                                    {techPosition && <p className="mt-step-desc">Position en direct</p>}
                                 </div>
                             </div>
                             <div className="mt-timeline-step pending">
                                 <div className="mt-step-icon"></div>
                                 <div className="mt-step-info">
-                                    <p className="mt-step-title">Arrived</p>
-                                </div>
-                            </div>
-                            <div className="mt-timeline-step pending">
-                                <div className="mt-step-icon"></div>
-                                <div className="mt-step-info">
-                                    <p className="mt-step-title">Working</p>
+                                    <p className="mt-step-title">Intervention</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Profile Card */}
-                    <div className="mt-glass-card mt-profile-card">
-                        <img 
-                            className="mt-profile-avatar"
-                            alt="Jean-Luc"
-                            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance" 
-                        />
-                        <div className="mt-profile-info">
-                            <h3 className="mt-profile-name">Jean-Luc M.</h3>
-                            <div className="mt-profile-rating">
-                                <span className="material-symbols-outlined fill-icon" style={{fontVariationSettings: "'FILL' 1"}}>star</span>
-                                <span>4.9 (120+ Jobs)</span>
+                    {tech && (
+                        <div className="mt-glass-card mt-profile-card">
+                            <img
+                                className="mt-profile-avatar"
+                                alt={tech.name}
+                                src={tech.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(tech.name)}&background=1a365d&color=fff&size=96`}
+                            />
+                            <div className="mt-profile-info">
+                                <h3 className="mt-profile-name">{tech.name}</h3>
+                                <div className="mt-profile-rating">
+                                    <span className="material-symbols-outlined fill-icon" style={{fontVariationSettings: "'FILL' 1"}}>star</span>
+                                    <span>{tech.rating} ({tech.num_reviews} avis)</span>
+                                </div>
+                            </div>
+                            <div className="mt-profile-actions">
+                                <button className="mt-action-btn secondary" onClick={() => setShowChatModal(true)} title="Chat">
+                                    <span className="material-symbols-outlined">chat</span>
+                                </button>
+                                {tech.phone && (
+                                    <a href={`tel:${tech.phone}`} className="mt-action-btn primary" title="Appeler">
+                                        <span className="material-symbols-outlined">call</span>
+                                    </a>
+                                )}
                             </div>
                         </div>
-                        <div className="mt-profile-actions">
-                            <button className="mt-action-btn secondary" onClick={() => setShowChatModal(true)} title="Ouvrir le chat">
-                                <span className="material-symbols-outlined">chat</span>
-                            </button>
-                            <button className="mt-action-btn primary" title="Appeler">
-                                <span className="material-symbols-outlined">call</span>
-                            </button>
+                    )}
+
+                    {/* Review Button - shown when mission is completed */}
+                    {mission?.request?.status === 'completed' && tech && !reviewSubmitted && (
+                        <button className="mt-btn-review" onClick={() => setShowReviewModal(true)}>
+                            <span className="material-symbols-outlined">rate_review</span>
+                            Laisser un avis
+                        </button>
+                    )}
+                    {reviewSubmitted && (
+                        <div className="mt-review-done">
+                            <span className="material-symbols-outlined">check_circle</span>
+                            Merci pour votre avis !
                         </div>
-                    </div>
+                    )}
                 </div>
 
-                {/* Right Bottom Corner Bento - Mission Summary */}
+                {/* Right Panel */}
                 <div className="mt-right-panel">
                     <div className="mt-bento-grid">
-                        {/* Location Bento */}
                         <div className="mt-glass-card mt-bento-card">
                             <div className="mt-bento-header">
                                 <div className="mt-bento-icon primary-bg">
                                     <span className="material-symbols-outlined">location_on</span>
                                 </div>
-                                <span className="mt-bento-label">Site Address</span>
+                                <span className="mt-bento-label">Adresse du site</span>
                             </div>
-                            <p className="mt-bento-title">Avenue Kennedy, Rue 1204</p>
-                            <p className="mt-bento-subtitle">Yaoundé, Cameroon</p>
+                            <p className="mt-bento-title">{mission.address?.address ?? mission.address?.label ?? '—'}</p>
+                            <p className="mt-bento-subtitle">{mission.address?.city ?? 'Cameroun'}</p>
                         </div>
-                        
-                        {/* Payment Bento */}
+
                         <div className="mt-glass-card mt-bento-card">
                             <div className="mt-bento-header">
                                 <div className="mt-bento-icon tertiary-bg">
                                     <span className="material-symbols-outlined">payments</span>
                                 </div>
-                                <span className="mt-bento-label">Total Estimate</span>
+                                <span className="mt-bento-label">Estimation totale</span>
                             </div>
-                            <p className="mt-bento-amount">25,000 <span>XAF</span></p>
-                            <p className="mt-bento-hint">Auto-debit on completion</p>
+                            <p className="mt-bento-amount">{mission.proposal ? Number(mission.proposal.price).toLocaleString() : '—'} <span>XAF</span></p>
+                            <p className="mt-bento-hint">Débit automatique à la fin</p>
                         </div>
 
-                        {/* Actions Bento */}
                         <div className="mt-glass-card mt-bento-actions">
                             <button className="mt-btn-danger">
                                 <span className="material-symbols-outlined">cancel</span>
-                                Cancel Mission
+                                Annuler la mission
                             </button>
                             <button className="mt-btn-outline">
                                 <span className="material-symbols-outlined">help_center</span>
-                                Get Support
+                                Aide
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Map Interactions Overlay (Bottom Right) */}
-            <div className="mt-map-controls">
-                <button className="mt-control-btn glass">
-                    <span className="material-symbols-outlined">my_location</span>
-                </button>
-                <div className="mt-control-group glass">
-                    <button className="mt-control-btn">
-                        <span className="material-symbols-outlined">add</span>
-                    </button>
-                    <button className="mt-control-btn">
-                        <span className="material-symbols-outlined">remove</span>
-                    </button>
-                </div>
-            </div>
+            
 
-            {/* Floating Chat Modal (Glassmorphism) */}
-            {showChatModal && (
+            {/* Review Modal */}
+            {showReviewModal && mission?.request && tech && (
+                <ReviewModal
+                    requestId={mission.request.id}
+                    technicianName={tech.name}
+                    onClose={() => setShowReviewModal(false)}
+                    onSubmitted={() => {
+                        setShowReviewModal(false);
+                        setReviewSubmitted(true);
+                    }}
+                />
+            )}
+
+            {/* Chat Modal */}
+            {showChatModal && tech && (
                 <div className="mt-chat-modal-backdrop" onClick={() => setShowChatModal(false)}>
                     <div className="mt-chat-modal" onClick={e => e.stopPropagation()}>
                         <div className="mt-chat-header">
                             <div>
-                                <h3>Messages Techniques</h3>
-                                <p>En direct avec Jean-Luc M.</p>
+                                <h3>Messages</h3>
+                                <p>Discussion avec {tech.name}</p>
                             </div>
                             <button className="mt-chat-close" onClick={() => setShowChatModal(false)}>
                                 <span className="material-symbols-outlined">close</span>
                             </button>
                         </div>
-                        
                         <div className="mt-chat-messages">
+                            {messages.length === 0 && (
+                                <div style={{ textAlign: 'center', color: '#94a3b8', padding: '2rem' }}>
+                                    <span className="material-symbols-outlined" style={{ fontSize: '32px' }}>chat_bubble_outline</span>
+                                    <p style={{ marginTop: '0.5rem', fontSize: '0.85rem' }}>Commencez la conversation</p>
+                                </div>
+                            )}
                             {messages.map((msg) => (
                                 <div key={msg.id} className={`mt-chat-bubble-wrapper ${msg.user === 'client' ? 'mine' : 'theirs'}`}>
                                     {msg.user === 'tech' && (
-                                        <img 
-                                            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance" 
-                                            alt="Tech" 
-                                            className="mt-chat-avatar" 
-                                        />
+                                        <img src={tech.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(tech.name)}&size=32`} alt={tech.name} className="mt-chat-avatar" />
                                     )}
                                     <div className="mt-chat-bubble">
                                         <p>{msg.text}</p>
-                                        <span className="mt-chat-time">{msg.timestamp}</span>
+                                        <span className="mt-chat-time">{msg.timestamp}</span> 
                                     </div>
                                 </div>
                             ))}
                         </div>
-
                         <form className="mt-chat-input-area" onSubmit={handleSendMessage}>
-                            <input 
-                                type="text" 
-                                placeholder="Écrivez votre message..." 
-                                value={newMessage}
-                                onChange={(e) => setNewMessage(e.target.value)}
-                            />
+                            <input type="text" placeholder="Écrivez votre message..." value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
                             <button type="submit" disabled={!newMessage.trim()} className="mt-chat-send">
                                 <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>send</span>
                             </button>

@@ -22,6 +22,11 @@ export interface MatchedTechnician {
     proficiency: number;
     hourly_rate: number;
   }[];
+  badges: {
+    code: string;
+    title: string;
+    icon_ref: string;
+  }[];
 }
 
 export interface MatchResult {
@@ -61,6 +66,26 @@ const matchingService = {
 
   async refuseProposal(proposalId: string) {
     const response = await api.post(`/proposals/${proposalId}/refuse`);
+    return response.data;
+  },
+
+  async getActiveMission() {
+    const response = await api.get('/proposals/active-mission');
+    return response.data;
+  },
+
+  async getClientActiveMission() {
+    const response = await api.get('/mission/active');
+    return response.data;
+  },
+
+  async updatePosition(latitude: number, longitude: number) {
+    const response = await api.post('/position/update', { latitude, longitude });
+    return response.data;
+  },
+
+  async getTechnicianPosition() {
+    const response = await api.get('/position/technician');
     return response.data;
   },
 

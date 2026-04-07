@@ -5,8 +5,6 @@ import './LiveRadar.css';
 import matchingService from '../../services/matchingService';
 import type { Proposal } from '../../services/matchingService';
 
-const SSE_URL = 'http://127.0.0.1:8000/api/v1/proposals/stream';
-
 const LiveRadar: React.FC = () => {
     const navigate = useNavigate();
     const [proposals, setProposals] = useState<Proposal[]>([]);
@@ -23,30 +21,10 @@ const LiveRadar: React.FC = () => {
         }
     }, []);
 
-    // Initial load + SSE for real-time updates
     useEffect(() => {
         fetchProposals();
-
-        const token = localStorage.getItem('auth_token');
-        if (!token) return;
-
-        const es = new EventSource(`${SSE_URL}?token=${encodeURIComponent(token)}`);
-
-        es.addEventListener('new_proposal', () => {
-            // Re-fetch proposals when a new one arrives
-            fetchProposals();
-        });
-
-        es.onerror = () => {
-            es.close();
-            // Fallback: retry connection after 5s
-            const timeout = setTimeout(() => {
-                // Component may have unmounted, just let useEffect re-run
-            }, 5000);
-            return () => clearTimeout(timeout);
-        };
-
-        return () => es.close();
+        const interval = setInterval(fetchProposals, 5000);
+        return () => clearInterval(interval);
     }, [fetchProposals]);
 
     const handleAccept = async (proposalId: string) => {

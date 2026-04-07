@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getTechProfile, updateTechLocation, updateTechProfile } from '../../services/technicianService';
 import TechServiceMap from '../../components/maps/TechServiceMap';
+import StarRating from '../../components/reviews/StarRating';
 import './IdentityHub.css';
 
 const competencesOptions = [
@@ -37,6 +38,19 @@ interface ProfileData {
         longitude: number | null;
         radius: number;
     };
+    badges: {
+        code: string;
+        title: string;
+        icon_ref: string;
+        awarded_at: string;
+    }[];
+    recent_reviews: {
+        id: string;
+        rating: number;
+        comment: string | null;
+        reviewer: { name: string; avatar_url: string | null };
+        created_at: string;
+    }[];
 }
 
 const IdentityHub: React.FC = () => {
@@ -331,6 +345,71 @@ const IdentityHub: React.FC = () => {
                                 <span className="tech-zone-tag tech-zone-empty">Updating coordinates allows for {profile?.service_perimeter?.radius || 50}km radius matching.</span>
                             )}
                         </div>
+                    </div>
+
+                    {/* Badges & Achievements */}
+                    <div className="tech-profile-card">
+                        <div className="tech-card-header">
+                            <h3>Badges & Achievements</h3>
+                        </div>
+                        {profile?.badges && profile.badges.length > 0 ? (
+                            <div className="tech-badges-grid">
+                                {profile.badges.map((badge, idx) => (
+                                    <div key={idx} className="tech-badge-item">
+                                        <div className="tech-badge-icon-wrap">
+                                            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>{badge.icon_ref}</span>
+                                        </div>
+                                        <div className="tech-badge-info">
+                                            <span className="tech-badge-title">{badge.title}</span>
+                                            <span className="tech-badge-date">
+                                                {new Date(badge.awarded_at).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p style={{ color: 'var(--on-surface-variant)', padding: '1rem', fontSize: '0.875rem' }}>
+                                Completez des missions pour debloquer des badges !
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Recent Reviews */}
+                    <div className="tech-profile-card">
+                        <div className="tech-card-header">
+                            <h3>Recent Reviews</h3>
+                            <span style={{ color: 'var(--on-surface-variant)', fontSize: '0.8rem' }}>
+                                {profile?.num_reviews ?? 0} total
+                            </span>
+                        </div>
+                        {profile?.recent_reviews && profile.recent_reviews.length > 0 ? (
+                            <div className="tech-reviews-list">
+                                {profile.recent_reviews.map((review) => (
+                                    <div key={review.id} className="tech-review-item">
+                                        <div className="tech-review-header">
+                                            <div className="tech-review-author">
+                                                <img
+                                                    src={review.reviewer.avatar_url || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'}
+                                                    alt={review.reviewer.name}
+                                                    className="tech-review-avatar"
+                                                />
+                                                <span>{review.reviewer.name}</span>
+                                            </div>
+                                            <StarRating value={review.rating} readonly size="sm" />
+                                        </div>
+                                        {review.comment && <p className="tech-review-comment">{review.comment}</p>}
+                                        <span className="tech-review-date">
+                                            {new Date(review.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p style={{ color: 'var(--on-surface-variant)', padding: '1rem', fontSize: '0.875rem' }}>
+                                Aucun avis pour le moment.
+                            </p>
+                        )}
                     </div>
 
                     {/* Edit Profile Modal */}
