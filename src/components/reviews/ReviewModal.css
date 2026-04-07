@@ -1,0 +1,114 @@
+.review-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.review-modal {
+    background: var(--surface, #1a1a2e);
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 480px;
+    overflow: hidden;
+}
+
+.review-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+}
+
+.review-modal-header h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--on-surface, #fff);
+    margin: 0;
+}
+
+.review-modal-header button {
+    background: none;
+    border: none;
+    color: var(--on-surface-variant, #9ca3af);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.review-modal-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.review-stars-section {
+    text-align: center;
+}
+
+.review-stars-section p {
+    margin: 0 0 0.75rem 0;
+    color: var(--on-surface-variant, #9ca3af);
+    font-size: 0.875rem;
+}
+
+.review-comment-section textarea {
+    width: 100%;
+    min-height: 100px;
+    background: var(--surface-variant, rgba(255, 255, 255, 0.05));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    color: var(--on-surface, #fff);
+    font-family: inherit;
+    font-size: 0.875rem;
+    resize: vertical;
+}
+
+.review-comment-section textarea::placeholder {
+    color: var(--on-surface-variant, #6b7280);
+}
+
+.review-modal-footer {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+}
+
+.review-btn-cancel {
+    flex: 1;
+    padding: 0.625rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.15));
+    background: transparent;
+    color: var(--on-surface, #fff);
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.review-btn-submit {
+    flex: 2;
+    padding: 0.625rem;
+    border-radius: 0.5rem;
+    border: none;
+    background: var(--primary, #6366f1);
+    color: #fff;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: opacity 0.2s;
+}
+
+.review-btn-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
