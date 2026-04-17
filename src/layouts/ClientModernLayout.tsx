@@ -1,6 +1,9 @@
 import React from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import UserAccountMenu from '../components/layout/UserAccountMenu';
+import { ChatProvider } from '../context/ChatContext';
+import FloatingChatButton from '../components/chat/FloatingChatButton';
+import ChatModal from '../components/chat/ChatModal';
 import './ClientModernLayout.css';
 
 const ClientModernLayout: React.FC = () => {
@@ -10,6 +13,8 @@ const ClientModernLayout: React.FC = () => {
         const path = location.pathname;
         if (path.includes('dashboard')) return 'Tableau de Bord';
         if (path.includes('demande')) return 'Nouvelle Demande';
+        if (path.includes('factures')) return 'Mes Factures';
+        if (path.includes('suivi-job')) return 'Suivi Intervention';
         if (path.includes('suivi')) return 'Suivi Live';
         if (path.includes('wallet')) return 'Portefeuille';
         if (path.includes('profil')) return 'Mon Profil';
@@ -25,50 +30,56 @@ const ClientModernLayout: React.FC = () => {
     ];
 
     return (
-        <div className="tech-layout-root">
-            
-            {/* Top App Bar — Same as Technician */}
-            <header className="tech-topbar">
-                <div className="tech-topbar-inner">
-                    <h1 className="tech-topbar-title">{getPageTitle()}</h1>
-                    <div className="tech-topbar-actions">
-                        <span className="material-symbols-outlined">notifications</span>
-                        <span className="material-symbols-outlined">settings</span>
-                        <UserAccountMenu />
+        <ChatProvider>
+            <div className="tech-layout-root">
+
+                {/* Top App Bar — Same as Technician */}
+                <header className="tech-topbar">
+                    <div className="tech-topbar-inner">
+                        <h1 className="tech-topbar-title">{getPageTitle()}</h1>
+                        <div className="tech-topbar-actions">
+                            <span className="material-symbols-outlined">notifications</span>
+                            <span className="material-symbols-outlined">settings</span>
+                            <UserAccountMenu />
+                        </div>
                     </div>
-                </div>
-            </header>
+                </header>
 
-            {/* Main Content */}
-            <main className="tech-layout-main">
-                <Outlet />
-            </main>
+                {/* Main Content */}
+                <main className="tech-layout-main">
+                    <Outlet />
+                </main>
 
-            {/* Floating Horizontal NavBar — Same as Technician */}
-            <nav className="tech-floating-nav">
-                {navLinks.map((link) => (
-                    <NavLink
-                        key={link.to}
-                        to={link.to}
-                        className={({ isActive }) => 
-                            `tech-dock-link ${isActive ? 'active' : ''}`
-                        }
-                    >
-                        <span 
-                            className="material-symbols-outlined"
-                            style={{
-                                fontVariationSettings: location.pathname.includes(link.to) 
-                                    ? "'FILL' 1" 
-                                    : "'FILL' 0"
-                            }}
+                {/* Chat */}
+                <FloatingChatButton />
+                <ChatModal />
+
+                {/* Floating Horizontal NavBar — Same as Technician */}
+                <nav className="tech-floating-nav">
+                    {navLinks.map((link) => (
+                        <NavLink
+                            key={link.to}
+                            to={link.to}
+                            className={({ isActive }) =>
+                                `tech-dock-link ${isActive ? 'active' : ''}`
+                            }
                         >
-                            {link.icon}
-                        </span>
-                        <span className="tech-dock-label">{link.label}</span>
-                    </NavLink>
-                ))}
-            </nav>
-        </div>
+                            <span
+                                className="material-symbols-outlined"
+                                style={{
+                                    fontVariationSettings: location.pathname.includes(link.to)
+                                        ? "'FILL' 1"
+                                        : "'FILL' 0"
+                                }}
+                            >
+                                {link.icon}
+                            </span>
+                            <span className="tech-dock-label">{link.label}</span>
+                        </NavLink>
+                    ))}
+                </nav>
+            </div>
+        </ChatProvider>
     );
 };
 
