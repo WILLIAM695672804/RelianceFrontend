@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import matchingService from '../../services/matchingService';
 import RouteMap from '../../components/maps/RouteMap';
 import ReviewModal from '../../components/reviews/ReviewModal';
+import { useChat } from '../../context/ChatContext';
 import './MissionTracking.css';
 
 interface MissionData {
@@ -35,23 +36,14 @@ interface MissionData {
     } | null;
 }
 
-interface ChatMessage {
-    id: number;
-    user: 'client' | 'tech';
-    text: string;
-    timestamp: string;
-}
-
 const MissionTracking: React.FC = () => {
     const [mission, setMission] = useState<MissionData | null>(null);
     const [loading, setLoading] = useState(true);
     const [myPosition, setMyPosition] = useState<{ latitude: number; longitude: number } | null>(null);
     const [techPosition, setTechPosition] = useState<{ latitude: number; longitude: number } | null>(null);
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
-    const [newMessage, setNewMessage] = useState('');
-    const [showChatModal, setShowChatModal] = useState(false);
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [reviewSubmitted, setReviewSubmitted] = useState(false);
+    const { openChat } = useChat();
 
     // Fetch mission data
     useEffect(() => {
@@ -93,16 +85,6 @@ const MissionTracking: React.FC = () => {
         const interval = setInterval(fetchTechPosition, 8000);
         return () => clearInterval(interval);
     }, [fetchTechPosition]);
-
-    const handleSendMessage = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!newMessage.trim()) return;
-        setMessages(prev => [
-            ...prev,
-            { id: Date.now(), user: 'client', text: newMessage, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
-        ]);
-        setNewMessage('');
-    };
 
     const getStatusLabel = () => {
         if (!mission) return '';
@@ -234,7 +216,7 @@ const MissionTracking: React.FC = () => {
                                 </div>
                             </div>
                             <div className="mt-profile-actions">
-                                <button className="mt-action-btn secondary" onClick={() => setShowChatModal(true)} title="Chat">
+                                <button className="mt-action-btn secondary" onClick={openChat} title="Chat">
                                     <span className="material-symbols-outlined">chat</span>
                                 </button>
                                 {tech.phone && (
@@ -314,47 +296,6 @@ const MissionTracking: React.FC = () => {
                 />
             )}
 
-            {/* Chat Modal */}
-            {showChatModal && tech && (
-                <div className="mt-chat-modal-backdrop" onClick={() => setShowChatModal(false)}>
-                    <div className="mt-chat-modal" onClick={e => e.stopPropagation()}>
-                        <div className="mt-chat-header">
-                            <div>
-                                <h3>Messages</h3>
-                                <p>Discussion avec {tech.name}</p>
-                            </div>
-                            <button className="mt-chat-close" onClick={() => setShowChatModal(false)}>
-                                <span className="material-symbols-outlined">close</span>
-                            </button>
-                        </div>
-                        <div className="mt-chat-messages">
-                            {messages.length === 0 && (
-                                <div style={{ textAlign: 'center', color: '#94a3b8', padding: '2rem' }}>
-                                    <span className="material-symbols-outlined" style={{ fontSize: '32px' }}>chat_bubble_outline</span>
-                                    <p style={{ marginTop: '0.5rem', fontSize: '0.85rem' }}>Commencez la conversation</p>
-                                </div>
-                            )}
-                            {messages.map((msg) => (
-                                <div key={msg.id} className={`mt-chat-bubble-wrapper ${msg.user === 'client' ? 'mine' : 'theirs'}`}>
-                                    {msg.user === 'tech' && (
-                                        <img src={tech.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(tech.name)}&size=32`} alt={tech.name} className="mt-chat-avatar" />
-                                    )}
-                                    <div className="mt-chat-bubble">
-                                        <p>{msg.text}</p>
-                                        <span className="mt-chat-time">{msg.timestamp}</span> 
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        <form className="mt-chat-input-area" onSubmit={handleSendMessage}>
-                            <input type="text" placeholder="Écrivez votre message..." value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
-                            <button type="submit" disabled={!newMessage.trim()} className="mt-chat-send">
-                                <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>send</span>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
