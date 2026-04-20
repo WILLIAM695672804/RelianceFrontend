@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import authService from '../../services/authService';
+import RoleUpgradeModal from '../../components/common/RoleUpgradeModal';
 import './ProfileSettings.css';
 
 const ProfileSettings: React.FC = () => {
@@ -12,6 +13,7 @@ const ProfileSettings: React.FC = () => {
         phone: user?.phone || '',
         email: user?.email || ''
     });
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
     const [locations, setLocations] = useState<any[]>([]);
@@ -369,6 +371,21 @@ const ProfileSettings: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            {/* CTA Devenir Technicien */}
+            <div className="ps-card" style={{ background: 'linear-gradient(135deg, var(--color-primary-blue), var(--color-bg-gradient-start))', color: '#fff', textAlign: 'center', padding: '2rem' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>engineering</span>
+                <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Devenir Technicien</h3>
+                <p style={{ fontSize: '0.85rem', opacity: 0.9, marginBottom: '1rem' }}>Rejoignez notre réseau de professionnels et proposez vos services.</p>
+                <button
+                    onClick={() => setShowUpgradeModal(true)}
+                    style={{ padding: '0.7rem 1.5rem', background: '#fff', color: 'var(--color-primary-blue)', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}
+                >
+                    Faire une demande
+                </button>
+            </div>
+
+            <RoleUpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
         </div>
     );
 };

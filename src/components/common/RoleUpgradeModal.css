@@ -1,0 +1,15 @@
+.upgrade-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
+.upgrade-modal { background: #fff; border-radius: 16px; padding: 2rem; max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto; }
+.upgrade-modal h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+.upgrade-modal .subtitle { color: var(--color-text-gray); font-size: 0.85rem; margin-bottom: 1.5rem; }
+.upgrade-field { margin-bottom: 1rem; }
+.upgrade-field label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.3rem; }
+.upgrade-field input, .upgrade-field textarea { width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 8px; font-size: 0.85rem; box-sizing: border-box; }
+.upgrade-skills { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.upgrade-skill-chip { padding: 0.35rem 0.7rem; border: 1px solid #ddd; border-radius: 20px; background: transparent; cursor: pointer; font-size: 0.8rem; }
+.upgrade-skill-chip.selected { background: var(--color-primary-blue); color: #fff; border-color: var(--color-primary-blue); }
+.upgrade-actions { display: flex; gap: 0.5rem; margin-top: 1.5rem; }
+.upgrade-actions button { flex: 1; padding: 0.7rem; border-radius: 10px; font-weight: 600; cursor: pointer; }
+.upgrade-btn-cancel { background: #f3f4f6; border: none; color: var(--color-text-dark); }
+.upgrade-btn-submit { background: var(--color-primary-blue); border: none; color: #fff; }
+.upgrade-btn-submit:disabled { opacity: 0.5; }
