@@ -1,0 +1,20 @@
+.notifications-page { padding: var(--spacing-lg); max-width: 800px; margin: 0 auto; }
+.notif-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--spacing-lg); }
+.notif-header h1 { font-family: var(--tech-font-display); font-size: var(--text-2xl); color: var(--tech-primary); }
+.mark-all-btn { background: var(--tech-secondary-fixed); color: var(--tech-on-secondary-fixed); border: none; padding: 8px 16px; border-radius: var(--border-radius); font-weight: 600; font-size: var(--text-sm); cursor: pointer; transition: all var(--transition-base); }
+.mark-all-btn:hover { opacity: 0.85; }
+.notif-list { display: flex; flex-direction: column; gap: 2px; }
+.notif-item { display: flex; gap: 12px; padding: 16px; border-radius: var(--border-radius); cursor: pointer; transition: background var(--transition-fast); border-left: 3px solid transparent; }
+.notif-item.unread { background: var(--tech-surface-container-low); border-left-color: var(--tech-primary); }
+.notif-item.read { background: transparent; opacity: 0.75; }
+.notif-item:hover { background: var(--tech-surface-container-high); }
+.notif-dot-col { width: 12px; padding-top: 6px; flex-shrink: 0; }
+.notif-dot { display: block; width: 8px; height: 8px; border-radius: 50%; background: var(--tech-primary); }
+.notif-content h4 { font-family: var(--tech-font-body); font-size: var(--text-base); font-weight: 600; color: var(--tech-on-surface); margin-bottom: 2px; }
+.notif-content p { font-size: var(--text-sm); color: var(--color-text-gray); line-height: 1.4; }
+.notif-time { font-size: var(--text-xs); color: var(--tech-outline-variant); margin-top: 4px; display: inline-block; }
+.notif-empty { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-md); padding: var(--spacing-3xl) 0; color: var(--color-text-gray); }
+.load-more-btn { display: block; margin: var(--spacing-lg) auto 0; background: transparent; border: 1px solid var(--tech-outline-variant); color: var(--tech-primary); padding: 10px 24px; border-radius: var(--border-radius); font-weight: 600; cursor: pointer; transition: all var(--transition-base); }
+.load-more-btn:hover { background: var(--tech-surface-container-low); }
+.notif-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 50vh; gap: var(--spacing-md); }
+.notif-spinner { width: 40px; height: 40px; border: 3px solid var(--tech-surface-container-high); border-top-color: var(--tech-primary); border-radius: 50%; animation: spin 0.8s linear infinite; }

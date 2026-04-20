@@ -1,0 +1,21 @@
+.dispute-detail-page { max-width: 800px; margin: 0 auto; padding: 1.5rem; }
+.dispute-detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.dispute-detail-header h1 { font-size: 1.5rem; font-weight: 700; color: var(--tech-on-surface); }
+.dispute-back-btn { display: flex; align-items: center; gap: 0.25rem; background: none; border: none; color: var(--tech-secondary); cursor: pointer; font-size: 0.9rem; }
+.dispute-info-card { background: var(--tech-surface-container-lowest); border: 1px solid var(--tech-surface-variant); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; }
+.dispute-info-row { display: flex; gap: 1rem; margin-bottom: 0.5rem; }
+.dispute-info-label { font-weight: 600; color: var(--tech-on-surface); min-width: 120px; font-size: 0.85rem; }
+.dispute-info-value { color: var(--color-text-gray); font-size: 0.85rem; }
+.dispute-messages { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
+.dispute-msg { padding: 0.75rem 1rem; border-radius: 10px; max-width: 80%; }
+.dispute-msg.mine { background: var(--tech-secondary-fixed); align-self: flex-end; }
+.dispute-msg.other { background: var(--tech-surface-container-high); align-self: flex-start; }
+.dispute-msg-sender { font-weight: 600; font-size: 0.75rem; color: var(--tech-primary); margin-bottom: 0.25rem; }
+.dispute-msg-body { font-size: 0.85rem; color: var(--tech-on-surface); }
+.dispute-msg-time { font-size: 0.7rem; color: var(--color-text-gray); margin-top: 0.25rem; text-align: right; }
+.dispute-reply-form { display: flex; gap: 0.5rem; margin-top: 1rem; }
+.dispute-reply-form input { flex: 1; padding: 0.6rem 0.75rem; border: 1px solid var(--tech-outline-variant); border-radius: 8px; font-size: 0.85rem; }
+.dispute-reply-form button { padding: 0.6rem 1rem; background: var(--tech-primary); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.dispute-resolution-box { margin-top: 1rem; padding: 1rem; background: #ecfdf5; border: 1px solid #10b981; border-radius: 10px; }
+.dispute-resolution-box h4 { color: #065f46; margin-bottom: 0.25rem; font-size: 0.9rem; }
+.dispute-resolution-box p { color: #047857; font-size: 0.85rem; }
