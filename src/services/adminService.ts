@@ -124,15 +124,74 @@ const adminService = {
         search?: string;
         page?: number;
     }): Promise<PaginatedResponse<KycDocument>> {
-        const response = await api.get('/kyc/admin/documents', { params });
+        const response = await api.get('/auth/kyc/admin/documents', { params });
         return response.data;
     },
 
     async validateKyc(id: string, status: 'approved' | 'rejected', rejectionReason?: string): Promise<any> {
-        const response = await api.post(`/kyc/${id}/validate`, {
+        const response = await api.post(`/auth/kyc/${id}/validate`, {
             status,
             rejection_reason: rejectionReason,
         });
+        return response.data;
+    },
+
+    // Fees & Commissions
+    async getFees(): Promise<any> {
+        const response = await api.get('/admin/fees');
+        return response.data;
+    },
+
+    async createFee(data: { name: string; fee_type: string; value: number; applies_to: string }): Promise<any> {
+        const response = await api.post('/admin/fees', data);
+        return response.data;
+    },
+
+    async updateFee(id: string, data: Partial<{ name: string; fee_type: string; value: number; applies_to: string; active: boolean }>): Promise<any> {
+        const response = await api.patch(`/admin/fees/${id}`, data);
+        return response.data;
+    },
+
+    async toggleFee(id: string): Promise<any> {
+        const response = await api.patch(`/admin/fees/${id}/toggle`);
+        return response.data;
+    },
+
+    // Requests Management
+    async getAllRequests(params?: { status?: string; page?: number }): Promise<any> {
+        const response = await api.get('/admin/requests', { params });
+        return response.data;
+    },
+
+    async assignTechnician(requestId: string, technicianId: string): Promise<any> {
+        const response = await api.post(`/admin/requests/${requestId}/assign`, { technician_id: technicianId });
+        return response.data;
+    },
+
+    // Conversations Supervision
+    async getAllConversations(params?: { page?: number; search?: string }): Promise<any> {
+        const response = await api.get('/admin/conversations', { params });
+        return response.data;
+    },
+
+    async getConversationDetail(id: string): Promise<any> {
+        const response = await api.get(`/admin/conversations/${id}`);
+        return response.data;
+    },
+
+    async searchConversations(query: string): Promise<any> {
+        const response = await api.get('/admin/conversations/search', { params: { q: query } });
+        return response.data;
+    },
+
+    // Analytics
+    async getAnalytics(params?: { period?: string }): Promise<any> {
+        const response = await api.get('/admin/analytics', { params });
+        return response.data;
+    },
+
+    async getAnalyticsSummary(): Promise<any> {
+        const response = await api.get('/admin/analytics/summary');
         return response.data;
     },
 };
