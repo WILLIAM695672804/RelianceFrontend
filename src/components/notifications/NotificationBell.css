@@ -1,0 +1,38 @@
+.notif-bell {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  transition: background 0.2s;
+}
+.notif-bell:hover {
+  background: var(--tech-surface-container-high, #e5e9eb);
+}
+.notif-bell .material-symbols-outlined {
+  font-size: 1.4rem;
+  color: var(--tech-on-surface, #181c1e);
+}
+.notif-bell-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--color-primary-red, #E82948);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  line-height: 1;
+  border: 2px solid var(--tech-surface-container-lowest, #fff);
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import UserAccountMenu from '../components/layout/UserAccountMenu';
+import NotificationBell from '../components/notifications/NotificationBell';
 import { ChatProvider } from '../context/ChatContext';
 import FloatingChatButton from '../components/chat/FloatingChatButton';
 import ChatModal from '../components/chat/ChatModal';
@@ -38,8 +39,7 @@ const ClientModernLayout: React.FC = () => {
                     <div className="tech-topbar-inner">
                         <h1 className="tech-topbar-title">{getPageTitle()}</h1>
                         <div className="tech-topbar-actions">
-                            <span className="material-symbols-outlined">notifications</span>
-                            <span className="material-symbols-outlined">settings</span>
+                            <NotificationBell basePath="/espace-client" />
                             <UserAccountMenu />
                         </div>
                     </div>
