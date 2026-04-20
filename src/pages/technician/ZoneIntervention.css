@@ -1,0 +1,20 @@
+.zone-page { padding: 1.5rem; max-width: 1000px; margin: 0 auto; }
+.zone-title { font-size: 1.5rem; font-weight: 700; color: var(--tech-on-surface); }
+.zone-subtitle { color: var(--color-text-gray); margin-bottom: 1.5rem; font-size: 0.9rem; }
+.zone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 768px) { .zone-grid { grid-template-columns: 1fr; } }
+.zone-map-card { background: var(--tech-surface-container-lowest); border: 1px solid var(--tech-surface-variant); border-radius: 16px; overflow: hidden; min-height: 300px; display: flex; align-items: center; justify-content: center; }
+.zone-map-placeholder { text-align: center; padding: 2rem; }
+.zone-map-info p { margin: 0.25rem 0; color: var(--tech-on-surface); }
+.zone-radius-display { font-weight: 700; font-size: 1.1rem; color: var(--tech-primary); margin-top: 0.5rem !important; }
+.zone-controls-card { background: var(--tech-surface-container-lowest); border: 1px solid var(--tech-surface-variant); border-radius: 16px; padding: 1.5rem; }
+.zone-field { margin-bottom: 1.25rem; }
+.zone-field label { display: block; font-weight: 600; font-size: 0.85rem; color: var(--tech-on-surface); margin-bottom: 0.4rem; }
+.zone-field input { width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--tech-outline-variant); border-radius: 8px; font-size: 0.85rem; box-sizing: border-box; }
+.zone-geolocate-btn { display: flex; align-items: center; gap: 0.25rem; margin-top: 0.5rem; background: none; border: 1px solid var(--tech-secondary); color: var(--tech-secondary); padding: 0.4rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+.zone-radius-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.zone-radius-chip { padding: 0.4rem 0.75rem; border: 1px solid var(--tech-outline-variant); border-radius: 20px; background: transparent; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+.zone-radius-chip.active { background: var(--tech-primary); color: #fff; border-color: var(--tech-primary); }
+.zone-message { font-size: 0.85rem; color: var(--tech-tertiary); margin: 0.5rem 0; }
+.zone-save-btn { width: 100%; padding: 0.75rem; background: var(--tech-primary); color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
+.zone-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }

@@ -1,0 +1,16 @@
+.social-wall-page { padding: 1.5rem; max-width: 700px; margin: 0 auto; }
+.social-wall-page h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
+.social-post-form { background: var(--tech-surface-container-lowest); border: 1px solid var(--tech-surface-variant); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; }
+.social-post-form textarea { width: 100%; border: 1px solid var(--tech-outline-variant); border-radius: 8px; padding: 0.6rem; font-size: 0.85rem; resize: vertical; box-sizing: border-box; }
+.social-post-form button { margin-top: 0.5rem; padding: 0.5rem 1.25rem; background: var(--tech-primary); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.social-post-form button:disabled { opacity: 0.5; }
+.social-feed { display: flex; flex-direction: column; gap: 0.75rem; }
+.social-card { background: var(--tech-surface-container-lowest); border: 1px solid var(--tech-surface-variant); border-radius: 12px; padding: 1rem; }
+.social-card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+.social-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--tech-primary-container); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.social-author { font-weight: 600; font-size: 0.85rem; display: block; }
+.social-time { font-size: 0.75rem; color: var(--color-text-gray); }
+.social-content { font-size: 0.9rem; line-height: 1.5; color: var(--tech-on-surface); }
+.social-actions { display: flex; gap: 1rem; margin-top: 0.75rem; }
+.social-actions button, .social-actions span { display: flex; align-items: center; gap: 0.25rem; background: none; border: none; cursor: pointer; font-size: 0.8rem; color: var(--color-text-gray); }
+.social-actions button:hover { color: var(--color-primary-red); }

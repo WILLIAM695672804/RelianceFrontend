@@ -1,0 +1,15 @@
+.trophies-page { padding: 1.5rem; max-width: 800px; margin: 0 auto; }
+.trophies-page h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.25rem; }
+.trophies-rep-card { background: var(--tech-surface-container-lowest); border: 1px solid var(--tech-surface-variant); border-radius: 16px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.trophies-rep-score { display: flex; align-items: center; gap: 0.75rem; }
+.rep-value { font-size: 2.5rem; font-weight: 800; color: var(--tech-on-surface); }
+.rep-label { font-size: 0.8rem; color: var(--color-text-gray); }
+.trophies-rep-stats { display: flex; gap: 1.5rem; font-size: 0.9rem; color: var(--tech-on-surface); }
+.trophies-empty { text-align: center; padding: 3rem; color: var(--color-text-gray); }
+.trophies-hint { font-size: 0.85rem; margin-top: 0.5rem; }
+.trophies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+.trophy-card { background: var(--tech-surface-container-lowest); border: 1px solid var(--tech-surface-variant); border-radius: 16px; padding: 1.25rem; text-align: center; }
+.trophy-icon { font-size: 2.5rem; color: #F59E0B; }
+.trophy-card h3 { font-size: 0.95rem; font-weight: 700; margin: 0.5rem 0 0.25rem; }
+.trophy-card p { font-size: 0.8rem; color: var(--color-text-gray); }
+.trophy-date { font-size: 0.7rem; color: var(--tech-outline-variant); display: block; margin-top: 0.5rem; }
