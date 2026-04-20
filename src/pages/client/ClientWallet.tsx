@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getInvoices, type Invoice } from '../../services/operationsService';
 import './ClientWallet.css';
 
 interface Transaction {
@@ -10,13 +12,27 @@ interface Transaction {
 }
 
 const ClientWallet: React.FC = () => {
+    const navigate = useNavigate();
     // Mock Data
     const [balance] = useState(4250500); // Available balance
-    
+    const [recentInvoices, setRecentInvoices] = useState<Invoice[]>([]);
+
     // Recharge Modal States
     const [showRechargeModal, setShowRechargeModal] = useState(false);
     const [rechargeStep, setRechargeStep] = useState(1);
     const [selectedMethod, setSelectedMethod] = useState('');
+
+    useEffect(() => {
+        const fetchInvoices = async () => {
+            try {
+                const res = await getInvoices(1);
+                setRecentInvoices(res.data?.slice(0, 3) || []);
+            } catch {
+                // silent
+            }
+        };
+        fetchInvoices();
+    }, []);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XAF', maximumFractionDigits: 0 }).format(amount);
@@ -136,28 +152,33 @@ const ClientWallet: React.FC = () => {
                     {/* Saved Invoices Section */}
                     <div className="cw-invoices-card">
                         <div className="cw-card-header-flex mb-6">
-                            <h3 className="cw-card-title">Invoices</h3>
-                            <button className="cw-btn-link text-primary hover:underline">View All</button>
+                            <h3 className="cw-card-title">Factures</h3>
+                            <button className="cw-btn-link text-primary hover:underline" onClick={() => navigate('/espace-client/factures')}>Voir tout</button>
                         </div>
                         <div className="cw-invoices-list">
-                            {[
-                                { id: 'INV-2024-0012', date: 'June 12, 2024', size: '240 KB' },
-                                { id: 'INV-2024-0009', date: 'May 28, 2024', size: '1.2 MB' },
-                                { id: 'INV-2024-0005', date: 'April 15, 2024', size: '512 KB' }
-                            ].map(inv => (
-                                <div className="cw-invoice-item" key={inv.id}>
-                                    <div className="cw-invoice-icon bg-red-50 text-red-500">
-                                        <span className="material-symbols-outlined">picture_as_pdf</span>
+                            {recentInvoices.length > 0 ? recentInvoices.map(inv => (
+                                <div className="cw-invoice-item" key={inv.id} style={{ cursor: 'pointer' }} onClick={() => navigate('/espace-client/factures')}>
+                                    <div className="cw-invoice-icon" style={{ background: inv.status === 'paid' ? '#f0fdf4' : '#fef3c7', color: inv.status === 'paid' ? '#16a34a' : '#d97706' }}>
+                                        <span className="material-symbols-outlined">{inv.status === 'paid' ? 'check_circle' : 'schedule'}</span>
                                     </div>
                                     <div className="cw-invoice-info">
-                                        <div className="cw-invoice-id">{inv.id}</div>
-                                        <div className="cw-invoice-metatext-slate-400">{inv.date} • {inv.size}</div>
+                                        <div className="cw-invoice-id">{inv.reference}</div>
+                                        <div className="cw-invoice-metatext-slate-400">
+                                            {new Date(inv.created_at).toLocaleDateString('fr-FR')} • {Number(inv.amount).toLocaleString()} XAF
+                                        </div>
                                     </div>
-                                    <button className="cw-btn-download text-slate-400 hover:text-primary">
-                                        <span className="material-symbols-outlined">download</span>
-                                    </button>
+                                    <span style={{
+                                        fontSize: '0.7rem', fontWeight: 600, padding: '3px 8px',
+                                        borderRadius: '10px', textTransform: 'uppercase',
+                                        background: inv.status === 'paid' ? '#dcfce7' : '#fef3c7',
+                                        color: inv.status === 'paid' ? '#16a34a' : '#d97706'
+                                    }}>{inv.status === 'paid' ? 'Payee' : 'Non payee'}</span>
                                 </div>
-                            ))}
+                            )) : (
+                                <p style={{ fontSize: '0.85rem', color: '#94a3b8', textAlign: 'center', padding: '16px 0' }}>
+                                    Aucune facture. Elles apparaitront ici apres acceptation d'un devis.
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>

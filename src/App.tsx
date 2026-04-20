@@ -38,24 +38,33 @@ import ProfileSettings from './pages/client/ProfileSettings';
 
 // Technician Space
 import TechnicianLayout from './layouts/TechnicianLayout';
-// import ZoneIntervention from './pages/technician/ZoneIntervention';
+import ZoneIntervention from './pages/technician/ZoneIntervention';
 import KYCStatus from './pages/technician/KYCStatus';
 import Dashboard from './pages/technician/Dashboard';
 import Planning from './pages/technician/Planning';
 import LiveRadar from './pages/technician/LiveRadar';
 import Cockpit from './pages/technician/Cockpit';
-// import MissionDetail from './pages/technician/MissionDetail';
-// import QuoteEditor from './pages/technician/QuoteEditor';
-// import MissionRoute from './pages/technician/MissionRoute';
-// import MissionCompletion from './pages/technician/MissionCompletion';
+import MissionDetail from './pages/technician/MissionDetail';
+import QuoteEditor from './pages/technician/QuoteEditor';
+import MissionCompletion from './pages/technician/MissionCompletion';
 import Wallet from './pages/technician/Wallet';
 import Withdrawal from './pages/technician/Withdrawal';
-// import TransactionHistory from './pages/technician/TransactionHistory';
+import TransactionHistory from './pages/technician/TransactionHistory';
 import IdentityHub from './pages/technician/IdentityHub';
-// import Reviews from './pages/technician/Reviews';
-// import SocialWall from './pages/technician/SocialWall';
-// import Trophies from './pages/technician/Trophies';
+import ReviewsList from './pages/technician/ReviewsList';
+import SocialWall from './pages/technician/SocialWall';
+import Trophies from './pages/technician/Trophies';
 import SlaAuditLog from './pages/technician/SlaAuditLog';
+import Subscriptions from './pages/technician/Subscriptions';
+
+// Client Operations Pages
+import Invoices from './pages/client/Invoices';
+import JobTracking from './pages/client/JobTracking';
+
+// Common Pages (shared between client & technician)
+import Notifications from './pages/common/Notifications';
+import Disputes from './pages/common/Disputes';
+import DisputeDetail from './pages/common/DisputeDetail';
 
 // Admin Space
 import AdminLayout from './layouts/AdminLayout';
@@ -63,6 +72,19 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminTechnicians from './pages/admin/AdminTechnicians';
 import AdminKyc from './pages/admin/AdminKyc';
+import AdminDisputes from './pages/admin/AdminDisputes';
+import AdminSubscriptions from './pages/admin/AdminSubscriptions';
+import AdminUpgradeRequests from './pages/admin/AdminUpgradeRequests';
+import AdminFees from './pages/admin/AdminFees';
+import AdminAnalytics from './pages/admin/AdminAnalytics';
+import AdminRequests from './pages/admin/AdminRequests';
+import AdminConversations from './pages/admin/AdminConversations';
+
+// Agency Space
+import AgencyLayout from './layouts/AgencyLayout';
+import AgencyDashboard from './pages/agency/AgencyDashboard';
+import AgencyMembers from './pages/agency/AgencyMembers';
+import AgencyProfile from './pages/agency/AgencyProfile';
 
 // Auth Guard
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -109,8 +131,13 @@ function App() {
             <Route path="demande" element={<RequestWizard />} />
             <Route path="matching" element={<MatchingResults />} />
             <Route path="suivi" element={<MissionTracking />} />
+            <Route path="factures" element={<Invoices />} />
+            <Route path="suivi-job/:jobId" element={<JobTracking />} />
             <Route path="wallet" element={<ClientWallet />} />
             <Route path="profil" element={<ProfileSettings />} />
+            <Route path="notifications" element={<Notifications />} />
+            <Route path="litiges" element={<Disputes />} />
+            <Route path="litiges/:id" element={<DisputeDetail />} />
           </Route>
 
           {/* Espace Technicien — Protégé par rôle */}
@@ -121,23 +148,26 @@ function App() {
           }>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="verification" element={<KYCStatus />} />
-            {/* <Route path="zone" element={<ZoneIntervention />} /> */}
+            <Route path="zone" element={<ZoneIntervention />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="cockpit" element={<Cockpit />} />
             <Route path="radar" element={<LiveRadar />} />
             <Route path="planning" element={<Planning />} />
-            {/* <Route path="mission/:id" element={<MissionDetail />} />
+            <Route path="mission/:id" element={<MissionDetail />} />
             <Route path="mission/:id/devis" element={<QuoteEditor />} />
-            <Route path="mission/:id/route" element={<MissionRoute />} />
-            <Route path="mission/:id/travaux" element={<MissionCompletion />} /> */}
+            <Route path="mission/:id/travaux" element={<MissionCompletion />} />
             <Route path="wallet" element={<Wallet />} />
             <Route path="wallet/retrait" element={<Withdrawal />} />
-            {/* <Route path="wallet/historique" element={<TransactionHistory />} /> */}
+            <Route path="wallet/historique" element={<TransactionHistory />} />
             <Route path="identite" element={<IdentityHub />} />
-            {/* <Route path="avis" element={<Reviews />} /> */}
+            <Route path="avis" element={<ReviewsList />} />
             <Route path="audit-sla" element={<SlaAuditLog />} />
-            {/* <Route path="social" element={<SocialWall />} />
-            <Route path="trophees" element={<Trophies />} /> */}
+            <Route path="abonnements" element={<Subscriptions />} />
+            <Route path="notifications" element={<Notifications />} />
+            <Route path="litiges" element={<Disputes />} />
+            <Route path="litiges/:id" element={<DisputeDetail />} />
+            <Route path="social" element={<SocialWall />} />
+            <Route path="trophees" element={<Trophies />} />
           </Route>
           {/* Espace Admin — Protege par role */}
           <Route path="/admin" element={
@@ -150,6 +180,27 @@ function App() {
             <Route path="users" element={<AdminUsers />} />
             <Route path="technicians" element={<AdminTechnicians />} />
             <Route path="kyc" element={<AdminKyc />} />
+            <Route path="litiges" element={<AdminDisputes />} />
+            <Route path="abonnements" element={<AdminSubscriptions />} />
+            <Route path="promotions" element={<AdminUpgradeRequests />} />
+            <Route path="fees" element={<AdminFees />} />
+            <Route path="analytics" element={<AdminAnalytics />} />
+            <Route path="demandes" element={<AdminRequests />} />
+            <Route path="messagerie" element={<AdminConversations />} />
+            <Route path="notifications" element={<Notifications />} />
+          </Route>
+
+          {/* Espace Agence — Protégé par rôle */}
+          <Route path="/agence" element={
+            <ProtectedRoute allowedRoles={['agence']}>
+              <AgencyLayout />
+            </ProtectedRoute>
+          }>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<AgencyDashboard />} />
+            <Route path="membres" element={<AgencyMembers />} />
+            <Route path="profil" element={<AgencyProfile />} />
+            <Route path="notifications" element={<Notifications />} />
           </Route>
         </Routes>
         <AuthModal />

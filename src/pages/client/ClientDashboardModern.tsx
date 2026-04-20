@@ -190,7 +190,7 @@ const ClientDashboardModern: React.FC = () => {
                 <section className="sm-jobs-section">
                     <div className="sm-jobs-header">
                         <h2 className="sm-jobs-title">Active Jobs</h2>
-                        <button className="sm-jobs-link">View All Requests</button>
+                        <button className="sm-jobs-link" onClick={() => navigate('/espace-client/factures')}>Mes Factures</button>
                     </div>
 
                     <div className="sm-jobs-grid">

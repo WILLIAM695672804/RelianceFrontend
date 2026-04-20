@@ -1,0 +1,118 @@
+.jt-page { padding: 24px; max-width: 700px; margin: 0 auto; }
+
+.jt-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+.jt-back-btn {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px; width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #334155;
+}
+.jt-back-btn:hover { background: rgba(0,0,0,0.05); }
+.jt-title { font-size: 1.4rem; font-weight: 700; color: #0f172a; margin: 0; }
+
+/* Status banner */
+.jt-status-banner {
+    display: flex; align-items: center; gap: 16px;
+    padding: 20px 24px; border-radius: 16px;
+    background: rgba(255,255,255,0.8); backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-left: 4px solid #3b82f6; margin-bottom: 24px;
+}
+.jt-status-label { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 0; }
+.jt-tech-name { font-size: 0.9rem; color: #64748b; margin: 4px 0 0; }
+.jt-eta { font-size: 0.85rem; color: #3b82f6; margin: 4px 0 0; font-weight: 500; }
+
+/* Card */
+.jt-card {
+    background: rgba(255,255,255,0.7); backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.3); border-radius: 16px;
+    padding: 24px; margin-bottom: 24px;
+}
+.jt-card-title {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 1rem; font-weight: 600; color: #1e293b; margin: 0 0 16px;
+}
+.jt-card-title .material-symbols-outlined { color: #3b82f6; }
+
+/* Timeline */
+.jt-timeline { display: flex; align-items: center; gap: 0; margin: 8px 0; }
+.jt-timeline-step {
+    display: flex; flex-direction: column; align-items: center; flex: 1; position: relative;
+}
+.jt-timeline-step:not(:last-child)::after {
+    content: ''; position: absolute; top: 14px; left: 55%; right: -45%;
+    height: 2px; background: #e2e8f0; z-index: 0;
+}
+.jt-timeline-step.done:not(:last-child)::after { background: #3b82f6; }
+
+.jt-timeline-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #f1f5f9; border: 2px solid #e2e8f0;
+    display: flex; align-items: center; justify-content: center; z-index: 1;
+}
+.jt-timeline-step.current .jt-timeline-dot {
+    box-shadow: 0 0 0 4px rgba(59,130,246,0.2);
+}
+.jt-timeline-label { font-size: 0.65rem; color: #94a3b8; margin-top: 6px; text-align: center; }
+.jt-timeline-step.done .jt-timeline-label { color: #3b82f6; font-weight: 500; }
+
+/* Progress */
+.jt-progress-bar {
+    height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; margin-bottom: 16px;
+}
+.jt-progress-fill {
+    height: 100%; background: linear-gradient(90deg, #3b82f6, #6366f1);
+    border-radius: 3px; transition: width 0.5s ease;
+}
+
+/* Phases */
+.jt-phases { display: flex; flex-direction: column; gap: 4px; }
+.jt-phase {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 8px; font-size: 0.9rem; color: #475569;
+}
+.jt-phase-completed { color: #16a34a; }
+.jt-phase-completed .material-symbols-outlined { color: #16a34a; }
+.jt-phase-in_progress .material-symbols-outlined { color: #f59e0b; }
+.jt-phase-pending .material-symbols-outlined { color: #cbd5e1; }
+
+/* Quote review */
+.jt-quote-review {
+    background: #f8fafc; border: 1px solid #e2e8f0;
+    border-radius: 12px; padding: 16px; margin-bottom: 12px;
+}
+.jt-quote-amount { font-size: 1.3rem; font-weight: 700; color: #0f172a; margin-bottom: 12px; }
+.jt-quote-breakdown { margin-bottom: 12px; }
+.jt-breakdown-line {
+    display: flex; justify-content: space-between;
+    font-size: 0.85rem; color: #475569; padding: 4px 0;
+    border-bottom: 1px dashed #e2e8f0;
+}
+.jt-quote-actions { display: flex; gap: 10px; margin-top: 12px; }
+.jt-btn-reject {
+    flex: 1; padding: 10px; background: #f1f5f9; color: #64748b;
+    border: none; border-radius: 10px; cursor: pointer; font-weight: 500;
+}
+.jt-btn-reject:hover { background: #e2e8f0; }
+.jt-btn-accept {
+    flex: 2; padding: 10px; background: #16a34a; color: #fff;
+    border: none; border-radius: 10px; cursor: pointer; font-weight: 600;
+}
+.jt-btn-accept:hover { background: #15803d; }
+.jt-btn-reject:disabled, .jt-btn-accept:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Completed */
+.jt-completed {
+    text-align: center; padding: 32px;
+    background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 16px;
+}
+.jt-completed .material-symbols-outlined { font-size: 48px; color: #16a34a; }
+.jt-completed h3 { color: #166534; margin: 12px 0 8px; }
+.jt-completed p { color: #4ade80; font-size: 0.9rem; }
+
+.jt-empty { text-align: center; padding: 60px 20px; }
+.jt-empty p { color: #94a3b8; margin: 16px 0; }
+.jt-btn-back {
+    background: #f1f5f9; color: #475569; border: none; padding: 10px 24px;
+    border-radius: 10px; cursor: pointer;
+}

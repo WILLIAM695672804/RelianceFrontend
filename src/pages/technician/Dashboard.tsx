@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { getTechProfile } from '../../services/technicianService';
 import TechServiceMap from '../../components/maps/TechServiceMap';
 import matchingService from '../../services/matchingService';
 import './Dashboard.css';
 
 const Dashboard: React.FC = () => {
+    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [profile, setProfile] = useState<any>(null);
     const [pendingProposals, setPendingProposals] = useState<any[]>([]);
@@ -70,7 +71,7 @@ const Dashboard: React.FC = () => {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {pendingProposals.map((prop) => (
-                                <div key={prop.id} className="glass-panel p-4 flex flex-col justify-between border-l-4 border-blue-500">
+                                <div key={prop.id} className="glass-panel p-4 flex flex-col justify-between border-l-4 border-blue-500" style={{ cursor: 'pointer' }} onClick={() => navigate(`/technicien/mission/${prop.client_request?.id || prop.request_id}`)}>
                                     <div>
                                         <div className="flex justify-between items-start mb-2">
                                             <span className="tech-table-type">{prop.client_request?.category || 'Intervention'}</span>
@@ -84,8 +85,20 @@ const Dashboard: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="flex gap-2 mt-4">
-                                        <button className="tech-btn-sm-outline flex-1">Décliner</button>
-                                        <button className="tech-btn-sm-solid flex-1">Accepter</button>
+                                        <button className="tech-btn-sm-outline flex-1" onClick={async (e) => {
+                                            e.stopPropagation();
+                                            try {
+                                                await matchingService.refuseProposal(prop.id);
+                                                setPendingProposals(prev => prev.filter(p => p.id !== prop.id));
+                                            } catch { /* silent */ }
+                                        }}>Décliner</button>
+                                        <button className="tech-btn-sm-solid flex-1" onClick={async (e) => {
+                                            e.stopPropagation();
+                                            try {
+                                                await matchingService.acceptProposal(prop.id);
+                                                navigate(`/technicien/mission/${prop.client_request?.id || prop.request_id}`);
+                                            } catch { /* silent */ }
+                                        }}>Accepter</button>
                                     </div>
                                 </div>
                             ))}

@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getTechCalendar, removeScheduleException } from '../../services/scheduleService';
+import { getUpcomingAppointments, type Appointment } from '../../services/operationsService';
 import './Planning.css';
 
 const Planning: React.FC = () => {
+    const navigate = useNavigate();
     const [calendarData, setCalendarData] = useState<any>(null);
+    const [upcomingAppts, setUpcomingAppts] = useState<Appointment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         fetchCalendar();
+        fetchUpcoming();
     }, []);
 
     const fetchCalendar = async () => {
@@ -18,6 +23,15 @@ const Planning: React.FC = () => {
             console.error("Failed to fetch calendar", error);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const fetchUpcoming = async () => {
+        try {
+            const appts = await getUpcomingAppointments();
+            setUpcomingAppts(appts);
+        } catch {
+            // silent
         }
     };
 
@@ -230,20 +244,28 @@ const Planning: React.FC = () => {
                     <button>View All</button>
                 </div>
                 <div className="tech-upcoming-grid">
-                    
-                    {appointments.length > 0 ? (
-                        appointments.map((appt: any) => (
-                            <div className="tech-appt-card" key={appt.id}>
+
+                    {upcomingAppts.length > 0 ? (
+                        upcomingAppts.map((appt) => (
+                            <div className="tech-appt-card" key={appt.id} style={{ cursor: 'pointer' }} onClick={() => navigate(`/technicien/mission/${appt.request_id}`)}>
                                 <div className="tech-appt-card-header">
-                                    <span className="tech-appt-time">{appt.scheduled_start}</span>
-                                    <button className="tech-btn-more"><span className="material-symbols-outlined">more_vert</span></button>
+                                    <span className="tech-appt-time">
+                                        {new Date(appt.scheduled_start).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}
+                                        {' '}
+                                        {new Date(appt.scheduled_start).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                    <span style={{
+                                        fontSize: '0.7rem', fontWeight: 600, padding: '2px 8px',
+                                        borderRadius: '12px', textTransform: 'uppercase',
+                                        background: appt.status === 'confirmed' ? '#dcfce7' : '#dbeafe',
+                                        color: appt.status === 'confirmed' ? '#16a34a' : '#2563eb'
+                                    }}>{appt.status}</span>
                                 </div>
-                                <h5>{appt.title}</h5>
-                                <p className="tech-appt-address">{appt.address}</p>
-                                <div className="tech-appt-client">
-                                    <img src="https://ui-avatars.com/api/?name=" alt="Client"/>
-                                    <span>{appt.client_name}</span>
-                                </div>
+                                <h5>{appt.request?.title || 'Intervention'}</h5>
+                                <p className="tech-appt-address">{appt.location?.address ? `${appt.location.address}, ${appt.location.city}` : 'Adresse a confirmer'}</p>
+                                {appt.notes && (
+                                    <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>{appt.notes}</p>
+                                )}
                             </div>
                         ))
                     ) : (
