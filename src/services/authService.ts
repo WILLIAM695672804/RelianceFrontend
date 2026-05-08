@@ -25,7 +25,7 @@ export interface LoginData {
 export interface AuthResponse {
     message: string;
     user: any;
-    token: string;
+    token?: string; // Token is now stored in httpOnly cookie, not in response body
 }
 
 const authService = {

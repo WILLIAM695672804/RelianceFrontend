@@ -6,30 +6,22 @@ const api = axios.create({
         'Content-Type': 'application/json',
         'Accept': 'application/json',
     },
-});
-
-// Intercepteur: injecte le token Bearer automatiquement
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+    withCredentials: true, // Send httpOnly cookies with every request
 });
 
 // Flag pour éviter les boucles de refresh
 let isRefreshing = false;
 let failedQueue: Array<{
-    resolve: (token: string) => void;
+    resolve: (value?: unknown) => void;
     reject: (error: any) => void;
 }> = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: any) => {
     failedQueue.forEach(({ resolve, reject }) => {
         if (error) {
             reject(error);
         } else {
-            resolve(token!);
+            resolve();
         }
     });
     failedQueue = [];
@@ -41,10 +33,9 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        // Si 401 et qu'on a un token et que ce n'est pas déjà un retry
+        // Si 401 et que ce n'est pas déjà un retry
         if (
             error.response?.status === 401 &&
-            localStorage.getItem('auth_token') &&
             !originalRequest._retry &&
             !originalRequest.url?.includes('/auth/login') &&
             !originalRequest.url?.includes('/auth/refresh')
@@ -53,8 +44,7 @@ api.interceptors.response.use(
                 // Si un refresh est déjà en cours, mettre en file d'attente
                 return new Promise((resolve, reject) => {
                     failedQueue.push({ resolve, reject });
-                }).then((token) => {
-                    originalRequest.headers.Authorization = `Bearer ${token}`;
+                }).then(() => {
                     return api(originalRequest);
                 });
             }
@@ -63,20 +53,13 @@ api.interceptors.response.use(
             isRefreshing = true;
 
             try {
-                const response = await api.post('/auth/refresh');
-                const newToken = response.data.token;
-
-                localStorage.setItem('auth_token', newToken);
-                api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-                originalRequest.headers.Authorization = `Bearer ${newToken}`;
-
-                processQueue(null, newToken);
+                await api.post('/auth/refresh');
+                // Cookie is automatically updated by the server response
+                processQueue(null);
                 return api(originalRequest);
             } catch (refreshError) {
-                processQueue(refreshError, null);
+                processQueue(refreshError);
                 // Refresh échoué → déconnexion
-                localStorage.removeItem('auth_token');
-                localStorage.removeItem('auth_user');
                 window.location.href = '/connexion';
                 return Promise.reject(refreshError);
             } finally {
@@ -84,10 +67,8 @@ api.interceptors.response.use(
             }
         }
 
-        // Pas de token stocké ou déjà un retry → déconnexion directe
-        if (error.response?.status === 401 && localStorage.getItem('auth_token')) {
-            localStorage.removeItem('auth_token');
-            localStorage.removeItem('auth_user');
+        // Pas authentifié → redirection
+        if (error.response?.status === 401) {
             window.location.href = '/connexion';
         }
 

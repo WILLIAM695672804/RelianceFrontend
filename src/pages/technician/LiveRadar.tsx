@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TechServiceMap from '../../components/maps/TechServiceMap';
+import { useProposalChannel } from '../../hooks/useProposalChannel';
 import './LiveRadar.css';
 import matchingService from '../../services/matchingService';
 import type { Proposal } from '../../services/matchingService';
@@ -23,9 +24,22 @@ const LiveRadar: React.FC = () => {
 
     useEffect(() => {
         fetchProposals();
-        const interval = setInterval(fetchProposals, 5000);
-        return () => clearInterval(interval);
     }, [fetchProposals]);
+
+    // Real-time updates via WebSocket
+    useProposalChannel({
+        onProposalCreated: (data) => {
+            setProposals(prev => [{
+                id: data.id,
+                request_id: data.request_id,
+                technician_id: '',
+                price: data.price,
+                status: 'pending',
+                expires_at: data.expires_at || '',
+                request: data.request,
+            } as Proposal, ...prev]);
+        },
+    });
 
     const handleAccept = async (proposalId: string) => {
         setActing(proposalId);

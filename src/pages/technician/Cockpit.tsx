@@ -69,18 +69,10 @@ const Cockpit: React.FC = () => {
             { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
         );
 
-        // Also send position periodically
-        const interval = setInterval(() => {
-            if (myPosition) {
-                sendPosition(myPosition.latitude, myPosition.longitude);
-            }
-        }, 10000);
-
         return () => {
             navigator.geolocation.clearWatch(watchId);
-            clearInterval(interval);
         };
-    }, [sendPosition, myPosition]);
+    }, [sendPosition]);
 
     if (loading) {
         return (

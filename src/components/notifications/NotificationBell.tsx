@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { notificationService } from '../../services/notificationService';
+import { useNotificationChannel } from '../../hooks/useNotificationChannel';
 import './NotificationBell.css';
 
 interface NotificationBellProps {
@@ -21,9 +22,13 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ basePath }) => {
       }
     };
     fetchCount();
-    const interval = setInterval(fetchCount, 30000);
-    return () => clearInterval(interval);
   }, []);
+
+  useNotificationChannel({
+    onNotificationCreated: () => {
+      setUnreadCount(prev => prev + 1);
+    },
+  });
 
   return (
     <button className="notif-bell" onClick={() => navigate(`${basePath}/notifications`)}>

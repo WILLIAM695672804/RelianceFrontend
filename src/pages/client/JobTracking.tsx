@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getJobTracking, getQuotesForRequest, acceptQuote, rejectQuote, type Quote } from '../../services/operationsService';
+import { useJobChannel } from '../../hooks/useJobChannel';
 import './JobTracking.css';
 
 interface TrackingData {
@@ -25,9 +26,25 @@ const JobTracking: React.FC = () => {
 
     useEffect(() => {
         fetchTracking();
-        const interval = setInterval(fetchTracking, 10000);
-        return () => clearInterval(interval);
     }, [jobId]);
+
+    // Real-time updates via WebSocket
+    useJobChannel({
+        jobId,
+        onStatusChanged: (data) => {
+            setTracking(prev => prev ? {
+                ...prev,
+                status: data.status,
+                phases: data.phases,
+                started_at: data.started_at,
+                completed_at: data.completed_at,
+                estimated_travel_seconds: data.estimated_travel_seconds,
+            } : prev);
+        },
+        onPhasesUpdated: (data) => {
+            setTracking(prev => prev ? { ...prev, phases: data.phases } : prev);
+        },
+    });
 
     const fetchTracking = async () => {
         if (!jobId) return;

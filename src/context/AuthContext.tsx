@@ -23,7 +23,6 @@ interface AuthContextType {
     isLoading: boolean;
     user: AuthUser | null;
     role: UserRole;
-    token: string | null;
     isAuthModalOpen: boolean;
     openAuthModal: () => void;
     closeAuthModal: () => void;
@@ -45,28 +44,22 @@ function getUserRole(user: AuthUser | null): UserRole {
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<AuthUser | null>(null);
-    const [token, setToken] = useState<string | null>(localStorage.getItem('auth_token'));
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
     const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState<boolean>(false);
 
-    const isAuthenticated = !!user && !!token;
+    const isAuthenticated = !!user;
     const role = getUserRole(user);
 
-    // Restaurer la session au montage
+    // Restaurer la session au montage — le cookie httpOnly est envoyé automatiquement
     useEffect(() => {
         const restoreSession = async () => {
-            const storedToken = localStorage.getItem('auth_token');
-            if (storedToken) {
-                try {
-                    const data = await authService.getMe();
-                    setUser(data.user);
-                    setToken(storedToken);
-                } catch {
-                    localStorage.removeItem('auth_token');
-                    setToken(null);
-                    setUser(null);
-                }
+            try {
+                const data = await authService.getMe();
+                setUser(data.user);
+            } catch {
+                // No valid session cookie — user is not authenticated
+                setUser(null);
             }
             setIsLoading(false);
         };
@@ -82,8 +75,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const login = useCallback(async (data: LoginData): Promise<{ requires_2fa?: boolean; user?: AuthUser }> => {
         try {
             const response = await authService.login(data);
-            localStorage.setItem('auth_token', response.token);
-            setToken(response.token);
+            // Token is set as httpOnly cookie by the server — no localStorage needed
             setUser(response.user);
             setIsAuthModalOpen(false);
             return { user: response.user };
@@ -97,8 +89,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const register = useCallback(async (data: RegisterData): Promise<void> => {
         const response = await authService.register(data);
-        localStorage.setItem('auth_token', response.token);
-        setToken(response.token);
+        // Token is set as httpOnly cookie by the server — no localStorage needed
         setUser(response.user);
         setIsAuthModalOpen(false);
     }, []);
@@ -118,8 +109,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         } catch {
             // Ignore error, we logout locally anyway
         }
-        localStorage.removeItem('auth_token');
-        setToken(null);
+        // Server clears the httpOnly cookie via Set-Cookie header
         setUser(null);
     }, []);
 
@@ -129,7 +119,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             isLoading,
             user,
             role,
-            token,
             isAuthModalOpen,
             openAuthModal,
             closeAuthModal,

@@ -3,9 +3,12 @@ import matchingService from '../../services/matchingService';
 import RouteMap from '../../components/maps/RouteMap';
 import ReviewModal from '../../components/reviews/ReviewModal';
 import { useChat } from '../../context/ChatContext';
+import { useProposalChannel } from '../../hooks/useProposalChannel';
+import { useTrackingChannel } from '../../hooks/useTrackingChannel';
 import './MissionTracking.css';
 
 interface MissionData {
+    job_id: string | null;
     request: {
         id: string;
         title: string;
@@ -55,9 +58,17 @@ const MissionTracking: React.FC = () => {
             finally { setLoading(false); }
         };
         fetchMission();
-        const interval = setInterval(fetchMission, 15000);
-        return () => clearInterval(interval);
     }, []);
+
+    // Real-time updates for proposal status changes
+    useProposalChannel({
+        onProposalAccepted: () => {
+            matchingService.getClientActiveMission().then(res => setMission(res.data)).catch(() => {});
+        },
+        onProposalRefused: () => {
+            matchingService.getClientActiveMission().then(res => setMission(res.data)).catch(() => {});
+        },
+    });
 
     // Client geolocation
     useEffect(() => {
@@ -70,21 +81,26 @@ const MissionTracking: React.FC = () => {
         return () => navigator.geolocation.clearWatch(watchId);
     }, []);
 
-    // Fetch technician live position
-    const fetchTechPosition = useCallback(async () => {
-        try {
-            const res = await matchingService.getTechnicianPosition();
-            if (res.data) {
-                setTechPosition({ latitude: res.data.latitude, longitude: res.data.longitude });
-            }
-        } catch { /* silent */ }
+    // Initial fetch of technician position
+    useEffect(() => {
+        const fetchInitialPosition = async () => {
+            try {
+                const res = await matchingService.getTechnicianPosition();
+                if (res.data) {
+                    setTechPosition({ latitude: res.data.latitude, longitude: res.data.longitude });
+                }
+            } catch { /* silent */ }
+        };
+        fetchInitialPosition();
     }, []);
 
-    useEffect(() => {
-        fetchTechPosition();
-        const interval = setInterval(fetchTechPosition, 8000);
-        return () => clearInterval(interval);
-    }, [fetchTechPosition]);
+    // Real-time position updates via WebSocket
+    useTrackingChannel({
+        jobId: mission?.job_id ?? undefined,
+        onPositionUpdated: (data) => {
+            setTechPosition({ latitude: data.latitude, longitude: data.longitude });
+        },
+    });
 
     const getStatusLabel = () => {
         if (!mission) return '';

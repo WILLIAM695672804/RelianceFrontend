@@ -19,8 +19,10 @@ export function getEcho(): Echo<'pusher'> {
             authEndpoint: 'http://127.0.0.1:8000/broadcasting/auth',
             auth: {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+                    Accept: 'application/json',
                 },
+                // Send httpOnly cookie automatically for broadcasting auth
+                withCredentials: true,
             },
         });
     }
