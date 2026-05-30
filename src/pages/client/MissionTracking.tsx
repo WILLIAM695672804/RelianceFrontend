@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import matchingService from '../../services/matchingService';
 import RouteMap from '../../components/maps/RouteMap';
 import ReviewModal from '../../components/reviews/ReviewModal';
@@ -40,6 +41,7 @@ interface MissionData {
 }
 
 const MissionTracking: React.FC = () => {
+    const navigate = useNavigate();
     const [mission, setMission] = useState<MissionData | null>(null);
     const [loading, setLoading] = useState(true);
     const [myPosition, setMyPosition] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -285,11 +287,11 @@ const MissionTracking: React.FC = () => {
                         </div>
 
                         <div className="mt-glass-card mt-bento-actions">
-                            <button className="mt-btn-danger">
+                            <button className="mt-btn-danger" onClick={() => navigate('/espace-client/litiges')}>
                                 <span className="material-symbols-outlined">cancel</span>
                                 Annuler la mission
                             </button>
-                            <button className="mt-btn-outline">
+                            <button className="mt-btn-outline" onClick={() => navigate('/contact')}>
                                 <span className="material-symbols-outlined">help_center</span>
                                 Aide
                             </button>

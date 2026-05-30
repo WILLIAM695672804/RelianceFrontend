@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getInvoices, type Invoice } from '../../services/operationsService';
+import { financeService } from '../../services/financeService';
+import { Loading, EmptyState, ErrorState } from '../../components/common/AsyncStates';
+import { formatXAF, formatDateTime } from '../../utils/format';
 import './ClientWallet.css';
 
 interface Transaction {
@@ -13,14 +17,56 @@ interface Transaction {
 
 const ClientWallet: React.FC = () => {
     const navigate = useNavigate();
-    // Mock Data
-    const [balance] = useState(4250500); // Available balance
+    const [balance, setBalance] = useState(0); // Available balance
     const [recentInvoices, setRecentInvoices] = useState<Invoice[]>([]);
+
+    const qc = useQueryClient();
+    const { data: txRes, isLoading: txLoading, isError: txError, refetch: txRefetch } =
+        useQuery({ queryKey: ['client-wallet-transactions'], queryFn: () => financeService.getTransactions(1) });
+    const txList: any[] = txRes?.data?.data ?? [];
+    const [ledgerFilter, setLedgerFilter] = useState<'all' | 'holds' | 'payments'>('all');
+    const [visibleTx, setVisibleTx] = useState(8);
+    const filteredTx = txList.filter((t) =>
+        ledgerFilter === 'all' ? true : ledgerFilter === 'holds' ? t.type === 'hold' : ['debit', 'payment'].includes(t.type)
+    );
+    const shownTx = filteredTx.slice(0, visibleTx);
+
+    // Dépenses mensuelles = somme des débits par mois (6 derniers mois), vraies transactions.
+    const spending = (() => {
+        const now = new Date();
+        const buckets = Array.from({ length: 6 }, (_, i) => {
+            const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+            return { key: `${d.getFullYear()}-${d.getMonth()}`, label: d.toLocaleDateString('fr-FR', { month: 'short' }), total: 0 };
+        });
+        txList.forEach((t) => {
+            const d = new Date(t.created_at);
+            const b = buckets.find((x) => x.key === `${d.getFullYear()}-${d.getMonth()}`);
+            if (b && Number(t.amount) < 0) b.total += Math.abs(Number(t.amount));
+        });
+        const max = Math.max(1, ...buckets.map((b) => b.total));
+        return { buckets, max };
+    })();
 
     // Recharge Modal States
     const [showRechargeModal, setShowRechargeModal] = useState(false);
     const [rechargeStep, setRechargeStep] = useState(1);
     const [selectedMethod, setSelectedMethod] = useState('');
+    const [rechargeAmount, setRechargeAmount] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [rechargeError, setRechargeError] = useState('');
+    const [submitting, setSubmitting] = useState(false);
+    const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+    const fetchWallet = async () => {
+        try {
+            const res = await financeService.getWallet();
+            const data = res.data?.data ?? res.data;
+            if (data?.available_balance != null) setBalance(data.available_balance);
+            else if (data?.balance != null) setBalance(data.balance);
+        } catch {
+            // silent
+        }
+    };
 
     useEffect(() => {
         const fetchInvoices = async () => {
@@ -32,7 +78,73 @@ const ClientWallet: React.FC = () => {
             }
         };
         fetchInvoices();
+        fetchWallet();
+        return () => { if (pollRef.current) clearInterval(pollRef.current); };
     }, []);
+
+    const resetRecharge = () => {
+        if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+        setShowRechargeModal(false);
+        setRechargeStep(1);
+        setSelectedMethod('');
+        setRechargeAmount('');
+        setPhoneNumber('');
+        setRechargeError('');
+        setSubmitting(false);
+    };
+
+    const startRecharge = async () => {
+        setRechargeError('');
+        const amount = Number(rechargeAmount);
+        if (!amount || amount < 100) { setRechargeError('Montant minimum : 100 FCFA'); return; }
+        if ((selectedMethod === 'momo' || selectedMethod === 'om') && !phoneNumber.trim()) {
+            setRechargeError('Numéro de téléphone requis pour le Mobile Money'); return;
+        }
+        setSubmitting(true);
+        try {
+            const res = await financeService.rechargeWallet({
+                amount,
+                method: selectedMethod,
+                phone_number: phoneNumber.trim() || undefined,
+            });
+            const paymentId = res.data?.payment_id;
+            setRechargeStep(2);
+            pollPaymentStatus(paymentId);
+        } catch (err: any) {
+            setRechargeError(err?.response?.data?.message || 'Échec de l\'initiation du paiement');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const pollPaymentStatus = (paymentId: string) => {
+        if (!paymentId) return;
+        const startedAt = Date.now();
+        const TIMEOUT_MS = 90_000;
+        if (pollRef.current) clearInterval(pollRef.current);
+        pollRef.current = setInterval(async () => {
+            try {
+                const res = await financeService.getPayment(paymentId);
+                const status = (res.data?.data ?? res.data)?.status;
+                if (status === 'settled') {
+                    if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+                    await fetchWallet();
+                    qc.invalidateQueries({ queryKey: ['client-wallet-transactions'] });
+                    setRechargeStep(3);
+                } else if (status === 'failed' || status === 'cancelled') {
+                    if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+                    setRechargeError('Le paiement a échoué. Veuillez réessayer.');
+                    setRechargeStep(1);
+                } else if (Date.now() - startedAt > TIMEOUT_MS) {
+                    if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+                    setRechargeError('Délai dépassé. Vérifiez votre téléphone puis consultez votre historique.');
+                    setRechargeStep(1);
+                }
+            } catch {
+                // on continue à interroger malgré une erreur ponctuelle
+            }
+        }, 3000);
+    };
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XAF', maximumFractionDigits: 0 }).format(amount);
@@ -68,7 +180,7 @@ const ClientWallet: React.FC = () => {
                                 <span className="material-symbols-outlined">add_circle</span>
                                 Add Funds
                             </button>
-                            <button className="cw-btn-share text-primary bg-white hover-bg-slate-50">
+                            <button className="cw-btn-share text-primary bg-white hover-bg-slate-50" onClick={() => window.print()}>
                                 <span className="material-symbols-outlined">ios_share</span>
                             </button>
                         </div>
@@ -122,30 +234,16 @@ const ClientWallet: React.FC = () => {
                         </div>
                         
                         <div className="cw-chart-simulation">
-                            <div className="cw-bar-group">
-                                <div className="cw-bar h-12"></div>
-                                <span className="cw-bar-label">Jan</span>
-                            </div>
-                            <div className="cw-bar-group">
-                                <div className="cw-bar h-24"></div>
-                                <span className="cw-bar-label">Feb</span>
-                            </div>
-                            <div className="cw-bar-group active">
-                                <div className="cw-bar h-36"></div>
-                                <span className="cw-bar-label">Mar</span>
-                            </div>
-                            <div className="cw-bar-group">
-                                <div className="cw-bar h-16"></div>
-                                <span className="cw-bar-label">Apr</span>
-                            </div>
-                            <div className="cw-bar-group">
-                                <div className="cw-bar h-20"></div>
-                                <span className="cw-bar-label">May</span>
-                            </div>
-                            <div className="cw-bar-group focus">
-                                <div className="cw-bar h-40"></div>
-                                <span className="cw-bar-label">Jun</span>
-                            </div>
+                            {spending.buckets.map((b, i) => (
+                                <div key={b.key} className={`cw-bar-group ${i === spending.buckets.length - 1 ? 'focus' : ''}`}>
+                                    <div
+                                        className="cw-bar"
+                                        style={{ height: `${Math.max(8, Math.round((b.total / spending.max) * 160))}px` }}
+                                        title={formatXAF(b.total)}
+                                    ></div>
+                                    <span className="cw-bar-label">{b.label}</span>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
@@ -191,9 +289,9 @@ const ClientWallet: React.FC = () => {
                             <p className="cw-card-subtitle text-slate-500">History of all financial movements</p>
                         </div>
                         <div className="cw-ledger-filters flex gap-2">
-                            <button className="cw-filter-pill active">All</button>
-                            <button className="cw-filter-pill">Holds</button>
-                            <button className="cw-filter-pill">Payments</button>
+                            <button className={`cw-filter-pill ${ledgerFilter === 'all' ? 'active' : ''}`} onClick={() => { setLedgerFilter('all'); setVisibleTx(8); }}>All</button>
+                            <button className={`cw-filter-pill ${ledgerFilter === 'holds' ? 'active' : ''}`} onClick={() => { setLedgerFilter('holds'); setVisibleTx(8); }}>Holds</button>
+                            <button className={`cw-filter-pill ${ledgerFilter === 'payments' ? 'active' : ''}`} onClick={() => { setLedgerFilter('payments'); setVisibleTx(8); }}>Payments</button>
                         </div>
                     </div>
 
@@ -208,60 +306,46 @@ const ClientWallet: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
-                                <tr className="cw-ledger-row hover:bg-slate-50/50 transition-colors">
-                                    <td className="px-6 py-4">
-                                        <div className="cw-td-flex">
-                                            <div className="cw-td-icon bg-surface-container">
-                                                <span className="material-symbols-outlined text-slate-500">lock_clock</span>
-                                            </div>
-                                            <div>
-                                                <div className="cw-td-title font-bold text-sm">Escrow: Logistics Task #42</div>
-                                                <div className="cw-td-meta text-xs text-slate-400">June 21, 2024 • 14:20</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-xs font-medium text-slate-600">Hold</td>
-                                    <td className="px-6 py-4"><span className="cw-status-badge blue bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">ACTIVE</span></td>
-                                    <td className="px-6 py-4 text-right cw-td-amount text-slate-800 font-bold">- 850,000 XAF</td>
-                                </tr>
-                                <tr className="cw-ledger-row hover:bg-slate-50/50 transition-colors">
-                                    <td className="px-6 py-4">
-                                        <div className="cw-td-flex">
-                                            <div className="cw-td-icon deposit bg-tertiary-fixed-dim/20">
-                                                <span className="material-symbols-outlined text-tertiary-container">account_balance</span>
-                                            </div>
-                                            <div>
-                                                <div className="cw-td-title font-bold text-sm">Top-up via Orange Money</div>
-                                                <div className="cw-td-meta text-xs text-slate-400">June 18, 2024 • 09:12</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-xs font-medium text-slate-600">Deposit</td>
-                                    <td className="px-6 py-4"><span className="cw-status-badge green bg-green-100 text-green-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">COMPLETED</span></td>
-                                    <td className="px-6 py-4 text-right cw-td-amount text-tertiary-container font-bold">+ 1,200,000 XAF</td>
-                                </tr>
-                                <tr className="cw-ledger-row hover:bg-slate-50/50 transition-colors">
-                                    <td className="px-6 py-4">
-                                        <div className="cw-td-flex">
-                                            <div className="cw-td-icon bg-surface-container">
-                                                <span className="material-symbols-outlined text-slate-500">shopping_bag</span>
-                                            </div>
-                                            <div>
-                                                <div className="cw-td-title font-bold text-sm">Marketplace Purchase: Server Rack</div>
-                                                <div className="cw-td-meta text-xs text-slate-400">June 15, 2024 • 11:45</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-xs font-medium text-slate-600">Payment</td>
-                                    <td className="px-6 py-4"><span className="cw-status-badge green bg-green-100 text-green-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">COMPLETED</span></td>
-                                    <td className="px-6 py-4 text-right cw-td-amount text-slate-800 font-bold">- 325,000 XAF</td>
-                                </tr>
+                                {txLoading ? (
+                                    <tr><td colSpan={4}><Loading label="Chargement des mouvements…" /></td></tr>
+                                ) : txError ? (
+                                    <tr><td colSpan={4}><ErrorState onRetry={() => txRefetch()} /></td></tr>
+                                ) : filteredTx.length === 0 ? (
+                                    <tr><td colSpan={4}><EmptyState icon="account_balance_wallet" title="Aucun mouvement" message="Vos transactions apparaîtront ici." /></td></tr>
+                                ) : (
+                                    shownTx.map((t) => {
+                                        const credit = Number(t.amount) >= 0;
+                                        const label = String(t.meta?.source ?? t.type ?? 'Transaction').replace(/_/g, ' ');
+                                        return (
+                                            <tr key={t.id} className="cw-ledger-row hover:bg-slate-50/50 transition-colors">
+                                                <td className="px-6 py-4">
+                                                    <div className="cw-td-flex">
+                                                        <div className="cw-td-icon bg-surface-container">
+                                                            <span className="material-symbols-outlined text-slate-500">{credit ? 'south_west' : 'north_east'}</span>
+                                                        </div>
+                                                        <div>
+                                                            <div className="cw-td-title font-bold text-sm" style={{ textTransform: 'capitalize' }}>{label}</div>
+                                                            <div className="cw-td-meta text-xs text-slate-400">{formatDateTime(t.created_at)}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-xs font-medium text-slate-600" style={{ textTransform: 'capitalize' }}>{t.type}</td>
+                                                <td className="px-6 py-4"><span className="cw-status-badge green bg-green-100 text-green-700 px-2.5 py-0.5 rounded-full text-[10px] font-bold">OK</span></td>
+                                                <td className={`px-6 py-4 text-right cw-td-amount font-bold ${credit ? 'text-tertiary-container' : 'text-slate-800'}`}>
+                                                    {credit ? '+ ' : '- '}{formatXAF(Math.abs(Number(t.amount)))}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                )}
                             </tbody>
                         </table>
                     </div>
-                    <div className="cw-ledger-footer p-4 bg-slate-50 text-center">
-                        <button className="cw-btn-load-more text-xs font-bold text-slate-500 hover:text-primary transition-colors">Load more transactions...</button>
-                    </div>
+                    {shownTx.length < filteredTx.length && (
+                        <div className="cw-ledger-footer p-4 bg-slate-50 text-center">
+                            <button className="cw-btn-load-more text-xs font-bold text-slate-500 hover:text-primary transition-colors" onClick={() => setVisibleTx((v) => v + 8)}>Load more transactions...</button>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -272,9 +356,9 @@ const ClientWallet: React.FC = () => {
 
             {/* Recharge Modal overlay (Retained & Stylized via Glassmorphism) */}
             {showRechargeModal && (
-                <div className="cw-modal-backdrop fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in" onClick={() => {setShowRechargeModal(false); setRechargeStep(1)}}>
+                <div className="cw-modal-backdrop fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in" onClick={resetRecharge}>
                     <div className="cw-modal-content bg-white/95 backdrop-blur-md rounded-[2rem] p-8 w-full max-w-md shadow-2xl relative animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-                        <button className="cw-modal-close absolute top-6 right-6 w-10 h-10 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-full transition-all text-slate-500" onClick={() => {setShowRechargeModal(false); setRechargeStep(1)}}>
+                        <button className="cw-modal-close absolute top-6 right-6 w-10 h-10 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-full transition-all text-slate-500" onClick={resetRecharge}>
                             <span className="material-symbols-outlined">close</span>
                         </button>
 
@@ -307,17 +391,40 @@ const ClientWallet: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="cw-amount-input mb-8">
+                                <div className="cw-amount-input mb-6">
                                     <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Montant à recharger (FCFA)</label>
-                                    <input type="number" placeholder="Ex: 50000" className="w-full bg-slate-50 border-none rounded-xl px-4 py-3 font-semibold text-lg text-primary focus:ring-2 focus:ring-primary/20" />
+                                    <input
+                                        type="number"
+                                        placeholder="Ex: 50000"
+                                        value={rechargeAmount}
+                                        onChange={(e) => setRechargeAmount(e.target.value)}
+                                        className="w-full bg-slate-50 border-none rounded-xl px-4 py-3 font-semibold text-lg text-primary focus:ring-2 focus:ring-primary/20"
+                                    />
                                 </div>
 
-                                <button 
-                                    className={`w-full py-4 rounded-full font-bold transition-all ${selectedMethod ? 'bg-primary text-white hover:bg-secondary shadow-lg hover:shadow-xl' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`} 
-                                    disabled={!selectedMethod}
-                                    onClick={() => setRechargeStep(2)}
+                                {(selectedMethod === 'momo' || selectedMethod === 'om') && (
+                                    <div className="cw-phone-input mb-6">
+                                        <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Numéro de téléphone</label>
+                                        <input
+                                            type="tel"
+                                            placeholder="Ex: +237670000000"
+                                            value={phoneNumber}
+                                            onChange={(e) => setPhoneNumber(e.target.value)}
+                                            className="w-full bg-slate-50 border-none rounded-xl px-4 py-3 font-semibold text-lg text-primary focus:ring-2 focus:ring-primary/20"
+                                        />
+                                    </div>
+                                )}
+
+                                {rechargeError && (
+                                    <p className="text-sm text-red-500 font-semibold mb-4">{rechargeError}</p>
+                                )}
+
+                                <button
+                                    className={`w-full py-4 rounded-full font-bold transition-all ${selectedMethod && !submitting ? 'bg-primary text-white hover:bg-secondary shadow-lg hover:shadow-xl' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
+                                    disabled={!selectedMethod || submitting}
+                                    onClick={startRecharge}
                                 >
-                                    Continuer vers le paiement
+                                    {submitting ? 'Initiation…' : 'Continuer vers le paiement'}
                                 </button>
                             </div>
                         )}
@@ -325,14 +432,20 @@ const ClientWallet: React.FC = () => {
                         {rechargeStep === 2 && (
                             <div className="cw-recharge-step flex flex-col items-center text-center py-4">
                                 <div className="cw-process-icon w-20 h-20 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-6 animate-pulse">
-                                    <span className="material-symbols-outlined text-4xl">smartphone</span>
+                                    <span className="material-symbols-outlined text-4xl">{selectedMethod === 'card' ? 'credit_card' : 'smartphone'}</span>
                                 </div>
-                                <h2 className="font-headline text-2xl font-bold text-primary mb-2">Validation Mobile</h2>
-                                <p className="text-sm text-slate-500 mb-8 max-w-[250px] mx-auto">Un menu USSD a été envoyé. Entrez votre code secret pour valider le rechargement sur votre mobile.</p>
-                                
-                                <button className="text-sm font-bold text-primary hover:underline" onClick={() => setRechargeStep(3)}>
-                                    (Simuler le Succès de la transaction)
-                                </button>
+                                <h2 className="font-headline text-2xl font-bold text-primary mb-2">
+                                    {selectedMethod === 'card' ? 'Paiement par carte' : 'Validation Mobile'}
+                                </h2>
+                                <p className="text-sm text-slate-500 mb-8 max-w-[250px] mx-auto">
+                                    {selectedMethod === 'card'
+                                        ? 'Suivez les instructions de votre banque pour confirmer le paiement.'
+                                        : 'Un menu USSD a été envoyé sur votre téléphone. Composez votre code secret pour valider le rechargement.'}
+                                </p>
+                                <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
+                                    <span className="material-symbols-outlined animate-spin text-base">progress_activity</span>
+                                    En attente de confirmation…
+                                </div>
                             </div>
                         )}
 
@@ -343,7 +456,7 @@ const ClientWallet: React.FC = () => {
                                 </div>
                                 <h2 className="font-headline text-2xl font-bold text-primary mb-2">Paiement réussi !</h2>
                                 <p className="text-sm text-slate-500 mb-8 max-w-[250px] mx-auto">Votre portefeuille a été crédité avec succès. Les fonds sont disponibles immédiatement.</p>
-                                <button className="w-full bg-primary text-white font-bold py-4 rounded-full shadow-lg hover:bg-secondary transition-all" onClick={() => {setShowRechargeModal(false); setRechargeStep(1)}}>
+                                <button className="w-full bg-primary text-white font-bold py-4 rounded-full shadow-lg hover:bg-secondary transition-all" onClick={resetRecharge}>
                                     Fermer et retourner au wallet
                                 </button>
                             </div>

@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { getTechProfile } from '../../services/technicianService';
+import { useQuery } from '@tanstack/react-query';
+import { getTechProfile, getTechStats } from '../../services/technicianService';
+import reviewService from '../../services/reviewService';
 import TechServiceMap from '../../components/maps/TechServiceMap';
 import matchingService from '../../services/matchingService';
+import { formatNumber } from '../../utils/format';
+import { EmptyState } from '../../components/common/AsyncStates';
 import './Dashboard.css';
 
 const Dashboard: React.FC = () => {
@@ -12,6 +16,19 @@ const Dashboard: React.FC = () => {
     const [pendingProposals, setPendingProposals] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [showVerifiedModal, setShowVerifiedModal] = useState(searchParams.get('verified') === '1');
+
+    const { data: stats } = useQuery({ queryKey: ['tech-stats'], queryFn: getTechStats });
+    const { data: reviewsRes } = useQuery({ queryKey: ['my-reviews'], queryFn: () => reviewService.getMyReviews(1) });
+    // myReviews renvoie { data: <paginator{ data: [...] }> } → on extrait le tableau de façon robuste.
+    const reviewsPayload: any = reviewsRes?.data;
+    const reviews: any[] = Array.isArray(reviewsPayload)
+        ? reviewsPayload
+        : (Array.isArray(reviewsPayload?.data) ? reviewsPayload.data : []);
+    const categories: any[] = stats?.category_breakdown ?? [];
+    const catMax = Math.max(1, ...categories.map((c: any) => c.value));
+    const monthlyMissions: any[] = stats?.monthly_missions ?? [];
+    const missionsMax = Math.max(1, ...monthlyMissions.map((m: any) => m.count));
+    const recentMissions: any[] = stats?.recent_missions ?? [];
 
     const dismissVerifiedModal = () => {
         setShowVerifiedModal(false);
@@ -52,7 +69,7 @@ const Dashboard: React.FC = () => {
                         <p>Welcome back, {profile?.name || 'Professional'}. You have {pendingProposals.length} new matching opportunities.</p>
                     </div>
                     <div>
-                        <button className="tech-online-btn">
+                        <button className="tech-online-btn" onClick={() => navigate('/technicien/radar')}>
                             <span className="material-symbols-outlined" style={{ fontSize: '1.25rem' }}>bolt</span>
                             Go Online
                         </button>
@@ -114,10 +131,9 @@ const Dashboard: React.FC = () => {
                             <div className="tech-kpi-icon blue">
                                 <span className="material-symbols-outlined">account_balance_wallet</span>
                             </div>
-                            <span className="tech-kpi-badge green">+12%</span>
                         </div>
-                        <p className="tech-kpi-subtitle">Wallet Balance</p>
-                        <h3 className="tech-kpi-value">450,200 <span>XAF</span></h3>
+                        <p className="tech-kpi-subtitle">Solde du wallet</p>
+                        <h3 className="tech-kpi-value">{formatNumber(stats?.wallet_balance ?? 0)} <span>XAF</span></h3>
                     </div>
 
                     {/* Monthly Earnings */}
@@ -126,10 +142,10 @@ const Dashboard: React.FC = () => {
                             <div className="tech-kpi-icon blue">
                                 <span className="material-symbols-outlined">payments</span>
                             </div>
-                            <span className="tech-kpi-badge slate">Current Mo.</span>
+                            <span className="tech-kpi-badge slate">Ce mois</span>
                         </div>
-                        <p className="tech-kpi-subtitle">Monthly Earnings</p>
-                        <h3 className="tech-kpi-value">1,280,000 <span>XAF</span></h3>
+                        <p className="tech-kpi-subtitle">Gains du mois</p>
+                        <h3 className="tech-kpi-value">{formatNumber(stats?.monthly_earnings ?? 0)} <span>XAF</span></h3>
                     </div>
 
                     {/* Completion Rate */}
@@ -139,8 +155,8 @@ const Dashboard: React.FC = () => {
                                 <span className="material-symbols-outlined">task_alt</span>
                             </div>
                         </div>
-                        <p className="tech-kpi-subtitle">Completion Rate</p>
-                        <h3 className="tech-kpi-value">98.4<span>%</span></h3>
+                        <p className="tech-kpi-subtitle">Taux de complétion</p>
+                        <h3 className="tech-kpi-value">{stats?.completion_rate ?? 0}<span>%</span></h3>
                     </div>
 
                     {/* Global Rating */}
@@ -150,9 +166,9 @@ const Dashboard: React.FC = () => {
                                 <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                             </div>
                         </div>
-                        <p className="tech-kpi-subtitle">Global Rating</p>
+                        <p className="tech-kpi-subtitle">Note globale ({stats?.num_reviews ?? 0} avis)</p>
                         <h3 className="tech-kpi-value" style={{ display: 'flex', alignItems: 'flex-end', gap: '4px' }}>
-                            4.92 <span style={{ paddingBottom: '2px' }}>/ 5.0</span>
+                            {(stats?.rating ?? 0).toFixed(2)} <span style={{ paddingBottom: '2px' }}>/ 5.0</span>
                         </h3>
                     </div>
                 </div>
@@ -161,34 +177,24 @@ const Dashboard: React.FC = () => {
                 <div className="tech-charts-grid">
                     {/* Revenue Breakdown (Donut) */}
                     <div className="tech-card-white">
-                        <h4 className="tech-card-title">Revenue Breakdown</h4>
-                        <div className="tech-donut-wrapper">
-                            <svg viewBox="0 0 160 160" style={{ transform: 'rotate(-90deg)', width: '10rem', height: '10rem' }}>
-                                <circle cx="80" cy="80" fill="transparent" r="70" stroke="#f1f5f9" strokeWidth="12"></circle>
-                                <circle cx="80" cy="80" fill="transparent" r="70" stroke="#1a365d" strokeDasharray="440" strokeDashoffset="110" strokeWidth="12"></circle>
-                                <circle cx="80" cy="80" fill="transparent" r="70" stroke="#003f23" strokeDasharray="440" strokeDashoffset="350" strokeWidth="12"></circle>
-                            </svg>
-                            <div className="tech-donut-text">
-                                <span className="tech-donut-percentage">75%</span>
-                                <span className="tech-donut-label">Installation</span>
+                        <h4 className="tech-card-title">Répartition des missions</h4>
+                        {categories.length === 0 ? (
+                            <EmptyState icon="donut_small" title="Aucune mission" message="La répartition par catégorie apparaîtra ici." />
+                        ) : (
+                            <div className="tech-legend-list" style={{ marginTop: '1rem' }}>
+                                {categories.map((c) => (
+                                    <div key={c.label} className="tech-legend-item" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '6px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <span className="tech-legend-name" style={{ textTransform: 'capitalize' }}>{c.label}</span>
+                                            <span className="tech-legend-amount">{c.value}</span>
+                                        </div>
+                                        <div style={{ height: 8, background: '#f1f5f9', borderRadius: 999 }}>
+                                            <div style={{ width: `${Math.round((c.value / catMax) * 100)}%`, height: '100%', background: '#1960a3', borderRadius: 999 }}></div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        </div>
-                        <div className="tech-legend-list">
-                            <div className="tech-legend-item">
-                                <div className="tech-legend-left">
-                                    <div className="tech-legend-dot blue"></div>
-                                    <span className="tech-legend-name">Installations</span>
-                                </div>
-                                <span className="tech-legend-amount">960k</span>
-                            </div>
-                            <div className="tech-legend-item">
-                                <div className="tech-legend-left">
-                                    <div className="tech-legend-dot green"></div>
-                                    <span className="tech-legend-name">Maintenance</span>
-                                </div>
-                                <span className="tech-legend-amount">320k</span>
-                            </div>
-                        </div>
+                        )}
                     </div>
 
                     {/* Intervention Zones (MapLibre) */}
@@ -209,34 +215,22 @@ const Dashboard: React.FC = () => {
                 {/* Field Performance Charts */}
                 <div className="tech-card-white">
                     <div className="tech-bar-chart-header">
-                        <h4 className="tech-card-title" style={{ margin: 0 }}>Field Performance</h4>
+                        <h4 className="tech-card-title" style={{ margin: 0 }}>Missions par mois</h4>
                         <div className="tech-bar-chart-legend">
                             <div className="tech-bar-chart-legend-item">
                                 <div className="tech-bar-chart-legend-color" style={{ backgroundColor: '#1960a3' }}></div>
-                                <span className="tech-bar-chart-legend-text">Punctuality</span>
-                            </div>
-                            <div className="tech-bar-chart-legend-item">
-                                <div className="tech-bar-chart-legend-color" style={{ backgroundColor: '#e2e8f0' }}></div>
-                                <span className="tech-bar-chart-legend-text">Response Time</span>
+                                <span className="tech-bar-chart-legend-text">Missions</span>
                             </div>
                         </div>
                     </div>
                     
                     <div className="tech-bar-chart-area">
-                        {[
-                            { day: 'MON', p: '80%', r: '40%' },
-                            { day: 'TUE', p: '95%', r: '30%' },
-                            { day: 'WED', p: '70%', r: '60%' },
-                            { day: 'THU', p: '85%', r: '45%' },
-                            { day: 'FRI', p: '90%', r: '20%' },
-                            { day: 'SAT', p: '60%', r: '15%' },
-                        ].map((item, idx) => (
+                        {monthlyMissions.map((m, idx) => (
                             <div key={idx} className="tech-bar-group">
                                 <div className="tech-bars-wrapper">
-                                    <div className="tech-bar primary" style={{ height: item.p }}></div>
-                                    <div className="tech-bar secondary" style={{ height: item.r }}></div>
+                                    <div className="tech-bar primary" style={{ height: `${Math.max(6, Math.round((m.count / missionsMax) * 100))}%` }} title={`${m.count} mission(s)`}></div>
                                 </div>
-                                <span className="tech-bar-label">{item.day}</span>
+                                <span className="tech-bar-label">{m.label}</span>
                             </div>
                         ))}
                     </div>
@@ -246,7 +240,7 @@ const Dashboard: React.FC = () => {
                 <div className="tech-table-card-modern">
                     <div className="tech-table-header-modern">
                         <h4>Missions History</h4>
-                        <button>View All Missions</button>
+                        <button onClick={() => navigate('/technicien/planning')}>View All Missions</button>
                     </div>
                     <div className="tech-table-container">
                         <table className="tech-table-modern">
@@ -261,45 +255,25 @@ const Dashboard: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td className="tech-table-id">#RX-4492</td>
-                                    <td>
-                                        <div className="tech-table-client-info">
-                                            <span className="tech-table-client-name">Avenue de Gaulle</span>
-                                            <span className="tech-table-client-loc">Bonapriso, Douala</span>
-                                        </div>
-                                    </td>
-                                    <td><span className="tech-table-type">Electrical</span></td>
-                                    <td><span className="tech-table-status progress">IN PROGRESS</span></td>
-                                    <td className="tech-table-price">25,000</td>
-                                    <td><button className="tech-table-action-btn"><span className="material-symbols-outlined">more_horiz</span></button></td>
-                                </tr>
-                                <tr>
-                                    <td className="tech-table-id">#RX-4481</td>
-                                    <td>
-                                        <div className="tech-table-client-info">
-                                            <span className="tech-table-client-name">Immeuble Krystal</span>
-                                            <span className="tech-table-client-loc">Akwa, Douala</span>
-                                        </div>
-                                    </td>
-                                    <td><span className="tech-table-type">HVAC</span></td>
-                                    <td><span className="tech-table-status closed">CLOSED</span></td>
-                                    <td className="tech-table-price">48,500</td>
-                                    <td><button className="tech-table-action-btn"><span className="material-symbols-outlined">more_horiz</span></button></td>
-                                </tr>
-                                <tr>
-                                    <td className="tech-table-id">#RX-4475</td>
-                                    <td>
-                                        <div className="tech-table-client-info">
-                                            <span className="tech-table-client-name">Total Station</span>
-                                            <span className="tech-table-client-loc">Yassa, Douala</span>
-                                        </div>
-                                    </td>
-                                    <td><span className="tech-table-type">Plumbing</span></td>
-                                    <td><span className="tech-table-status pending">PENDING</span></td>
-                                    <td className="tech-table-price">12,000</td>
-                                    <td><button className="tech-table-action-btn"><span className="material-symbols-outlined">more_horiz</span></button></td>
-                                </tr>
+                                {recentMissions.length === 0 ? (
+                                    <tr><td colSpan={6}><EmptyState icon="work_history" title="Aucune mission" message="Vos missions apparaîtront ici." /></td></tr>
+                                ) : (
+                                    recentMissions.map((m) => (
+                                        <tr key={m.id} style={{ cursor: 'pointer' }} onClick={() => navigate(`/technicien/mission/${m.id}`)}>
+                                            <td className="tech-table-id">#{String(m.id).slice(0, 6)}</td>
+                                            <td>
+                                                <div className="tech-table-client-info">
+                                                    <span className="tech-table-client-name">{m.title}</span>
+                                                    <span className="tech-table-client-loc">{m.city}</span>
+                                                </div>
+                                            </td>
+                                            <td><span className="tech-table-type" style={{ textTransform: 'capitalize' }}>{m.category}</span></td>
+                                            <td><span className={`tech-table-status ${m.status === 'completed' ? 'closed' : m.status === 'in_progress' ? 'progress' : 'pending'}`} style={{ textTransform: 'uppercase' }}>{m.status}</span></td>
+                                            <td className="tech-table-price">—</td>
+                                            <td><button className="tech-table-action-btn"><span className="material-symbols-outlined">more_horiz</span></button></td>
+                                        </tr>
+                                    ))
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -311,40 +285,26 @@ const Dashboard: React.FC = () => {
             <div className="tech-dashboard-sidebar">
                 <div className="tech-sidebar-container">
                     <div className="tech-sidebar-header">
-                        <h4 className="tech-sidebar-title">Pro Network</h4>
-                        <span className="tech-sidebar-live">LIVE</span>
+                        <h4 className="tech-sidebar-title">Derniers avis</h4>
+                        <span className="tech-sidebar-live">{reviews.length}</span>
                     </div>
 
                     <div className="tech-feed-list">
-                        <div className="tech-network-item">
-                            <div className="tech-network-avatar">
-                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance" alt="User" />
-                            </div>
-                            <div className="tech-network-content">
-                                <p><span>Jerome K.</span> just completed a Gold-tier maintenance.</p>
-                                <p className="tech-network-time">2 mins ago</p>
-                            </div>
-                        </div>
-
-                        <div className="tech-network-item">
-                            <div className="tech-network-avatar">
-                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance" alt="User" />
-                            </div>
-                            <div className="tech-network-content">
-                                <p><span>Sandra M.</span> is now online in <span className="blue">Douala West</span>.</p>
-                                <p className="tech-network-time">15 mins ago</p>
-                            </div>
-                        </div>
-
-                        <div className="tech-network-item">
-                            <div className="tech-network-icon">
-                                <span className="material-symbols-outlined">workspace_premium</span>
-                            </div>
-                            <div className="tech-network-content">
-                                <p><span>New Badge!</span> You've unlocked the "Punctual Pro" status.</p>
-                                <p className="tech-network-time">1 hour ago</p>
-                            </div>
-                        </div>
+                        {reviews.length === 0 ? (
+                            <EmptyState icon="reviews" title="Aucun avis" message="Vos avis clients apparaîtront ici." />
+                        ) : (
+                            reviews.slice(0, 5).map((r: any) => (
+                                <div key={r.id} className="tech-network-item">
+                                    <div className="tech-network-icon">
+                                        <span className="material-symbols-outlined" style={{ color: '#f59e0b', fontVariationSettings: "'FILL' 1" }}>star</span>
+                                    </div>
+                                    <div className="tech-network-content">
+                                        <p><span>{r.reviewer?.name ?? 'Client'}</span> · {Number(r.rating).toFixed(1)}/5{r.comment ? ` — ${r.comment}` : ''}</p>
+                                        <p className="tech-network-time">{new Date(r.created_at).toLocaleDateString('fr-FR')}</p>
+                                    </div>
+                                </div>
+                            ))
+                        )}
                     </div>
 
                     <hr className="tech-sidebar-divider" />
@@ -354,18 +314,18 @@ const Dashboard: React.FC = () => {
                         <div className="tech-promo-content">
                             <h5 className="tech-promo-title">Reliance Premium</h5>
                             <p className="tech-promo-desc">Boost your mission visibility and get exclusive priority support.</p>
-                            <button className="tech-promo-btn">Upgrade Now</button>
+                            <button className="tech-promo-btn" onClick={() => navigate('/technicien/abonnements')}>Upgrade Now</button>
                         </div>
                         <span className="material-symbols-outlined bg-icon">verified_user</span>
                     </div>
 
                     {/* Helpful Links */}
                     <div className="tech-helpful-links">
-                        <a href="#" className="tech-link-item">
+                        <a className="tech-link-item" style={{ cursor: 'pointer' }} onClick={() => navigate('/contact')}>
                             <span className="material-symbols-outlined">support_agent</span>
                             Contact Tech Support
                         </a>
-                        <a href="#" className="tech-link-item">
+                        <a className="tech-link-item" style={{ cursor: 'pointer' }} onClick={() => navigate('/qui-sommes-nous')}>
                             <span className="material-symbols-outlined">menu_book</span>
                             Resource Center
                         </a>

@@ -9,6 +9,8 @@ const Planning: React.FC = () => {
     const [calendarData, setCalendarData] = useState<any>(null);
     const [upcomingAppts, setUpcomingAppts] = useState<Appointment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [weekOffset, setWeekOffset] = useState(0);
+    const [view, setView] = useState<'week' | 'month'>('week');
 
     useEffect(() => {
         fetchCalendar();
@@ -57,24 +59,27 @@ const Planning: React.FC = () => {
 
     // Helper to get week days
     const getWeekDays = () => {
-        const now = new Date();
-        const startOfWeek = new Date(now);
-        startOfWeek.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1)); // Start on Monday
-        
+        const today = new Date();
+        const ref = new Date();
+        ref.setDate(ref.getDate() + weekOffset * 7);
+        const startOfWeek = new Date(ref);
+        startOfWeek.setDate(ref.getDate() - ref.getDay() + (ref.getDay() === 0 ? -6 : 1)); // Start on Monday
+
         return Array.from({ length: 7 }).map((_, i) => {
             const date = new Date(startOfWeek);
             date.setDate(startOfWeek.getDate() + i);
             return {
                 name: date.toLocaleDateString('en-US', { weekday: 'short' }),
                 number: date.getDate(),
-                isToday: date.toDateString() === now.toDateString(),
+                year: date.getFullYear(),
+                isToday: date.toDateString() === today.toDateString(),
                 isWeekend: i >= 5
             };
         });
     };
 
     const weekDays = getWeekDays();
-    const weekRange = `${weekDays[0].name} ${weekDays[0].number} - ${weekDays[6].name} ${weekDays[6].number}, ${new Date().getFullYear()}`;
+    const weekRange = `${weekDays[0].name} ${weekDays[0].number} - ${weekDays[6].name} ${weekDays[6].number}, ${weekDays[6].year}`;
 
     return (
         <div className="tech-planning-page">
@@ -85,8 +90,8 @@ const Planning: React.FC = () => {
                     <p>Manage your service availability and scheduled technician interventions.</p>
                 </div>
                 <div className="tech-planning-actions">
-                    <button className="tech-btn-active">Week View</button>
-                    <button className="tech-btn-inactive">Month View</button>
+                    <button className={view === 'week' ? 'tech-btn-active' : 'tech-btn-inactive'} onClick={() => setView('week')}>Week View</button>
+                    <button className={view === 'month' ? 'tech-btn-active' : 'tech-btn-inactive'} onClick={() => setView('month')}>Month View</button>
                 </div>
             </div>
 
@@ -98,8 +103,8 @@ const Planning: React.FC = () => {
                         <div className="tech-cal-nav">
                             <h3>{weekRange}</h3>
                             <div className="tech-cal-buttons">
-                                <button><span className="material-symbols-outlined">chevron_left</span></button>
-                                <button><span className="material-symbols-outlined">chevron_right</span></button>
+                                <button onClick={() => setWeekOffset((o) => o - (view === 'month' ? 4 : 1))}><span className="material-symbols-outlined">chevron_left</span></button>
+                                <button onClick={() => setWeekOffset((o) => o + (view === 'month' ? 4 : 1))}><span className="material-symbols-outlined">chevron_right</span></button>
                             </div>
                         </div>
                         <div className="tech-cal-legend">
@@ -179,7 +184,7 @@ const Planning: React.FC = () => {
                                     <p className="text-xs text-slate-500 mb-3">No recurring shifts defined.</p>
                                 </div>
                             )}
-                            <button className="tech-btn-add-shift">+ Add Shift</button>
+                            <button className="tech-btn-add-shift" onClick={() => navigate('/technicien/zone')}>+ Add Shift</button>
                         </div>
                     </div>
 
@@ -241,7 +246,7 @@ const Planning: React.FC = () => {
             <section className="tech-upcoming-appointments">
                 <div className="tech-upcoming-header">
                     <h3>Immediate Appointments</h3>
-                    <button>View All</button>
+                    <button onClick={() => navigate('/technicien/cockpit')}>View All</button>
                 </div>
                 <div className="tech-upcoming-grid">
 

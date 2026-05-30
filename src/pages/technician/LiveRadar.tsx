@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TechServiceMap from '../../components/maps/TechServiceMap';
 import { useProposalChannel } from '../../hooks/useProposalChannel';
@@ -7,6 +7,8 @@ import matchingService from '../../services/matchingService';
 import type { Proposal } from '../../services/matchingService';
 
 const LiveRadar: React.FC = () => {
+    const mapRef = useRef<any>(null);
+    const radarCenter: [number, number] = [11.5021, 3.8480];
     const navigate = useNavigate();
     const [proposals, setProposals] = useState<Proposal[]>([]);
     const [acting, setActing] = useState<string | null>(null);
@@ -73,10 +75,11 @@ const LiveRadar: React.FC = () => {
         <div className="tech-liveradar-page">
             {/* Map Background with Radar Effects */}
             <div className="tech-liveradar-bg">
-                <TechServiceMap 
+                <TechServiceMap
                     latitude={3.8480}
                     longitude={11.5021}
-                    radiusInKm={10} 
+                    radiusInKm={10}
+                    onReady={(m) => { mapRef.current = m; }}
                 />
                 <div className="tech-radar-center">
                     <div className="tech-radar-pulse" style={{ animationDelay: '0s' }}></div>
@@ -198,10 +201,10 @@ const LiveRadar: React.FC = () => {
 
             {/* Contextual Controls Overlay */}
             <div className="tech-radar-controls">
-                <button className="tech-control-btn"><span className="material-symbols-outlined">add</span></button>
-                <button className="tech-control-btn"><span className="material-symbols-outlined">remove</span></button>
+                <button className="tech-control-btn" onClick={() => mapRef.current?.zoomIn()}><span className="material-symbols-outlined">add</span></button>
+                <button className="tech-control-btn" onClick={() => mapRef.current?.zoomOut()}><span className="material-symbols-outlined">remove</span></button>
                 <div className="tech-controls-divider"></div>
-                <button className="tech-control-btn tech-control-primary">
+                <button className="tech-control-btn tech-control-primary" onClick={() => mapRef.current?.flyTo({ center: radarCenter, zoom: 12 })}>
                     <span className="material-symbols-outlined" style={{fontVariationSettings:"'FILL' 1"}}>my_location</span>
                 </button>
             </div>

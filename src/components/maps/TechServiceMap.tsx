@@ -7,9 +7,11 @@ interface TechServiceMapProps {
     longitude: number;
     radiusInKm?: number;
     city?: string;
+    /** Reçoit l'instance maplibre une fois la carte chargée (pour piloter zoom/recentrage). */
+    onReady?: (map: any) => void;
 }
 
-const TechServiceMap: React.FC<TechServiceMapProps> = ({ latitude, longitude, radiusInKm = 5, city }) => {
+const TechServiceMap: React.FC<TechServiceMapProps> = ({ latitude, longitude, radiusInKm = 5, city, onReady }) => {
     // Helper to generate a GeoJSON circle
     const createGeoJSONCircle = (center: [number, number], radiusInKm: number, points: number = 64) => {
         const coords = {
@@ -51,6 +53,7 @@ const TechServiceMap: React.FC<TechServiceMapProps> = ({ latitude, longitude, ra
                 }}
                 mapStyle="https://tiles.openfreemap.org/styles/liberty" // Pro-grade detailed OSM style
                 style={{ width: '100%', height: '100%' }}
+                onLoad={(e) => onReady?.(e.target)}
             >
                 <NavigationControl position="top-right" />
                 <FullscreenControl position="top-left" />

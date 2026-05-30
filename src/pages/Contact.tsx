@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaMapMarkerAlt, FaEnvelope, FaPhoneAlt, FaListUl, FaBullseye, FaHandPaper } from 'react-icons/fa';
+import api from '../services/api';
 import Footer from '../components/layout/Footer';
 import '../styles/variables.css';
 import './Contact.css';
@@ -18,9 +19,27 @@ const Contact: React.FC = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [submitting, setSubmitting] = useState(false);
+    const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        alert('Message envoyé avec succès !');
+        setFeedback(null);
+        setSubmitting(true);
+        try {
+            await api.post('/contact', {
+                name: `${formData.prefix} ${formData.firstName} ${formData.lastName}`.trim(),
+                email: formData.email,
+                phone: formData.phone || undefined,
+                message: formData.message,
+            });
+            setFeedback({ type: 'success', text: 'Votre message a bien été envoyé. Nous vous répondrons rapidement.' });
+            setFormData({ prefix: 'M.', firstName: '', lastName: '', phone: '', email: '', message: '' });
+        } catch (err: any) {
+            setFeedback({ type: 'error', text: err?.response?.data?.message || 'Échec de l\'envoi. Réessayez.' });
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -138,8 +157,13 @@ const Contact: React.FC = () => {
                                     ></textarea>
                                 </div>
 
-                                <button type="submit" className="btn btn-primary ct-submit-btn">
-                                    Envoyer le message
+                                {feedback && (
+                                    <p style={{ color: feedback.type === 'success' ? '#16a34a' : '#dc2626', fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.75rem' }}>
+                                        {feedback.text}
+                                    </p>
+                                )}
+                                <button type="submit" className="btn btn-primary ct-submit-btn" disabled={submitting}>
+                                    {submitting ? 'Envoi…' : 'Envoyer le message'}
                                 </button>
                             </form>
                         </div>

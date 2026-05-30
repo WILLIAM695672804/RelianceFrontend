@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 import HeroCarousel from '../components/common/HeroCarousel';
 import '../styles/variables.css';
@@ -101,6 +102,7 @@ const candidatSlides = [
 ];
 
 const Candidats: React.FC = () => {
+    const navigate = useNavigate();
     return (
         <div className="page-candidats">
 
@@ -130,7 +132,7 @@ const Candidats: React.FC = () => {
                                         </li>
                                     ))}
                                 </ul>
-                                <button className="btn btn-primary cand-apply-btn">
+                                <button className="btn btn-primary cand-apply-btn" onClick={() => navigate('/inscription/technicien')}>
                                     Postuler maintenant
                                 </button>
                             </div>

@@ -1,41 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getInvoices, payInvoice, type Invoice } from '../../services/operationsService';
+import { Loading, EmptyState, ErrorState } from '../../components/common/AsyncStates';
+import { formatXAF, formatDate } from '../../utils/format';
 import './Invoices.css';
 
+/**
+ * GABARIT DE RÉFÉRENCE pour la mise en dynamique des pages :
+ *  - lecture via useQuery (cache + loading/error gérés)
+ *  - écriture via useMutation + invalidation du cache
+ *  - états async via <Loading/> <EmptyState/> <ErrorState/>
+ *  - montants via formatXAF, dates via formatDate
+ */
 const Invoices: React.FC = () => {
-    const [invoices, setInvoices] = useState<Invoice[]>([]);
-    const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(false);
-    const [payingId, setPayingId] = useState<string | null>(null);
+    const qc = useQueryClient();
 
-    useEffect(() => {
-        fetchInvoices();
-    }, [page]);
+    const { data, isLoading, isError, refetch } = useQuery({
+        queryKey: ['invoices', page],
+        queryFn: () => getInvoices(page),
+    });
 
-    const fetchInvoices = async () => {
-        try {
-            const res = await getInvoices(page);
-            setInvoices(res.data);
-            setHasMore(res.meta?.last_page > page);
-        } catch {
-            // silent
-        } finally {
-            setLoading(false);
-        }
-    };
+    const payMutation = useMutation({
+        mutationFn: (invoiceId: string) => payInvoice(invoiceId),
+        onSuccess: () => qc.invalidateQueries({ queryKey: ['invoices'] }),
+    });
 
-    const handlePay = async (invoiceId: string) => {
+    const invoices: Invoice[] = data?.data ?? [];
+    const hasMore = (data?.meta?.last_page ?? 1) > page;
+
+    const handlePay = (invoiceId: string) => {
         if (!window.confirm('Confirmer le paiement de cette facture ?')) return;
-        setPayingId(invoiceId);
-        try {
-            await payInvoice(invoiceId);
-            fetchInvoices();
-        } catch {
-            // silent
-        } finally {
-            setPayingId(null);
-        }
+        payMutation.mutate(invoiceId);
     };
 
     const statusConfig: Record<string, { label: string; cls: string; icon: string }> = {
@@ -45,9 +41,8 @@ const Invoices: React.FC = () => {
         refunded: { label: 'Remboursee', cls: 'inv-status-refunded', icon: 'undo' },
     };
 
-    if (loading) {
-        return <div className="inv-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>Chargement des factures...</div>;
-    }
+    if (isLoading) return <div className="inv-page"><Loading label="Chargement des factures…" /></div>;
+    if (isError) return <div className="inv-page"><ErrorState onRetry={() => refetch()} /></div>;
 
     return (
         <div className="inv-page">
@@ -57,15 +52,16 @@ const Invoices: React.FC = () => {
             </div>
 
             {invoices.length === 0 ? (
-                <div className="inv-empty">
-                    <span className="material-symbols-outlined" style={{ fontSize: 56, color: '#cbd5e1' }}>receipt_long</span>
-                    <p>Aucune facture pour le moment.</p>
-                    <p className="inv-empty-hint">Les factures sont generees automatiquement lorsque vous acceptez un devis.</p>
-                </div>
+                <EmptyState
+                    icon="receipt_long"
+                    title="Aucune facture pour le moment"
+                    message="Les factures sont générées automatiquement lorsque vous acceptez un devis."
+                />
             ) : (
                 <div className="inv-list">
                     {invoices.map((inv) => {
                         const st = statusConfig[inv.status] || statusConfig.unpaid;
+                        const paying = payMutation.isPending && payMutation.variables === inv.id;
                         return (
                             <div key={inv.id} className="inv-card">
                                 <div className="inv-card-top">
@@ -81,9 +77,9 @@ const Invoices: React.FC = () => {
 
                                 <div className="inv-card-body">
                                     <div className="inv-amount-block">
-                                        <span className="inv-amount">{Number(inv.amount).toLocaleString()} XAF</span>
+                                        <span className="inv-amount">{formatXAF(inv.amount)}</span>
                                         {Number(inv.tax_amount) > 0 && (
-                                            <span className="inv-tax">dont {Number(inv.tax_amount).toLocaleString()} XAF de taxes</span>
+                                            <span className="inv-tax">dont {formatXAF(inv.tax_amount)} de taxes</span>
                                         )}
                                     </div>
                                     <div className="inv-details">
@@ -95,7 +91,7 @@ const Invoices: React.FC = () => {
                                         )}
                                         <div className="inv-detail-item">
                                             <span className="material-symbols-outlined">calendar_today</span>
-                                            <span>{new Date(inv.created_at).toLocaleDateString('fr-FR')}</span>
+                                            <span>{formatDate(inv.created_at)}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -105,10 +101,10 @@ const Invoices: React.FC = () => {
                                         <button
                                             className="inv-pay-btn"
                                             onClick={() => handlePay(inv.id)}
-                                            disabled={payingId === inv.id}
+                                            disabled={paying}
                                         >
                                             <span className="material-symbols-outlined">payment</span>
-                                            {payingId === inv.id ? 'Paiement...' : 'Payer maintenant'}
+                                            {paying ? 'Paiement...' : 'Payer maintenant'}
                                         </button>
                                     </div>
                                 )}
@@ -118,7 +114,6 @@ const Invoices: React.FC = () => {
                 </div>
             )}
 
-            {/* Pagination */}
             {hasMore && (
                 <div className="inv-pagination">
                     <button className="inv-load-more" onClick={() => setPage(p => p + 1)}>

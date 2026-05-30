@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { getTechStats } from '../../services/technicianService';
+import { governanceService } from '../../services/governanceService';
+import { EmptyState } from '../../components/common/AsyncStates';
 import './SlaAuditLog.css';
 
 const SlaAuditLog: React.FC = () => {
     const navigate = useNavigate();
+    const { data: stats } = useQuery({ queryKey: ['tech-stats'], queryFn: getTechStats });
+    const { data: slaRes } = useQuery({ queryKey: ['my-sla-events'], queryFn: governanceService.getMySlaEvents });
+    const allEvents: any[] = slaRes?.data ?? [];
+    const [slaFilter, setSlaFilter] = useState<'all' | 'critical'>('all');
+    const events = slaFilter === 'critical'
+        ? allEvents.filter((ev: any) => Number(ev.payload?.points ?? ev.payload?.penalty ?? 0) < 0)
+        : allEvents;
+    const rating = Number(stats?.rating ?? 0);
+    const score = Math.round((rating / 5) * 100);
+    const scoreBadge = score >= 90 ? 'Excellent' : score >= 75 ? 'Bon' : score >= 50 ? 'Moyen' : 'À améliorer';
 
     return (
         <div className="tech-sla-page">
@@ -36,18 +50,18 @@ const SlaAuditLog: React.FC = () => {
                 <div className="tech-sla-score-wrapper">
                     <div className="tech-sla-score-card">
                         <div className="tech-sla-score-val">
-                            <div className="tech-score-number">94<span>/100</span></div>
+                            <div className="tech-score-number">{score}<span>/100</span></div>
                             <div className="tech-score-badge-wrap">
-                                <span className="tech-score-badge">Excellent</span>
+                                <span className="tech-score-badge">{scoreBadge}</span>
                             </div>
                         </div>
                         <div className="tech-sla-score-divider"></div>
                         <div className="tech-sla-score-trend">
                             <div className="tech-trend-val">
-                                <span className="material-symbols-outlined">trending_up</span>
-                                +2.4%
+                                <span className="material-symbols-outlined">star</span>
+                                {rating.toFixed(1)}/5
                             </div>
-                            <div className="tech-trend-label">Last 30 Days</div>
+                            <div className="tech-trend-label">{stats?.num_reviews ?? 0} avis</div>
                         </div>
                     </div>
                 </div>
@@ -59,40 +73,40 @@ const SlaAuditLog: React.FC = () => {
                 <div className="tech-metric-card">
                     <div className="tech-metric-top">
                         <span className="material-symbols-outlined" style={{color: 'var(--tech-secondary)'}}>schedule</span>
-                        <span className="tech-metric-title">Reliability</span>
+                        <span className="tech-metric-title">Fiabilité</span>
                     </div>
-                    <div className="tech-metric-value">98.2%</div>
-                    <div className="tech-metric-desc">Punctuality Rate</div>
+                    <div className="tech-metric-value">{stats?.completion_rate ?? 0}%</div>
+                    <div className="tech-metric-desc">Taux de complétion</div>
                 </div>
 
                 {/* Metric Card 2 */}
                 <div className="tech-metric-card">
                     <div className="tech-metric-top">
                         <span className="material-symbols-outlined" style={{color: 'var(--tech-secondary)'}}>speed</span>
-                        <span className="tech-metric-title">Efficiency</span>
+                        <span className="tech-metric-title">Activité</span>
                     </div>
-                    <div className="tech-metric-value">14m 20s</div>
-                    <div className="tech-metric-desc">Response Time</div>
+                    <div className="tech-metric-value">{stats?.missions_total ?? 0}</div>
+                    <div className="tech-metric-desc">Missions totales</div>
                 </div>
 
                 {/* Metric Card 3 */}
                 <div className="tech-metric-card tech-metric-card-error">
                     <div className="tech-metric-top">
                         <span className="material-symbols-outlined" style={{color: 'var(--tech-error)'}}>cancel</span>
-                        <span className="tech-metric-title">Attrition</span>
+                        <span className="tech-metric-title">Événements</span>
                     </div>
-                    <div className="tech-metric-value">1.4%</div>
-                    <div className="tech-metric-desc">Cancellation Rate</div>
+                    <div className="tech-metric-value">{events.length}</div>
+                    <div className="tech-metric-desc">Événements SLA</div>
                 </div>
 
                 {/* Metric Card 4 */}
                 <div className="tech-metric-card">
                     <div className="tech-metric-top">
                         <span className="material-symbols-outlined" style={{color: 'var(--tech-tertiary)'}}>task_alt</span>
-                        <span className="tech-metric-title">Quality</span>
+                        <span className="tech-metric-title">Missions OK</span>
                     </div>
-                    <div className="tech-metric-value">99.1%</div>
-                    <div className="tech-metric-desc">Success Rate</div>
+                    <div className="tech-metric-value">{stats?.missions_completed ?? 0}</div>
+                    <div className="tech-metric-desc">Missions complétées</div>
                 </div>
             </section>
 
@@ -104,8 +118,8 @@ const SlaAuditLog: React.FC = () => {
                     <div className="tech-ledger-header">
                         <h3>Historical Audit Ledger</h3>
                         <div className="tech-ledger-filters">
-                            <button className="tech-filter-active">All Events</button>
-                            <button className="tech-filter-inactive">Critical Only</button>
+                            <button className={slaFilter === 'all' ? 'tech-filter-active' : 'tech-filter-inactive'} onClick={() => setSlaFilter('all')}>All Events</button>
+                            <button className={slaFilter === 'critical' ? 'tech-filter-active' : 'tech-filter-inactive'} onClick={() => setSlaFilter('critical')}>Critical Only</button>
                         </div>
                     </div>
 
@@ -120,70 +134,34 @@ const SlaAuditLog: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>
-                                        <div className="tech-ledger-date">Oct 24, 2023</div>
-                                        <div className="tech-ledger-time">14:22 PM</div>
-                                    </td>
-                                    <td>
-                                        <div className="tech-event-type">
-                                            <span className="tech-event-dot bg-tertiary"></span>
-                                            <span>Successful Completion</span>
-                                        </div>
-                                    </td>
-                                    <td className="tech-impact-positive">+2 pts</td>
-                                    <td className="tech-ledger-ref">#MS-9921</td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        <div className="tech-ledger-date">Oct 23, 2023</div>
-                                        <div className="tech-ledger-time">09:15 AM</div>
-                                    </td>
-                                    <td>
-                                        <div className="tech-event-type">
-                                            <span className="tech-event-dot bg-error"></span>
-                                            <span>Late Arrival</span>
-                                        </div>
-                                    </td>
-                                    <td className="tech-impact-negative">-5 pts</td>
-                                    <td className="tech-ledger-ref">#MS-8812</td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        <div className="tech-ledger-date">Oct 21, 2023</div>
-                                        <div className="tech-ledger-time">18:40 PM</div>
-                                    </td>
-                                    <td>
-                                        <div className="tech-event-type">
-                                            <span className="tech-event-dot bg-secondary"></span>
-                                            <span>Mission Refusal</span>
-                                        </div>
-                                    </td>
-                                    <td className="tech-impact-neutral">-1 pts</td>
-                                    <td className="tech-ledger-ref">#MS-7761</td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        <div className="tech-ledger-date">Oct 20, 2023</div>
-                                        <div className="tech-ledger-time">11:05 AM</div>
-                                    </td>
-                                    <td>
-                                        <div className="tech-event-type">
-                                            <span className="tech-event-dot bg-tertiary"></span>
-                                            <span>Successful Completion</span>
-                                        </div>
-                                    </td>
-                                    <td className="tech-impact-positive">+2 pts</td>
-                                    <td className="tech-ledger-ref">#MS-7650</td>
-                                </tr>
+                                {events.length === 0 ? (
+                                    <tr><td colSpan={4}><EmptyState icon="gavel" title="Aucun événement SLA" message="Vos événements de conformité apparaîtront ici." /></td></tr>
+                                ) : (
+                                    events.map((ev: any) => {
+                                        const pts = Number(ev.payload?.points ?? ev.payload?.penalty ?? 0);
+                                        const impactCls = pts > 0 ? 'tech-impact-positive' : pts < 0 ? 'tech-impact-negative' : 'tech-impact-neutral';
+                                        const dot = pts > 0 ? 'bg-tertiary' : pts < 0 ? 'bg-error' : 'bg-secondary';
+                                        const d = new Date(ev.occurred_at);
+                                        return (
+                                            <tr key={ev.id}>
+                                                <td>
+                                                    <div className="tech-ledger-date">{d.toLocaleDateString('fr-FR')}</div>
+                                                    <div className="tech-ledger-time">{d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
+                                                </td>
+                                                <td>
+                                                    <div className="tech-event-type">
+                                                        <span className={`tech-event-dot ${dot}`}></span>
+                                                        <span style={{ textTransform: 'capitalize' }}>{String(ev.event_key).replace(/_/g, ' ')}</span>
+                                                    </div>
+                                                </td>
+                                                <td className={impactCls}>{pts > 0 ? '+' : ''}{pts} pts</td>
+                                                <td className="tech-ledger-ref">#{String(ev.request_id).slice(0, 6)}</td>
+                                            </tr>
+                                        );
+                                    })
+                                )}
                             </tbody>
                         </table>
-                        <div className="tech-ledger-footer">
-                            <button>Load Older Ledger Entries</button>
-                        </div>
                     </div>
                 </div>
 
@@ -201,7 +179,7 @@ const SlaAuditLog: React.FC = () => {
                                 <span>Reliance Insight</span>
                             </div>
                             <p>Your late-night response time is slowing down. Consider updating your schedule exceptions to maintain your 'Excellent' status.</p>
-                            <button>Apply Recommendations</button>
+                            <button onClick={() => navigate('/technicien/planning')}>Apply Recommendations</button>
                         </div>
                     </div>
 
@@ -239,7 +217,7 @@ const SlaAuditLog: React.FC = () => {
                             </li>
                         </ul>
                         <div className="tech-rules-footer">
-                            <button>
+                            <button onClick={() => navigate('/contact')}>
                                 Full SLA Documentation
                                 <span className="material-symbols-outlined">arrow_forward</span>
                             </button>

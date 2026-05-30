@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
 import { FaHeart, FaComment, FaShare, FaImage, FaPaperPlane, FaWrench } from 'react-icons/fa';
 import './SocialFeed.css';
 
@@ -50,6 +51,28 @@ const MOCK_POSTS: Post[] = [
 const SocialFeed: React.FC = () => {
     const { isAuthenticated, openAuthModal, role } = useAuth();
     const [posts, setPosts] = useState<Post[]>(MOCK_POSTS);
+    const [content, setContent] = useState('');
+    const [files, setFiles] = useState<File[]>([]);
+    const [posting, setPosting] = useState(false);
+    const fileRef = useRef<HTMLInputElement>(null);
+
+    const handlePublish = async () => {
+        if (!content.trim() && files.length === 0) return;
+        setPosting(true);
+        try {
+            const fd = new FormData();
+            if (content.trim()) fd.append('content', content);
+            files.forEach((f, i) => fd.append(`attachments[${i}]`, f));
+            await api.post('/posts', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+            setContent('');
+            setFiles([]);
+            alert('Publication réussie !');
+        } catch {
+            alert('Échec de la publication. Réessayez.');
+        } finally {
+            setPosting(false);
+        }
+    };
 
     // L'Auth Guard pour intercepter les actions
     const handleAction = (actionCallback: () => void) => {
@@ -88,11 +111,16 @@ const SocialFeed: React.FC = () => {
                         <div className="create-post-widget">
                             <div className="create-post-header">
                                 <div className="user-mini-avatar">VO</div>
-                                <input type="text" placeholder={`Partagez une réalisation, ${role === 'technician' ? 'artisan' : 'client'}...`} />
+                                <input type="text" value={content} onChange={(e) => setContent(e.target.value)} placeholder={`Partagez une réalisation, ${role === 'technician' ? 'artisan' : 'client'}...`} />
                             </div>
+                            <input ref={fileRef} type="file" accept="image/*,video/*" multiple hidden onChange={(e) => setFiles(Array.from(e.target.files || []))} />
                             <div className="create-post-actions">
-                                <button className="btn-post-media"><FaImage /> Photo/Vidéo</button>
-                                <button className="btn-post-submit"><FaPaperPlane /> Publier</button>
+                                <button className="btn-post-media" type="button" onClick={() => fileRef.current?.click()}>
+                                    <FaImage /> {files.length > 0 ? `${files.length} fichier(s)` : 'Photo/Vidéo'}
+                                </button>
+                                <button className="btn-post-submit" type="button" onClick={handlePublish} disabled={posting}>
+                                    <FaPaperPlane /> {posting ? 'Publication…' : 'Publier'}
+                                </button>
                             </div>
                         </div>
                     )}

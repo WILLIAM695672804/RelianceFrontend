@@ -135,8 +135,8 @@ const InscriptionClient: React.FC = () => {
                                 <label className="ic-checkbox-label">
                                     <input type="checkbox" name="acceptTerms" checked={formData.acceptTerms}
                                         onChange={handleChange} required />
-                                    J'accepte les <a href="#">conditions d'utilisation</a> et la{' '}
-                                    <a href="#">politique de confidentialité</a>
+                                    J'accepte les <Link to="/cgu">conditions d'utilisation</Link> et la{' '}
+                                    <Link to="/confidentialite">politique de confidentialité</Link>
                                 </label>
                             </div>
 

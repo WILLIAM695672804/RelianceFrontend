@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaArrowRight, FaUsers, FaFileAlt, FaShieldAlt, FaChartLine, FaHandshake, FaClock } from 'react-icons/fa';
 import Footer from '../components/layout/Footer';
 import HeroCarousel from '../components/common/HeroCarousel';
@@ -23,6 +24,7 @@ const entrepriseSlides = [
 ];
 
 const Entreprises: React.FC = () => {
+    const navigate = useNavigate();
     return (
         <div className="page-entreprises">
 
@@ -55,7 +57,7 @@ const Entreprises: React.FC = () => {
                                 un système de paiement sécurisé Escrow, et un matching intelligent basé
                                 sur les compétences et la proximité géographique.
                             </p>
-                            <button className="btn btn-primary">
+                            <button className="btn btn-primary" onClick={() => navigate('/inscription/entreprise')}>
                                 Devenir membre <FaArrowRight />
                             </button>
                         </div>
@@ -189,7 +191,7 @@ const Entreprises: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
-                            <button className="btn btn-primary">
+                            <button className="btn btn-primary" onClick={() => navigate('/inscription/entreprise')}>
                                 Devenir membre <FaArrowRight />
                             </button>
                         </div>

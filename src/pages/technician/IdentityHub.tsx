@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getTechProfile, updateTechLocation, updateTechProfile } from '../../services/technicianService';
 import TechServiceMap from '../../components/maps/TechServiceMap';
 import StarRating from '../../components/reviews/StarRating';
+import { useAuth } from '../../context/AuthContext';
 import './IdentityHub.css';
 
 const competencesOptions = [
@@ -74,6 +75,12 @@ const IdentityHub: React.FC = () => {
     const [isSaving, setIsSaving] = useState(false);
     
     const navigate = useNavigate();
+    const { logout } = useAuth();
+
+    const handleLogout = async () => {
+        await logout();
+        navigate('/connexion');
+    };
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -232,8 +239,8 @@ const IdentityHub: React.FC = () => {
                 </div>
 
                 <div className="tech-profile-actions">
-                    <button className="tech-btn-public">Public View</button>
-                    <button className="tech-btn-share">
+                    <button className="tech-btn-public" onClick={() => profile?.id && navigate(`/artisan/${profile.id}`)}>Public View</button>
+                    <button className="tech-btn-share" onClick={() => { if (profile?.id) { navigator.clipboard?.writeText(`${window.location.origin}/artisan/${profile.id}`); alert('Lien du profil copié !'); } }}>
                         <span className="material-symbols-outlined">share</span>
                     </button>
                 </div>
@@ -508,7 +515,7 @@ const IdentityHub: React.FC = () => {
                                 <span className={`tech-kyc-dot ${!profile?.kyc_approved ? 'pending' : ''}`}></span>
                                 <span className="tech-kyc-label">{profile?.kyc_approved ? 'Fully Compliant' : 'Pending KYC'}</span>
                             </div>
-                            <button className="tech-btn-kyc">View Credentials</button>
+                            <button className="tech-btn-kyc" onClick={() => navigate('/technicien/verification')}>View Credentials</button>
                         </div>
                     </div>
 
@@ -516,28 +523,28 @@ const IdentityHub: React.FC = () => {
                     <div className="tech-profile-card">
                         <h3 className="tech-settings-title">Account Settings</h3>
                         <div className="tech-settings-list">
-                            <a href="#" className="tech-settings-item">
+                            <a className="tech-settings-item" style={{ cursor: 'pointer' }} onClick={() => navigate('/mot-de-passe-oublie')}>
                                 <div className="tech-settings-item-main">
                                     <span className="material-symbols-outlined">security</span>
                                     <span>Login &amp; Security</span>
                                 </div>
                                 <span className="material-symbols-outlined text-outline text-sm">chevron_right</span>
                             </a>
-                            <a href="#" className="tech-settings-item">
+                            <a className="tech-settings-item" style={{ cursor: 'pointer' }} onClick={() => navigate('/technicien/notifications')}>
                                 <div className="tech-settings-item-main">
                                     <span className="material-symbols-outlined">notifications_active</span>
                                     <span>Notification Preferences</span>
                                 </div>
                                 <span className="material-symbols-outlined text-outline text-sm">chevron_right</span>
                             </a>
-                            <a href="#" className="tech-settings-item">
+                            <a className="tech-settings-item" style={{ cursor: 'pointer' }} onClick={() => navigate('/technicien/wallet')}>
                                 <div className="tech-settings-item-main">
                                     <span className="material-symbols-outlined">payments</span>
                                     <span>Payout Settings</span>
                                 </div>
                                 <span className="material-symbols-outlined text-outline text-sm">chevron_right</span>
                             </a>
-                            <a href="#" className="tech-settings-item">
+                            <a className="tech-settings-item" style={{ cursor: 'pointer' }} onClick={() => navigate('/confidentialite')}>
                                 <div className="tech-settings-item-main">
                                     <span className="material-symbols-outlined">privacy_tip</span>
                                     <span>Data &amp; Privacy</span>
@@ -546,7 +553,7 @@ const IdentityHub: React.FC = () => {
                             </a>
                         </div>
                         <div className="tech-settings-footer">
-                            <button className="tech-btn-logout">
+                            <button className="tech-btn-logout" onClick={handleLogout}>
                                 <span className="material-symbols-outlined">logout</span> Sign Out
                             </button>
                         </div>
@@ -557,7 +564,7 @@ const IdentityHub: React.FC = () => {
                         <span className="material-symbols-outlined tech-help-icon">contact_support</span>
                         <h4>Need assistance?</h4>
                         <p>Our dedicated technician support team is available 24/7.</p>
-                        <button className="tech-btn-text">Contact Support</button>
+                        <button className="tech-btn-text" onClick={() => navigate('/contact')}>Contact Support</button>
                     </div>
 
                 </div>

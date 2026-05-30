@@ -161,7 +161,7 @@ const MatchingResults: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="mr-tech-footer">
-                                        <button className="mr-btn-outline">View Profile</button>
+                                        <button className="mr-btn-outline" onClick={() => navigate(`/artisan/${tech.id}`)}>View Profile</button>
                                         <button 
                                             className="mr-btn-solid"
                                             disabled={selecting}
@@ -204,7 +204,7 @@ const MatchingResults: React.FC = () => {
                                 </div>
                                 <div className="mr-map-footer">
                                     <span>Showing technicians in a 5km radius</span>
-                                    <button className="mr-map-update-btn">Update Location</button>
+                                    <button className="mr-map-update-btn" onClick={() => navigate('/espace-client/profil')}>Update Location</button>
                                 </div>
                             </div>
 

@@ -1,8 +1,13 @@
 import React from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../context/AuthContext';
 import authService from '../../services/authService';
+import { financeService } from '../../services/financeService';
+import requestService from '../../services/requestService';
 import ClientLocationMap from '../../components/maps/ClientLocationMap';
+import { EmptyState } from '../../components/common/AsyncStates';
+import { formatNumber } from '../../utils/format';
 import './ClientDashboardModern.css';
 
 const ClientDashboardModern: React.FC = () => {
@@ -11,6 +16,18 @@ const ClientDashboardModern: React.FC = () => {
     const { user } = useAuth();
     const [resendStatus, setResendStatus] = React.useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [showVerifiedModal, setShowVerifiedModal] = React.useState(searchParams.get('verified') === '1');
+
+    const { data: reqRes } = useQuery({ queryKey: ['client-requests'], queryFn: () => requestService.list() });
+    const requests: any[] = reqRes?.data ?? reqRes ?? [];
+    const activeRequests = requests.filter((r: any) => !['completed', 'cancelled', 'closed', 'done'].includes(String(r.status)));
+
+    const { data: holdsRes } = useQuery({ queryKey: ['client-holds'], queryFn: () => financeService.getHolds() });
+    const holds: any[] = holdsRes?.data?.data ?? holdsRes?.data ?? [];
+    const pendingEscrow = holds.filter((h: any) => h.status === 'held').reduce((s: number, h: any) => s + Number(h.amount || 0), 0);
+
+    const { data: txRes } = useQuery({ queryKey: ['client-wallet-transactions'], queryFn: () => financeService.getTransactions(1) });
+    const txList: any[] = txRes?.data?.data ?? [];
+    const lifetimeSpend = txList.filter((t: any) => Number(t.amount) < 0).reduce((s: number, t: any) => s + Math.abs(Number(t.amount)), 0);
 
     // Clear the query param when modal is dismissed
     const dismissVerifiedModal = () => {
@@ -67,17 +84,17 @@ const ClientDashboardModern: React.FC = () => {
                         <h1 className="sm-hero-title">What can we help you fix today?</h1>
                         <div className="sm-search-group">
                             <input type="text" className="sm-hero-input" placeholder="Describe the issue (e.g. 'Leaking pipe in master bathroom')" />
-                            <button className="sm-ask-ai-btn">
+                            <button className="sm-ask-ai-btn" onClick={() => navigate('/espace-client/demande')}>
                                 <span className="material-symbols-outlined">auto_awesome</span>
                                 Ask AI
                             </button>
                         </div>
                         <div className="sm-suggestions">
                             <span className="sm-sug-label">Suggestions:</span>
-                            <button className="sm-sug-btn">Plumbing</button>
-                            <button className="sm-sug-btn">Electrical</button>
-                            <button className="sm-sug-btn">HVAC</button>
-                            <button className="sm-sug-btn">Smart Home</button>
+                            <button className="sm-sug-btn" onClick={() => navigate('/espace-client/demande')}>Plumbing</button>
+                            <button className="sm-sug-btn" onClick={() => navigate('/espace-client/demande')}>Electrical</button>
+                            <button className="sm-sug-btn" onClick={() => navigate('/espace-client/demande')}>HVAC</button>
+                            <button className="sm-sug-btn" onClick={() => navigate('/espace-client/demande')}>Smart Home</button>
                         </div>
                     </div>
                 </section>
@@ -106,8 +123,8 @@ const ClientDashboardModern: React.FC = () => {
                                 <div className="sm-stat-left">
                                     <div className="sm-stat-icon sm-icon-1"><span className="material-symbols-outlined">construction</span></div>
                                     <div>
-                                        <p className="sm-stat-name">Active Interventions</p>
-                                        <p className="sm-stat-value">02</p>
+                                        <p className="sm-stat-name">Interventions actives</p>
+                                        <p className="sm-stat-value">{String(activeRequests.length).padStart(2, '0')}</p>
                                     </div>
                                 </div>
                                 <span className="material-symbols-outlined" style={{ color: '#cbd5e1' }}>chevron_right</span>
@@ -117,8 +134,8 @@ const ClientDashboardModern: React.FC = () => {
                                 <div className="sm-stat-left">
                                     <div className="sm-stat-icon sm-icon-2"><span className="material-symbols-outlined">account_balance_wallet</span></div>
                                     <div>
-                                        <p className="sm-stat-name">Pending Escrow</p>
-                                        <p className="sm-stat-value">45,500 <span style={{ fontSize: '0.75rem', color: '#64748b' }}>XAF</span></p>
+                                        <p className="sm-stat-name">Escrow en attente</p>
+                                        <p className="sm-stat-value">{formatNumber(pendingEscrow)} <span style={{ fontSize: '0.75rem', color: '#64748b' }}>XAF</span></p>
                                     </div>
                                 </div>
                             </div>
@@ -127,8 +144,8 @@ const ClientDashboardModern: React.FC = () => {
                                 <div className="sm-stat-left">
                                     <div className="sm-stat-icon sm-icon-3"><span className="material-symbols-outlined">monitoring</span></div>
                                     <div>
-                                        <p className="sm-stat-name">Lifetime Spend</p>
-                                        <p className="sm-stat-value">820,000 <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 'normal' }}>XAF</span></p>
+                                        <p className="sm-stat-name">Total dépensé</p>
+                                        <p className="sm-stat-value">{formatNumber(lifetimeSpend)} <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 'normal' }}>XAF</span></p>
                                     </div>
                                 </div>
                             </div>
@@ -153,35 +170,23 @@ const ClientDashboardModern: React.FC = () => {
                             <div className="sm-timeline">
                                 <div className="sm-timeline-line"></div>
 
-                                <div className="sm-tl-item">
-                                    <div className="sm-tl-dot sm-dot-1"></div>
-                                    <div className="sm-tl-content">
-                                        <p className="sm-tl-title">Job Completed</p>
-                                        <p className="sm-tl-desc">Central AC Unit repaired successfully by Jean-Marc T.</p>
-                                        <p className="sm-tl-time">Today, 11:45 AM</p>
-                                    </div>
-                                </div>
-
-                                <div className="sm-tl-item">
-                                    <div className="sm-tl-dot sm-dot-2"></div>
-                                    <div className="sm-tl-content">
-                                        <p className="sm-tl-title">Technician En-route</p>
-                                        <p className="sm-tl-desc">Samuel O. is traveling to your location in Bastos.</p>
-                                        <p className="sm-tl-time">Today, 09:30 AM</p>
-                                    </div>
-                                </div>
-
-                                <div className="sm-tl-item sm-disabled">
-                                    <div className="sm-tl-dot sm-dot-3"></div>
-                                    <div className="sm-tl-content">
-                                        <p className="sm-tl-title">Inspection Scheduled</p>
-                                        <p className="sm-tl-desc">Pre-inspection for roof renovation booked for Tomorrow.</p>
-                                        <p className="sm-tl-time">Yesterday, 04:00 PM</p>
-                                    </div>
-                                </div>
+                                {requests.length === 0 ? (
+                                    <EmptyState icon="history" title="Aucune activité" message="Vos demandes apparaîtront ici." />
+                                ) : (
+                                    requests.slice(0, 4).map((r: any, i: number) => (
+                                        <div key={r.id} className="sm-tl-item">
+                                            <div className={`sm-tl-dot sm-dot-${(i % 3) + 1}`}></div>
+                                            <div className="sm-tl-content">
+                                                <p className="sm-tl-title" style={{ textTransform: 'capitalize' }}>{String(r.status).replace(/_/g, ' ')}</p>
+                                                <p className="sm-tl-desc">{r.title}</p>
+                                                <p className="sm-tl-time">{new Date(r.created_at).toLocaleDateString('fr-FR')}</p>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
                             </div>
 
-                            <button className="sm-status-btn-full">Full Activity Log</button>
+                            <button className="sm-status-btn-full" onClick={() => navigate('/espace-client/notifications')}>Full Activity Log</button>
                         </div>
                     </div>
                 </div>
@@ -194,51 +199,24 @@ const ClientDashboardModern: React.FC = () => {
                     </div>
 
                     <div className="sm-jobs-grid">
-
-                        {/* Job 1 */}
-                        <div className="sm-job-card">
-                            <div className="sm-job-left">
-                                <div className="sm-job-tags">
-                                    <span className="sm-job-badge sm-badge-secondary">In Progress</span>
-                                    <span className="sm-job-id">#REL-89231</span>
+                        {activeRequests.length === 0 ? (
+                            <EmptyState icon="construction" title="Aucune intervention active" message="Créez une demande pour démarrer." />
+                        ) : (
+                            activeRequests.slice(0, 6).map((r: any) => (
+                                <div key={r.id} className="sm-job-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/espace-client/suivi')}>
+                                    <div className="sm-job-left">
+                                        <div className="sm-job-tags">
+                                            <span className="sm-job-badge sm-badge-secondary" style={{ textTransform: 'capitalize' }}>{String(r.status).replace(/_/g, ' ')}</span>
+                                            <span className="sm-job-id">#{String(r.id).slice(0, 6)}</span>
+                                        </div>
+                                        <h3 className="sm-job-name">{r.title}</h3>
+                                        <div className="sm-job-meta">
+                                            <span><span className="material-symbols-outlined text-[14px]">calendar_today</span> {new Date(r.created_at).toLocaleDateString('fr-FR')}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <h3 className="sm-job-name">Main Board Replacement</h3>
-                                <div className="sm-job-meta">
-                                    <span><span className="material-symbols-outlined text-[14px]">schedule</span> 45m left</span>
-                                    <span><span className="material-symbols-outlined text-[14px]">location_on</span> Bastos Residence</span>
-                                </div>
-                            </div>
-                            <div className="sm-job-right">
-                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Maker" alt="Samuel O." className="sm-assignee-avatar" />
-                                <div className="sm-assignee-info">
-                                    <p className="sm-assignee-name">Samuel O.</p>
-                                    <p className="sm-assignee-role">Master Electrician</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Job 2 */}
-                        <div className="sm-job-card">
-                            <div className="sm-job-left">
-                                <div className="sm-job-tags">
-                                    <span className="sm-job-badge sm-badge-tertiary">Arrival Impending</span>
-                                    <span className="sm-job-id">#REL-89245</span>
-                                </div>
-                                <h3 className="sm-job-name">Kitchen Sink Leak</h3>
-                                <div className="sm-job-meta">
-                                    <span><span className="material-symbols-outlined text-[14px]">schedule</span> 5m left</span>
-                                    <span><span className="material-symbols-outlined text-[14px]">location_on</span> Mvan Office</span>
-                                </div>
-                            </div>
-                            <div className="sm-job-right">
-                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Maker" alt="Fiona K." className="sm-assignee-avatar" />
-                                <div className="sm-assignee-info">
-                                    <p className="sm-assignee-name">Fiona K.</p>
-                                    <p className="sm-assignee-role">Plumbing Specialist</p>
-                                </div>
-                            </div>
-                        </div>
-
+                            ))
+                        )}
                     </div>
                 </section>
             </main>

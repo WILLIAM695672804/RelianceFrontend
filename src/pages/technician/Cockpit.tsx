@@ -235,11 +235,11 @@ const Cockpit: React.FC = () => {
                             </div>
 
                             <div className="tech-journey-actions">
-                                <button className="tech-btn-complete">
+                                <button className="tech-btn-complete" onClick={() => navigate(`/technicien/mission/${mission.request.id}/travaux`)}>
                                     <span>Terminer la mission</span>
                                     <span className="material-symbols-outlined">fact_check</span>
                                 </button>
-                                <button className="tech-btn-delay">Signaler un problème</button>
+                                <button className="tech-btn-delay" onClick={() => navigate('/technicien/litiges')}>Signaler un problème</button>
                             </div>
                         </div>
                     </div>

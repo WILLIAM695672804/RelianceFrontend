@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaCheckCircle, FaArrowRight } from 'react-icons/fa';
 import './Mission.css';
 
 const Mission: React.FC = () => {
+    const navigate = useNavigate();
     return (
         <section id="mission" className="mission section">
             <div className="container">
@@ -42,7 +44,7 @@ const Mission: React.FC = () => {
                             </li>
                         </ul>
 
-                        <button className="btn btn-primary">
+                        <button className="btn btn-primary" onClick={() => navigate('/qui-sommes-nous')}>
                             En savoir plus <FaArrowRight />
                         </button>
                     </div>

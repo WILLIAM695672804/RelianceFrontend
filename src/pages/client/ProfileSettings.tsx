@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../context/AuthContext';
 import authService from '../../services/authService';
+import requestService from '../../services/requestService';
+import { EmptyState } from '../../components/common/AsyncStates';
 import RoleUpgradeModal from '../../components/common/RoleUpgradeModal';
 import './ProfileSettings.css';
 
@@ -81,18 +84,16 @@ const ProfileSettings: React.FC = () => {
         setIsEditModalOpen(true);
     };
 
-    // Mock data for elements not yet in backend
+    const { data: reqRes } = useQuery({ queryKey: ['client-requests'], queryFn: () => requestService.list() });
+    const myRequests: any[] = reqRes?.data ?? reqRes ?? [];
+    const activeCount = myRequests.filter((r: any) => !['completed', 'cancelled', 'closed', 'done'].includes(String(r.status))).length;
     const stats = {
-        totalRequests: 24,
-        avgRating: 4.9,
-        pointsToPlatinum: 15,
-        progress: 85
+        totalRequests: myRequests.length,
+        activeRequests: activeCount,
     };
 
-    const favorites = [
-        { id: 1, name: 'Jean Dupont', role: 'Plumbing Expert', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance' },
-        { id: 2, name: "Marcus N'go", role: 'Master Electrician', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Reliance' }
-    ];
+    // Pas d'endpoint « favoris » côté backend pour l'instant.
+    const favorites: any[] = [];
 
     return (
         <div className="ps-page">
@@ -199,7 +200,7 @@ const ProfileSettings: React.FC = () => {
                                             <p className="ps-sec-desc">Last changed 3 months ago</p>
                                         </div>
                                     </div>
-                                    <button className="px-4 py-1.5 border border-outline rounded-full text-xs font-bold hover:bg-white transition-all">Update</button>
+                                    <button className="px-4 py-1.5 border border-outline rounded-full text-xs font-bold hover:bg-white transition-all" onClick={openEditModal}>Update</button>
                                 </div>
                             </div>
                         </div>
@@ -211,7 +212,7 @@ const ProfileSettings: React.FC = () => {
                                     <span className="material-symbols-outlined">payments</span>
                                     Payment Methods
                                 </h2>
-                                <button className="bg-primary text-white px-4 py-2 rounded-full text-xs font-bold hover:bg-secondary transition-all">
+                                <button className="bg-primary text-white px-4 py-2 rounded-full text-xs font-bold hover:bg-secondary transition-all" onClick={openEditModal}>
                                     + Add New
                                 </button>
                             </div>
@@ -251,19 +252,12 @@ const ProfileSettings: React.FC = () => {
                                 <div className="ps-stats-grid">
                                     <div className="ps-stat-box">
                                         <p className="ps-stat-val">{stats.totalRequests}</p>
-                                        <p className="ps-stat-label">Total Requests</p>
+                                        <p className="ps-stat-label">Demandes totales</p>
                                     </div>
                                     <div className="ps-stat-box">
-                                        <p className="ps-stat-val">{stats.avgRating}</p>
-                                        <p className="ps-stat-label">Avg. Rating</p>
+                                        <p className="ps-stat-val">{stats.activeRequests}</p>
+                                        <p className="ps-stat-label">Demandes actives</p>
                                     </div>
-                                </div>
-                                <div className="ps-progress-wrap">
-                                    <p className="text-xs opacity-70 mb-2">Member status</p>
-                                    <div className="ps-progress-bg">
-                                        <div className="ps-progress-fill" style={{ width: `${stats.progress}%` }}></div>
-                                    </div>
-                                    <p className="text-[10px] font-bold text-tertiary-fixed">{stats.pointsToPlatinum} points to Platinum Level</p>
                                 </div>
                             </div>
                             <span className="material-symbols-outlined ps-stats-bg-icon text-9xl">analytics</span>
@@ -273,20 +267,23 @@ const ProfileSettings: React.FC = () => {
                         <div className="glass-card ps-fav-card">
                             <h3 className="ps-stats-header text-primary-container" style={{ fontSize: '1rem' }}>Favorite Technicians</h3>
                             <div className="ps-fav-list">
-                                {favorites.map(tech => (
-                                    <div key={tech.id} className="ps-fav-item group">
-                                        <div className="ps-fav-info">
-                                            <img className="ps-fav-avatar" src={tech.avatar} alt={tech.name} />
-                                            <div>
-                                                <p className="ps-fav-name">{tech.name}</p>
-                                                <p className="ps-fav-role">{tech.role}</p>
+                                {favorites.length === 0 ? (
+                                    <EmptyState icon="favorite" title="Aucun favori" message="Ajoutez des techniciens à vos favoris depuis leur profil." />
+                                ) : (
+                                    favorites.map((tech: any) => (
+                                        <div key={tech.id} className="ps-fav-item group">
+                                            <div className="ps-fav-info">
+                                                <img className="ps-fav-avatar" src={tech.avatar} alt={tech.name} />
+                                                <div>
+                                                    <p className="ps-fav-name">{tech.name}</p>
+                                                    <p className="ps-fav-role">{tech.role}</p>
+                                                </div>
                                             </div>
+                                            <span className="material-symbols-outlined ps-fav-heart" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
                                         </div>
-                                        <span className="material-symbols-outlined ps-fav-heart" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
-                                    </div>
-                                ))}
+                                    ))
+                                )}
                             </div>
-                            <button className="ps-view-all-btn">View All Technicians</button>
                         </div>
 
                         {/* Help Banner */}

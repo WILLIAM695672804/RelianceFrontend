@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FaFacebook, FaTwitter, FaLinkedin, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
 import './Footer.css';
 
@@ -14,9 +15,9 @@ const Footer: React.FC = () => {
                             Venir en aide aux clients en les connectant avec des techniciens qualifiés pour répondre à leurs besoins de dépannage et maintenance.
                         </p>
                         <div className="social-links">
-                            <a href="#" aria-label="Facebook"><FaFacebook /></a>
-                            <a href="#" aria-label="Twitter"><FaTwitter /></a>
-                            <a href="#" aria-label="LinkedIn"><FaLinkedin /></a>
+                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><FaFacebook /></a>
+                            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><FaTwitter /></a>
+                            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><FaLinkedin /></a>
                         </div>
                     </div>
 
@@ -28,8 +29,8 @@ const Footer: React.FC = () => {
                             <li><a href="#mission">À propos</a></li>
                             <li><a href="#services">Services</a></li>
                             <li><a href="#contact">Contact</a></li>
-                            <li><a href="#">CGU</a></li>
-                            <li><a href="#">Confidentialité</a></li>
+                            <li><Link to="/cgu">CGU</Link></li>
+                            <li><Link to="/confidentialite">Confidentialité</Link></li>
                         </ul>
                     </div>
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { FaUser, FaEnvelope, FaPhone, FaLock, FaMapMarkerAlt, FaHome, FaInfo } from 'react-icons/fa';
 import Footer from '../../components/layout/Footer';
 import '../../styles/variables.css';
@@ -18,6 +19,11 @@ const InscriptionEntreprise: React.FC = () => {
         acceptTerms: false,
     });
 
+    const navigate = useNavigate();
+    const { register } = useAuth();
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         const target = e.target as HTMLInputElement;
@@ -27,14 +33,36 @@ const InscriptionEntreprise: React.FC = () => {
         });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError('');
         if (formData.password !== formData.passwordConfirmation) {
-            alert('Les mots de passe ne correspondent pas');
+            setError('Les mots de passe ne correspondent pas');
             return;
         }
-        console.log('Company Registration Data:', formData);
-        alert('Inscription entreprise en cours...');
+        if (!formData.acceptTerms) {
+            setError('Veuillez accepter les conditions d\'utilisation');
+            return;
+        }
+        setLoading(true);
+        try {
+            await register({
+                name: formData.contactName,
+                email: formData.email,
+                phone: formData.phone,
+                password: formData.password,
+                password_confirmation: formData.passwordConfirmation,
+                role: 'agence',
+                agency_name: formData.companyName,
+                address: formData.address,
+                description: formData.sector,
+            });
+            navigate('/agence/dashboard');
+        } catch (err: any) {
+            setError(err?.response?.data?.message || 'Échec de l\'inscription. Vérifiez vos informations.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -200,13 +228,16 @@ const InscriptionEntreprise: React.FC = () => {
                                         onChange={handleChange}
                                         required
                                     />
-                                    J'accepte les <a href="#">conditions d'utilisation</a> et la{' '}
-                                    <a href="#">politique de confidentialité</a>
+                                    J'accepte les <Link to="/cgu">conditions d'utilisation</Link> et la{' '}
+                                    <Link to="/confidentialite">politique de confidentialité</Link>
                                 </label>
                             </div>
 
-                            <button type="submit" className="ie-submit-btn">
-                                Créer mon compte entreprise
+                            {error && (
+                                <p style={{ color: '#dc2626', fontWeight: 600, fontSize: '0.85rem', marginBottom: '0.75rem' }}>{error}</p>
+                            )}
+                            <button type="submit" className="ie-submit-btn" disabled={loading}>
+                                {loading ? 'Création en cours…' : 'Créer mon compte entreprise'}
                             </button>
                         </form>
                     </div>

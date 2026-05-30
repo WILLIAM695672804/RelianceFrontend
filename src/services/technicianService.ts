@@ -5,6 +5,11 @@ export const getTechProfile = async () => {
     return response.data.data;
 };
 
+export const getTechStats = async () => {
+    const response = await api.get('/technician/stats');
+    return response.data;
+};
+
 export const updateTechProfile = async (data: FormData) => {
     // Note: We use POST with FormData. If the backend route is PUT, 
     // we must ensure the FormData contains '_method': 'PUT'.

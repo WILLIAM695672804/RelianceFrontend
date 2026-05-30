@@ -38,7 +38,8 @@ api.interceptors.response.use(
             error.response?.status === 401 &&
             !originalRequest._retry &&
             !originalRequest.url?.includes('/auth/login') &&
-            !originalRequest.url?.includes('/auth/refresh')
+            !originalRequest.url?.includes('/auth/refresh') &&
+            !originalRequest.url?.includes('/auth/me')
         ) {
             if (isRefreshing) {
                 // Si un refresh est déjà en cours, mettre en file d'attente
@@ -59,17 +60,28 @@ api.interceptors.response.use(
                 return api(originalRequest);
             } catch (refreshError) {
                 processQueue(refreshError);
-                // Refresh échoué → déconnexion
-                window.location.href = '/connexion';
+                // Refresh échoué → déconnexion (évite la boucle si déjà sur /connexion)
+                if (!window.location.pathname.startsWith('/connexion')) {
+                    window.location.href = '/connexion';
+                }
                 return Promise.reject(refreshError);
             } finally {
                 isRefreshing = false;
             }
         }
 
-        // Pas authentifié → redirection
+        // 401 sur une requête protégée → redirection.
+        // On NE redirige PAS pour les checks d'auth (getMe/refresh/login au démarrage),
+        // ni si on est déjà sur /connexion : c'était la cause de la boucle de rechargement.
         if (error.response?.status === 401) {
-            window.location.href = '/connexion';
+            const url = originalRequest?.url || '';
+            const isAuthCheck =
+                url.includes('/auth/me') ||
+                url.includes('/auth/refresh') ||
+                url.includes('/auth/login');
+            if (!isAuthCheck && !window.location.pathname.startsWith('/connexion')) {
+                window.location.href = '/connexion';
+            }
         }
 
         return Promise.reject(error);

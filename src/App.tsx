@@ -17,6 +17,9 @@ import DepannageMaintenance from './pages/DepannageMaintenance';
 import InstallationSecurite from './pages/InstallationSecurite';
 import DevenirMembre from './pages/DevenirMembre';
 import Connexion from './pages/Connexion';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import Legal from './pages/Legal';
 import InscriptionClient from './pages/inscription/InscriptionClient';
 import InscriptionTechnicien from './pages/inscription/InscriptionTechnicien';
 import InscriptionAgence from './pages/inscription/InscriptionAgence';
@@ -48,7 +51,6 @@ import MissionDetail from './pages/technician/MissionDetail';
 import QuoteEditor from './pages/technician/QuoteEditor';
 import MissionCompletion from './pages/technician/MissionCompletion';
 import Wallet from './pages/technician/Wallet';
-import Withdrawal from './pages/technician/Withdrawal';
 import TransactionHistory from './pages/technician/TransactionHistory';
 import IdentityHub from './pages/technician/IdentityHub';
 import ReviewsList from './pages/technician/ReviewsList';
@@ -108,6 +110,10 @@ function App() {
             <Route path="/installation-securite" element={<InstallationSecurite />} />
             <Route path="/devenir-membre" element={<DevenirMembre />} />
             <Route path="/connexion" element={<Connexion />} />
+            <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/cgu" element={<Legal type="cgu" />} />
+            <Route path="/confidentialite" element={<Legal type="privacy" />} />
             <Route path="/inscription/client" element={<InscriptionClient />} />
             <Route path="/inscription/technicien" element={<InscriptionTechnicien />} />
             <Route path="/inscription/agence" element={<InscriptionAgence />} />
@@ -157,7 +163,6 @@ function App() {
             <Route path="mission/:id/devis" element={<QuoteEditor />} />
             <Route path="mission/:id/travaux" element={<MissionCompletion />} />
             <Route path="wallet" element={<Wallet />} />
-            <Route path="wallet/retrait" element={<Withdrawal />} />
             <Route path="wallet/historique" element={<TransactionHistory />} />
             <Route path="identite" element={<IdentityHub />} />
             <Route path="avis" element={<ReviewsList />} />

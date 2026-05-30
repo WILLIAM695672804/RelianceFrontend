@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './CTA.css';
 
 const CTA: React.FC = () => {
+    const navigate = useNavigate();
     return (
         <section id="cta" className="cta section">
             <div className="container cta-content">
@@ -10,10 +12,10 @@ const CTA: React.FC = () => {
                     Rejoignez des milliers d'utilisateurs satisfaits
                 </p>
                 <div className="cta-buttons">
-                    <button className="btn btn-primary">
+                    <button className="btn btn-primary" onClick={() => navigate('/inscription/client')}>
                         Trouver un technicien
                     </button>
-                    <button className="btn btn-outline-dark">
+                    <button className="btn btn-outline-dark" onClick={() => navigate('/inscription/technicien')}>
                         Devenir technicien
                     </button>
                 </div>

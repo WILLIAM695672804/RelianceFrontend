@@ -76,6 +76,16 @@ const authService = {
         return response.data;
     },
 
+    async forgotPassword(email: string): Promise<any> {
+        const response = await api.post('/auth/forgot-password', { email });
+        return response.data;
+    },
+
+    async resetPassword(data: { token: string; email: string; password: string; password_confirmation: string }): Promise<any> {
+        const response = await api.post('/auth/reset-password', data);
+        return response.data;
+    },
+
     async updateAvatar(file: File): Promise<any> {
         const formData = new FormData();
         formData.append('avatar', file);

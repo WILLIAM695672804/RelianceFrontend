@@ -1,7 +1,10 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../context/AuthContext';
 import { FaStar, FaMapMarkerAlt, FaCheckCircle, FaWrench, FaComments } from 'react-icons/fa';
+import api from '../../services/api';
+import { Loading } from '../../components/common/AsyncStates';
 import './TechProfile.css';
 
 const PublicTechProfile: React.FC = () => {
@@ -9,18 +12,27 @@ const PublicTechProfile: React.FC = () => {
     const { isAuthenticated, openAuthModal } = useAuth();
     const navigate = useNavigate();
 
-    // Mock data based on ID
-    const techName = id === 'sarah-kone' ? 'Sarah Koné' : 'Alain Dupont';
-    const techProfession = id === 'sarah-kone' ? 'Électricienne Experte' : 'Plombier Certifié';
+    const { data: profile, isLoading } = useQuery({
+        queryKey: ['public-tech', id],
+        queryFn: () => api.get(`/technicians/${id}/profile`).then((r) => r.data?.data ?? r.data),
+        enabled: !!id,
+    });
 
     const handleRequestIntervention = () => {
-        if (!isAuthenticated) {
-            openAuthModal();
-        } else {
-            // Logged in: redirect to the request wizard pre-filled with this tech
-            navigate('/client/demande');
-        }
+        if (!isAuthenticated) openAuthModal();
+        else navigate('/espace-client/demande');
     };
+
+    if (isLoading) {
+        return <div className="public-profile-container"><Loading label="Chargement du profil…" /></div>;
+    }
+
+    const techName = profile?.name ?? 'Technicien';
+    const techProfession = profile?.skills?.[0]?.name ?? profile?.competences ?? 'Professionnel certifié';
+    const city = profile?.service_perimeter?.city;
+    const radius = profile?.service_perimeter?.radius;
+    const reviews: any[] = profile?.recent_reviews ?? [];
+    const avatar = profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(techName)}&background=0D8ABC&color=fff&size=120`;
 
     return (
         <div className="public-profile-container">
@@ -33,7 +45,7 @@ const PublicTechProfile: React.FC = () => {
                 {/* Header Info */}
                 <div className="profile-header">
                     <div className="profile-avatar">
-                        <img src={`https://ui-avatars.com/api/?name=${techName}&background=0D8ABC&color=fff&size=120`} alt={techName} />
+                        <img src={avatar} alt={techName} />
                     </div>
                     <div className="profile-actions">
                         <button className="btn-secondary-action" onClick={() => !isAuthenticated ? openAuthModal() : alert('Message envoye')}>
@@ -46,52 +58,49 @@ const PublicTechProfile: React.FC = () => {
                 </div>
 
                 <div className="profile-main-info">
-                    <h1>{techName} <FaCheckCircle className="verified-badge" title="Profil Vérifié KYC" /></h1>
+                    <h1>{techName} {profile?.verified && <FaCheckCircle className="verified-badge" title="Profil Vérifié KYC" />}</h1>
                     <h2>{techProfession}</h2>
-                    
+
                     <div className="profile-stats-row">
-                        <span className="stat-item"><FaStar className="star-icon" /> 4.9 (124 avis)</span>
-                        <span className="stat-item"><FaMapMarkerAlt /> Douala, Akwa (Intervient à 15km)</span>
+                        <span className="stat-item"><FaStar className="star-icon" /> {(profile?.rating ?? 0).toFixed(1)} ({profile?.num_reviews ?? 0} avis)</span>
+                        {city && (
+                            <span className="stat-item"><FaMapMarkerAlt /> {city}{radius ? ` (Intervient à ${radius}km)` : ''}</span>
+                        )}
                     </div>
                 </div>
 
                 {/* About Section */}
                 <div className="profile-section">
                     <h3>À propos</h3>
-                    <p>
-                        Artisan passionné avec plus de 10 ans d'expérience. Spécialisé dans les dépannages d'urgence et les installations complexes. 
-                        Je garantis un travail propre, rapide et respectueux des normes de sécurité en vigueur.
-                        Maîtrise complète des nouveaux matériaux.
-                    </p>
+                    <p>{profile?.bio || 'Ce professionnel n\'a pas encore renseigné de description.'}</p>
                 </div>
 
-                {/* Portfolio / Réalisations */}
-                <div className="profile-section">
-                    <h3>Portfolio & Réalisations</h3>
-                    <div className="portfolio-grid">
-                        <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=400" alt="Réalisation 1" />
-                        <img src="https://images.unsplash.com/photo-1486262715619-67081010308f?auto=format&fit=crop&q=80&w=400" alt="Réalisation 2" />
-                        <img src="https://images.unsplash.com/photo-1574359411659-15573a27fd0c?auto=format&fit=crop&q=80&w=400" alt="Réalisation 3" />
+                {/* Compétences */}
+                {profile?.skills?.length > 0 && (
+                    <div className="profile-section">
+                        <h3>Compétences</h3>
+                        <div className="profile-stats-row" style={{ flexWrap: 'wrap', gap: '8px' }}>
+                            {profile.skills.map((s: any) => (
+                                <span key={s.id} className="stat-item"><FaWrench /> {s.name}</span>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* Reviews Summary */}
                 <div className="profile-section">
                     <h3>Avis clients récents</h3>
-                    <div className="review-card">
-                        <div className="review-stars">
-                            ★★★★★
-                        </div>
-                        <p className="review-text">"Intervention très rapide et professionnelle. Le problème a été résolu en moins d'une heure. Je recommande vivement !"</p>
-                        <span className="review-author">- Paul M., Il y a 2 jours</span>
-                    </div>
-                    <div className="review-card">
-                        <div className="review-stars">
-                            ★★★★★
-                        </div>
-                        <p className="review-text">"Travail soigné et explications claires sur l'origine de la panne."</p>
-                        <span className="review-author">- Marie F., La semaine dernière</span>
-                    </div>
+                    {reviews.length === 0 ? (
+                        <p style={{ color: '#94a3b8' }}>Aucun avis pour le moment.</p>
+                    ) : (
+                        reviews.map((r: any, i: number) => (
+                            <div className="review-card" key={r.id ?? i}>
+                                <div className="review-stars">{'★'.repeat(Math.round(Number(r.rating) || 0))}</div>
+                                {r.comment && <p className="review-text">"{r.comment}"</p>}
+                                <span className="review-author">- {r.reviewer?.name ?? 'Client'}{r.created_at ? `, ${new Date(r.created_at).toLocaleDateString('fr-FR')}` : ''}</span>
+                            </div>
+                        ))
+                    )}
                 </div>
             </div>
 

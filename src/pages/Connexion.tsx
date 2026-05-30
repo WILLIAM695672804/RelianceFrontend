@@ -144,9 +144,9 @@ const Connexion: React.FC = () => {
                             </button>
 
                             <div className="cx-forgot">
-                                <a href="#" className="cx-forgot-link">
+                                <Link to="/mot-de-passe-oublie" className="cx-forgot-link">
                                     Mot de passe oublié ?
-                                </a>
+                                </Link>
                             </div>
                         </form>
                     </div>
