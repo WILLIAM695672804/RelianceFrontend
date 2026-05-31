@@ -8,9 +8,62 @@
     gap: var(--spacing-xl);
 }
 
-.step-card {
+/* === FLIP CARD (réplique de l'Elementor Flip Box du design de référence) === */
+.how-it-works .flip-card {
+    height: 280px;
+    perspective: 1000px;
+    background: transparent;
+}
+
+.how-it-works .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s ease-in-out;
+    transform-style: preserve-3d;
+}
+
+.how-it-works .flip-card:hover .flip-card-inner {
+    transform: rotateY(-180deg);
+}
+
+.how-it-works .flip-card-front,
+.how-it-works .flip-card-back {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-md);
     text-align: center;
-    padding: var(--spacing-2xl);
+}
+
+.how-it-works .flip-card-front {
+    background-color: var(--color-bg-white);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+}
+
+.how-it-works .flip-card-back {
+    color: var(--color-text-white);
+    transform: rotateY(-180deg);
+}
+
+.how-it-works .flip-card-back.blue {
+    background-color: var(--color-primary-blue);
+}
+
+.how-it-works .flip-card-back.red {
+    background-color: var(--color-primary-red);
+}
+
+.how-it-works .flip-card-back.green {
+    background-color: #10B981;
 }
 
 .step-number {
@@ -40,13 +93,19 @@
 
 .step-title {
     font-size: var(--text-xl);
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: 0;
     color: var(--color-text-black);
+}
+
+.step-title-back {
+    font-size: var(--text-xl);
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-white);
 }
 
 .step-description {
     font-size: var(--text-base);
-    color: var(--color-text-gray);
+    color: var(--color-text-white);
     line-height: 1.6;
 }
 

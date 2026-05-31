@@ -5,9 +5,11 @@
 
 :root {
   /* === COLORS === */
-  /* Primary */
-  --color-primary-red: #E82948;
+  /* Primary — rouge profond façon CCRI (référence) */
+  --color-primary-red: #C8102E;
+  --color-primary-red-dark: #A30D24;
   --color-primary-blue: #1E3A8A;
+  --color-accent-yellow: #F4B400;
   --color-primary-dark: #000000;
   
   /* Secondary */
@@ -189,9 +191,9 @@ button {
 }
 
 .btn-primary:hover {
-  background-color: #d01f3a;
+  background-color: var(--color-primary-red-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(232, 41, 72, 0.3);
+  box-shadow: 0 4px 12px rgba(200, 16, 46, 0.3);
 }
 
 .btn-outline {

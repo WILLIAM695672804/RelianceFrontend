@@ -59,9 +59,11 @@ const Footer: React.FC = () => {
                         <p className="newsletter-text">
                             Restez informé des nouvelles fonctionnalités et actualités.
                         </p>
-                        <form className="newsletter-form">
+                        <form className="newsletter-form" onSubmit={(e) => { e.preventDefault(); const i = (e.currentTarget.elements.namedItem('nl') as HTMLInputElement); if (i?.value) { alert('Merci ! Vous êtes abonné à la newsletter.'); i.value = ''; } }}>
                             <input
                                 type="email"
+                                name="nl"
+                                required
                                 placeholder="Votre email"
                                 className="newsletter-input"
                             />

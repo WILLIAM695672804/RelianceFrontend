@@ -30,12 +30,19 @@ const HowItWorks: React.FC = () => {
 
                 <div className="steps-grid">
                     {steps.map((step) => (
-                        <div key={step.number} className="step-card card">
-                            <div className={`step-number ${step.color}`}>
-                                {step.number}
+                        <div key={step.number} className="flip-card">
+                            <div className="flip-card-inner">
+                                <div className="flip-card-front">
+                                    <div className={`step-number ${step.color}`}>
+                                        {step.number}
+                                    </div>
+                                    <h3 className="step-title">{step.title}</h3>
+                                </div>
+                                <div className={`flip-card-back ${step.color}`}>
+                                    <h3 className="step-title-back">{step.title}</h3>
+                                    <p className="step-description">{step.description}</p>
+                                </div>
                             </div>
-                            <h3 className="step-title">{step.title}</h3>
-                            <p className="step-description">{step.description}</p>
                         </div>
                     ))}
                 </div>

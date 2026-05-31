@@ -49,12 +49,19 @@ const Services: React.FC = () => {
 
                 <div className="services-grid">
                     {services.map((service, index) => (
-                        <div key={index} className="service-card card">
-                            <div className={`service-icon ${service.color}`}>
-                                {service.icon}
+                        <div key={index} className="flip-card">
+                            <div className="flip-card-inner">
+                                <div className="flip-card-front">
+                                    <div className={`service-icon ${service.color}`}>
+                                        {service.icon}
+                                    </div>
+                                    <h3 className="service-title">{service.title}</h3>
+                                </div>
+                                <div className={`flip-card-back ${service.color}`}>
+                                    <h3 className="service-title-back">{service.title}</h3>
+                                    <p className="service-description">{service.description}</p>
+                                </div>
                             </div>
-                            <h3 className="service-title">{service.title}</h3>
-                            <p className="service-description">{service.description}</p>
                         </div>
                     ))}
                 </div>
