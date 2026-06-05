@@ -2,6 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './RequestWizard.css';
 import requestService from '../../../services/requestService';
+import skillService from '../../../services/skillService';
+import type { Skill } from '../../../services/skillService';
+
+// Habillage visuel (icône + teinte) par groupe de catégorie.
+const CATEGORY_STYLES: Record<string, { icon: string; tint: string; iconColor: string }> = {
+    'Plomberie': { icon: 'plumbing', tint: 'bg-blue-tint', iconColor: 'rw-icon-primary' },
+    'Électricité': { icon: 'electrical_services', tint: 'bg-yellow-tint', iconColor: 'rw-icon-yellow' },
+    'Mécanique': { icon: 'car_repair', tint: 'bg-red-tint', iconColor: 'rw-icon-red' },
+    'Informatique': { icon: 'devices', tint: 'bg-green-tint', iconColor: 'rw-icon-green' },
+    'Électronique': { icon: 'memory', tint: 'bg-green-tint', iconColor: 'rw-icon-green' },
+    'Sécurité': { icon: 'security', tint: 'bg-red-tint', iconColor: 'rw-icon-red' },
+    'Bâtiment': { icon: 'construction', tint: 'bg-yellow-tint', iconColor: 'rw-icon-yellow' },
+    'Climatisation': { icon: 'ac_unit', tint: 'bg-blue-tint', iconColor: 'rw-icon-primary' },
+};
+const DEFAULT_CATEGORY_STYLE = { icon: 'handyman', tint: 'bg-blue-tint', iconColor: 'rw-icon-primary' };
+
+interface CategoryGroup {
+    category: string;
+    style: { icon: string; tint: string; iconColor: string };
+    skills: Skill[];
+}
 
 const RequestWizard: React.FC = () => {
     const navigate = useNavigate();
@@ -17,28 +38,76 @@ const RequestWizard: React.FC = () => {
         description: '',
         latitude: 0,
         longitude: 0,
+        address_label: '',
+        city: '',
         files: [] as File[] // For UI simulation purposes
     });
+    const [geocoding, setGeocoding] = useState(false);
 
     const [realMatchedTechnicians, setRealMatchedTechnicians] = useState<any[]>([]);
+
+    // Catégories chargées depuis le backend (GET /skills), regroupées par famille.
+    const [skillGroups, setSkillGroups] = useState<CategoryGroup[]>([]);
+    const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+
+    useEffect(() => {
+        skillService.list().then((skills) => {
+            const byCategory = new Map<string, Skill[]>();
+            skills.forEach((s) => {
+                const key = s.category ?? 'Autres';
+                if (!byCategory.has(key)) byCategory.set(key, []);
+                byCategory.get(key)!.push(s);
+            });
+            const groups: CategoryGroup[] = Array.from(byCategory.entries()).map(([category, list]) => ({
+                category,
+                style: CATEGORY_STYLES[category] ?? DEFAULT_CATEGORY_STYLE,
+                skills: list,
+            }));
+            setSkillGroups(groups);
+        }).catch(() => { /* l'API renverra vide → fallback géré dans le rendu */ });
+    }, []);
+
+    // Sélection d'un groupe : on retient une compétence représentative (la 1ère).
+    const selectGroup = (group: CategoryGroup) => {
+        setSelectedGroup(group.category);
+        updateForm('category', group.skills[0]?.slug ?? '');
+    };
+
+    // Géocodage inverse (OpenStreetMap / Nominatim) : coordonnées → adresse + ville.
+    const reverseGeocode = async (lat: number, lng: number) => {
+        setGeocoding(true);
+        try {
+            const res = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=fr`,
+                { headers: { 'Accept': 'application/json' } }
+            );
+            const data = await res.json();
+            const a = data.address ?? {};
+            const city = a.city || a.town || a.village || a.municipality || a.county || '';
+            const label = data.display_name || '';
+            setFormData(prev => ({
+                ...prev,
+                // On ne réécrit pas ce que l'utilisateur aurait déjà saisi.
+                address_label: prev.address_label || label,
+                city: prev.city || city,
+            }));
+        } catch { /* géocodage indisponible — l'utilisateur peut saisir à la main */ }
+        finally { setGeocoding(false); }
+    };
 
     // Auto-detect location on mount
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    setFormData(prev => ({
-                        ...prev,
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude
-                    }));
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    setFormData(prev => ({ ...prev, latitude: lat, longitude: lng }));
+                    reverseGeocode(lat, lng);
                 },
                 () => {
-                    setFormData(prev => ({
-                        ...prev,
-                        latitude: 3.848,
-                        longitude: 11.5021
-                    }));
+                    setFormData(prev => ({ ...prev, latitude: 3.848, longitude: 11.5021 }));
+                    reverseGeocode(3.848, 11.5021);
                 }
             );
         }
@@ -86,6 +155,8 @@ const RequestWizard: React.FC = () => {
                 category_slug: formData.category || undefined,
                 latitude: formData.latitude,
                 longitude: formData.longitude,
+                address_label: formData.address_label || undefined,
+                city: formData.city || undefined,
                 photos: formData.files.length > 0 ? formData.files : undefined,
             });
 
@@ -207,65 +278,47 @@ const RequestWizard: React.FC = () => {
                                 <p className="rw-step-desc">Select a category that best describes your technical request. We'll match you with the right specialist for the job.</p>
                             </header>
 
-                            {/* Categories Grid (Asymmetric Bento Inspired Layout) */}
+                            {/* Categories Grid — chargées dynamiquement depuis le backend */}
                             <div className="rw-categories-grid">
-                                
-                                <div 
-                                    className={`rw-cat-card ${formData.category === 'plomberie-generale' ? 'is-selected' : 'is-default'}`}
-                                    onClick={() => updateForm('category', 'plomberie-generale')}
-                                >
-                                    {formData.category === 'plomberie-generale' && (
-                                        <div className="rw-cat-check text-sm"><span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>done</span></div>
-                                    )}
-                                    <div className="rw-cat-icon-wrap bg-blue-tint">
-                                        <span className="material-symbols-outlined rw-icon-primary">plumbing</span>
+                                {skillGroups.length === 0 && (
+                                    <p className="rw-cat-desc" style={{ gridColumn: '1 / -1' }}>Chargement des catégories…</p>
+                                )}
+                                {skillGroups.map((group) => (
+                                    <div
+                                        key={group.category}
+                                        className={`rw-cat-card ${selectedGroup === group.category ? 'is-selected' : 'is-default'}`}
+                                        onClick={() => selectGroup(group)}
+                                    >
+                                        {selectedGroup === group.category && (
+                                            <div className="rw-cat-check text-sm"><span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>done</span></div>
+                                        )}
+                                        <div className={`rw-cat-icon-wrap ${group.style.tint}`}>
+                                            <span className={`material-symbols-outlined ${group.style.iconColor}`}>{group.style.icon}</span>
+                                        </div>
+                                        <h3 className="rw-cat-title text-on-surface-color">{group.category}</h3>
+                                        <p className="rw-cat-desc">{group.skills.slice(0, 4).map((s) => s.name).join(', ')}.</p>
                                     </div>
-                                    <h3 className="rw-cat-title text-primary-color">Plomberie</h3>
-                                    <p className="rw-cat-desc">Fuites d'eau, canalisations bouchées, installation sanitaire, chauffe-eau.</p>
-                                </div>
-
-                                <div 
-                                    className={`rw-cat-card ${formData.category === 'electricite-generale' ? 'is-selected' : 'is-default'}`}
-                                    onClick={() => updateForm('category', 'electricite-generale')}
-                                >
-                                    {formData.category === 'electricite-generale' && (
-                                        <div className="rw-cat-check text-sm"><span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>done</span></div>
-                                    )}
-                                    <div className="rw-cat-icon-wrap bg-yellow-tint">
-                                        <span className="material-symbols-outlined rw-icon-yellow">electrical_services</span>
-                                    </div>
-                                    <h3 className="rw-cat-title text-on-surface-color">Électricité</h3>
-                                    <p className="rw-cat-desc">Pannes électriques, disjoncteurs, câblages, installation d'éclairage.</p>
-                                </div>
-
-                                <div 
-                                    className={`rw-cat-card ${formData.category === 'mecanique-auto' ? 'is-selected' : 'is-default'}`}
-                                    onClick={() => updateForm('category', 'mecanique-auto')}
-                                >
-                                    {formData.category === 'mecanique-auto' && (
-                                        <div className="rw-cat-check text-sm"><span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>done</span></div>
-                                    )}
-                                    <div className="rw-cat-icon-wrap bg-red-tint">
-                                        <span className="material-symbols-outlined rw-icon-red">car_repair</span>
-                                    </div>
-                                    <h3 className="rw-cat-title text-on-surface-color">Mécanique Auto</h3>
-                                    <p className="rw-cat-desc">Pannes moteurs, freins, batteries, ou visite complète de votre véhicule.</p>
-                                </div>
-
-                                <div 
-                                    className={`rw-cat-card ${formData.category === 'maintenance-informatique' ? 'is-selected' : 'is-default'}`}
-                                    onClick={() => updateForm('category', 'maintenance-informatique')}
-                                >
-                                    {formData.category === 'maintenance-informatique' && (
-                                        <div className="rw-cat-check text-sm"><span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>done</span></div>
-                                    )}
-                                    <div className="rw-cat-icon-wrap bg-green-tint">
-                                        <span className="material-symbols-outlined rw-icon-green">devices</span>
-                                    </div>
-                                    <h3 className="rw-cat-title text-on-surface-color">Informatique</h3>
-                                    <p className="rw-cat-desc">Ordinateurs, réseaux Wi-Fi, box internet, et réparation électronique simple.</p>
-                                </div>
+                                ))}
                             </div>
+
+                            {/* Affinage : préciser la spécialité dans le groupe choisi */}
+                            {selectedGroup && (
+                                <div className="rw-subskills">
+                                    <p className="rw-subskills-label">Préciser la spécialité (optionnel)</p>
+                                    <div className="rw-subskills-chips">
+                                        {skillGroups.find((g) => g.category === selectedGroup)?.skills.map((s) => (
+                                            <button
+                                                type="button"
+                                                key={s.slug}
+                                                className={`rw-subskill-chip ${formData.category === s.slug ? 'is-active' : ''}`}
+                                                onClick={() => updateForm('category', s.slug)}
+                                            >
+                                                {s.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Descriptive Image Card (Bento Style Extension) */}
                             <div className="rw-promo-grid">
@@ -471,6 +524,33 @@ const RequestWizard: React.FC = () => {
                                             ))}
                                         </div>
                                     )}
+                                </div>
+                            </div>
+
+                            {/* Adresse d'intervention */}
+                            <div className="rw-address-section">
+                                <div className="rw-address-header">
+                                    <span className="material-symbols-outlined">location_on</span>
+                                    <div>
+                                        <h4>Adresse d'intervention</h4>
+                                        <p>{geocoding ? 'Localisation en cours…' : formData.latitude ? 'Position détectée — vérifiez ou corrigez l\'adresse.' : 'Saisissez l\'adresse du site.'}</p>
+                                    </div>
+                                </div>
+                                <div className="rw-address-fields">
+                                    <input
+                                        type="text"
+                                        className="rw-address-input"
+                                        placeholder="Adresse (quartier, rue, point de repère…)"
+                                        value={formData.address_label}
+                                        onChange={(e) => updateForm('address_label', e.target.value)}
+                                    />
+                                    <input
+                                        type="text"
+                                        className="rw-address-input rw-address-city"
+                                        placeholder="Ville"
+                                        value={formData.city}
+                                        onChange={(e) => updateForm('city', e.target.value)}
+                                    />
                                 </div>
                             </div>
 

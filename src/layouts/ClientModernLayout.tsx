@@ -25,6 +25,7 @@ const ClientModernLayout: React.FC = () => {
     const navLinks = [
         { to: "/espace-client/dashboard", icon: "space_dashboard", label: "Home" },
         { to: "/espace-client/demande", icon: "build_circle", label: "Demande" },
+        { to: "/espace-client/rendez-vous", icon: "event", label: "Rendez-vous" },
         { to: "/espace-client/suivi", icon: "radar", label: "Suivi" },
         { to: "/espace-client/wallet", icon: "account_balance_wallet", label: "Wallet" },
         { to: "/espace-client/profil", icon: "person", label: "Profil" },

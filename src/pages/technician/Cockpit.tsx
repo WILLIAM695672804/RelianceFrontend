@@ -2,12 +2,39 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RouteMap from '../../components/maps/RouteMap';
 import matchingService from '../../services/matchingService';
+import { useChat } from '../../context/ChatContext';
+import { createJob, updateJobStatus, type TechnicianJob } from '../../services/operationsService';
 import './Cockpit.css';
+
+// Flux de statut d'intervention (identique a MissionDetail) : un cran a la fois.
+const STATUS_FLOW: Record<string, { next: string; label: string; icon: string }> = {
+    pending: { next: 'en_route', label: 'Démarrer le trajet', icon: 'directions_car' },
+    en_route: { next: 'arrived', label: 'Je suis arrivé', icon: 'location_on' },
+    arrived: { next: 'in_progress', label: 'Commencer les travaux', icon: 'construction' },
+    in_progress: { next: 'completed', label: 'Terminer la mission', icon: 'check_circle' },
+};
+
+const STATUS_LABELS: Record<string, string> = {
+    pending: 'En attente',
+    en_route: 'En route',
+    arrived: 'Sur place',
+    in_progress: 'En cours',
+    completed: 'Terminée',
+    cancelled: 'Annulée',
+};
+
+const STATUS_STEPS = ['pending', 'en_route', 'arrived', 'in_progress', 'completed'];
 
 interface ActiveMission {
     proposal_id: string;
     price: number;
     accepted_at: string;
+    job: {
+        id: string;
+        status: string;
+        phases: TechnicianJob['phases'];
+        started_at: string | null;
+    } | null;
     request: {
         id: string;
         title: string;
@@ -33,9 +60,11 @@ interface ActiveMission {
 
 const Cockpit: React.FC = () => {
     const navigate = useNavigate();
+    const { openChat, conversation } = useChat();
     const [mission, setMission] = useState<ActiveMission | null>(null);
     const [loading, setLoading] = useState(true);
     const [myPosition, setMyPosition] = useState<{ latitude: number; longitude: number } | null>(null);
+    const [statusUpdating, setStatusUpdating] = useState(false);
 
     // Fetch active mission
     useEffect(() => {
@@ -48,6 +77,28 @@ const Cockpit: React.FC = () => {
         };
         fetchMission();
     }, []);
+
+    // Demarrer le suivi d'intervention (cree un job en statut "pending").
+    const handleStartJob = useCallback(async () => {
+        if (!mission || statusUpdating) return;
+        setStatusUpdating(true);
+        try {
+            const job = await createJob({ request_id: mission.request.id });
+            setMission((prev) => prev ? { ...prev, job: { id: job.id, status: job.status, phases: job.phases, started_at: job.started_at } } : prev);
+        } catch { /* silent */ }
+        finally { setStatusUpdating(false); }
+    }, [mission, statusUpdating]);
+
+    // Faire avancer le statut d'un cran (pending -> en_route -> arrived -> ...).
+    const handleAdvanceStatus = useCallback(async (nextStatus: string) => {
+        if (!mission?.job || statusUpdating) return;
+        setStatusUpdating(true);
+        try {
+            const updated = await updateJobStatus(mission.job.id, { status: nextStatus });
+            setMission((prev) => prev && prev.job ? { ...prev, job: { ...prev.job, status: updated.status, phases: updated.phases, started_at: updated.started_at } } : prev);
+        } catch { /* silent */ }
+        finally { setStatusUpdating(false); }
+    }, [mission, statusUpdating]);
 
     // Geolocation + send position to backend
     const sendPosition = useCallback(async (lat: number, lng: number) => {
@@ -160,11 +211,22 @@ const Cockpit: React.FC = () => {
                             </div>
                             <div className="tech-bento-footer">
                                 <p>{mission.client.phone ?? 'Téléphone non renseigné'}</p>
-                                {mission.client.phone && (
-                                    <a href={`tel:${mission.client.phone}`} style={{ textDecoration: 'none' }}>
-                                        <button>Appeler</button>
-                                    </a>
-                                )}
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <button
+                                        onClick={openChat}
+                                        disabled={!conversation}
+                                        title={conversation ? 'Ouvrir la messagerie' : 'Messagerie en cours de préparation...'}
+                                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', opacity: conversation ? 1 : 0.5, cursor: conversation ? 'pointer' : 'not-allowed' }}
+                                    >
+                                        <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>chat</span>
+                                        Message
+                                    </button>
+                                    {mission.client.phone && (
+                                        <a href={`tel:${mission.client.phone}`} style={{ textDecoration: 'none' }}>
+                                            <button>Appeler</button>
+                                        </a>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -234,11 +296,52 @@ const Cockpit: React.FC = () => {
                                 </div>
                             </div>
 
+                            {/* Suivi du statut d'intervention — etape par etape */}
+                            {mission.job && (
+                                <div className="tech-status-timeline">
+                                    {STATUS_STEPS.map((step) => {
+                                        const idx = STATUS_STEPS.indexOf(step);
+                                        const currentIdx = STATUS_STEPS.indexOf(mission.job!.status);
+                                        const done = idx <= currentIdx;
+                                        return (
+                                            <div key={step} className={`tech-status-step ${done ? 'done' : ''} ${idx === currentIdx ? 'current' : ''}`}>
+                                                <span className="tech-status-dot">
+                                                    {done && <span className="material-symbols-outlined">check</span>}
+                                                </span>
+                                                <span className="tech-status-label">{STATUS_LABELS[step]}</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+
                             <div className="tech-journey-actions">
-                                <button className="tech-btn-complete" onClick={() => navigate(`/technicien/mission/${mission.request.id}/travaux`)}>
-                                    <span>Terminer la mission</span>
-                                    <span className="material-symbols-outlined">fact_check</span>
-                                </button>
+                                {!mission.job ? (
+                                    <button className="tech-btn-complete" onClick={handleStartJob} disabled={statusUpdating}>
+                                        <span>{statusUpdating ? 'Démarrage...' : "Démarrer l'intervention"}</span>
+                                        <span className="material-symbols-outlined">add_task</span>
+                                    </button>
+                                ) : STATUS_FLOW[mission.job.status] ? (
+                                    <button
+                                        className="tech-btn-complete"
+                                        onClick={() => handleAdvanceStatus(STATUS_FLOW[mission.job!.status].next)}
+                                        disabled={statusUpdating}
+                                    >
+                                        <span>{statusUpdating ? 'Mise à jour...' : STATUS_FLOW[mission.job.status].label}</span>
+                                        <span className="material-symbols-outlined">{STATUS_FLOW[mission.job.status].icon}</span>
+                                    </button>
+                                ) : (
+                                    <button className="tech-btn-complete" disabled style={{ opacity: 0.7 }}>
+                                        <span>Mission terminée</span>
+                                        <span className="material-symbols-outlined">verified</span>
+                                    </button>
+                                )}
+
+                                {mission.job?.status === 'in_progress' && (
+                                    <button className="tech-btn-delay" onClick={() => navigate(`/technicien/mission/${mission.request.id}/travaux`)}>
+                                        Gérer les phases de travail
+                                    </button>
+                                )}
                                 <button className="tech-btn-delay" onClick={() => navigate('/technicien/litiges')}>Signaler un problème</button>
                             </div>
                         </div>

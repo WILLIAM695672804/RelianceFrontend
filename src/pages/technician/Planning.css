@@ -706,3 +706,140 @@
     color: var(--tech-outline);
     margin: 0.25rem 0 0 0;
 }
+
+/* ── Demandes de rendez-vous à confirmer ── */
+.tech-pending-section {
+    background: var(--tech-surface-container-lowest, #fff);
+    border: 1px solid var(--tech-tertiary, #00693d);
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.tech-pending-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    color: var(--tech-primary, #29446c);
+}
+.tech-pending-header h3 { margin: 0; font-size: 1.05rem; font-weight: 800; }
+.tech-pending-header .material-symbols-outlined { color: var(--tech-tertiary, #00693d); }
+
+.tech-pending-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.tech-pending-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    border-radius: 0.75rem;
+    background: var(--tech-surface-container-low, #f1f4f6);
+    flex-wrap: wrap;
+}
+.tech-pending-info { flex: 1; min-width: 200px; }
+.tech-pending-info h5 { margin: 0 0 0.35rem; font-size: 0.95rem; font-weight: 700; }
+.tech-pending-date, .tech-pending-loc {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin: 0.15rem 0;
+    font-size: 0.8rem;
+    color: var(--tech-on-surface-variant, #6B7280);
+    text-transform: capitalize;
+}
+.tech-pending-date .material-symbols-outlined,
+.tech-pending-loc .material-symbols-outlined { font-size: 1rem; }
+.tech-pending-notes {
+    margin: 0.35rem 0 0;
+    font-size: 0.78rem;
+    font-style: italic;
+    color: var(--tech-on-surface-variant, #6B7280);
+}
+.tech-pending-actions { display: flex; gap: 0.5rem; }
+.tech-pending-accept, .tech-pending-refuse {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    border: none;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: filter 0.2s;
+}
+.tech-pending-accept .material-symbols-outlined,
+.tech-pending-refuse .material-symbols-outlined { font-size: 1rem; }
+.tech-pending-accept { background: var(--tech-tertiary, #00693d); color: #fff; }
+.tech-pending-refuse { background: transparent; color: #b91c1c; border: 1px solid #b91c1c; }
+.tech-pending-accept:hover { filter: brightness(1.1); }
+.tech-pending-refuse:hover { background: rgba(185, 28, 28, 0.08); }
+.tech-pending-accept:disabled, .tech-pending-refuse:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Modale d'absence ── */
+.tech-exc-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+    backdrop-filter: blur(2px);
+}
+.tech-exc-modal {
+    position: relative;
+    background: var(--tech-surface-container-lowest, #fff);
+    color: var(--tech-on-surface, #181c1e);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+}
+.tech-exc-modal h3 { margin: 0 0 0.35rem; color: var(--tech-primary, #29446c); }
+.tech-exc-modal p { margin: 0 0 1rem; font-size: 0.85rem; color: var(--tech-on-surface-variant, #6B7280); }
+.tech-exc-modal label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin: 0.6rem 0 0.3rem;
+}
+.tech-exc-modal input {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border-radius: 0.6rem;
+    border: 1px solid var(--tech-outline, #c2c8cc);
+    background: var(--tech-surface-container-lowest, #fff);
+    color: var(--tech-on-surface, #181c1e);
+    font-size: 0.9rem;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+.tech-exc-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--tech-on-surface-variant, #6B7280);
+    display: flex;
+}
+.tech-exc-modal-submit {
+    width: 100%;
+    margin-top: 1.25rem;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 9999px;
+    background: var(--tech-primary, #29446c);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+.tech-exc-modal-submit:disabled { opacity: 0.5; cursor: not-allowed; }

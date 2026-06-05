@@ -1665,3 +1665,26 @@ body .material-symbols-outlined {
         transform: translateX(0);
     }
 }
+
+/* Affinage des sous-spécialités (catégories dynamiques) */
+.rw-subskills { margin-top: 1.25rem; }
+.rw-subskills-label { font-size: 0.8rem; font-weight: 600; color: #64748b; margin-bottom: 0.5rem; }
+.rw-subskills-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.rw-subskill-chip {
+    padding: 0.45rem 0.9rem; border-radius: 999px; border: 1px solid #d8dee9;
+    background: #fff; color: #334155; font-size: 0.8rem; font-weight: 500;
+    cursor: pointer; transition: all 0.15s ease;
+}
+.rw-subskill-chip:hover { border-color: #1960a3; color: #1960a3; }
+.rw-subskill-chip.is-active { background: #1960a3; border-color: #1960a3; color: #fff; }
+
+/* Adresse d'intervention (étape 3) */
+.rw-address-section { margin-top: 1.5rem; padding: 1.25rem; border: 1px solid #e2e8f0; border-radius: 16px; background: #fff; }
+.rw-address-header { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1rem; }
+.rw-address-header .material-symbols-outlined { color: #1960a3; font-size: 26px; }
+.rw-address-header h4 { margin: 0; font-size: 0.95rem; font-weight: 700; color: #1e293b; }
+.rw-address-header p { margin: 0.15rem 0 0; font-size: 0.8rem; color: #64748b; }
+.rw-address-fields { display: grid; grid-template-columns: 2fr 1fr; gap: 0.75rem; }
+.rw-address-input { padding: 0.7rem 0.9rem; border: 1px solid #d8dee9; border-radius: 10px; font-size: 0.85rem; width: 100%; }
+.rw-address-input:focus { outline: none; border-color: #1960a3; box-shadow: 0 0 0 2px rgba(25,96,163,0.12); }
+@media (max-width: 600px) { .rw-address-fields { grid-template-columns: 1fr; } }

@@ -3,8 +3,6 @@ import ScrollToTop from './components/common/ScrollToTop';
 // Header is now handled by PublicLayout
 import { AuthProvider } from './context/AuthContext';
 import AuthModal from './components/common/AuthModal';
-// BottomNav is now handled by PublicLayout
-import SocialFeed from './pages/public/SocialFeed';
 import PublicTechProfile from './pages/public/TechProfile';
 import './styles/variables.css';
 import Home from './pages/Home';
@@ -35,6 +33,7 @@ import ClientDashboardModern from './pages/client/ClientDashboardModern';
 import Auth2FA from './pages/client/Auth2FA';
 import RequestWizard from './pages/client/RequestWizard/RequestWizard';
 import MatchingResults from './pages/client/MatchingResults';
+import ClientAppointments from './pages/client/ClientAppointments';
 import MissionTracking from './pages/client/MissionTracking';
 import ClientWallet from './pages/client/ClientWallet';
 import ProfileSettings from './pages/client/ProfileSettings';
@@ -121,8 +120,6 @@ function App() {
             <Route path="/auth/2fa" element={<Auth2FA />} />
             <Route path="/auth/verify-email" element={<VerifyEmail />} />
 
-            {/* Social Feed (Hybrid Base) */}
-            <Route path="/actualites" element={<SocialFeed />} />
             <Route path="/artisan/:id" element={<PublicTechProfile />} />
           </Route>
 
@@ -136,6 +133,7 @@ function App() {
             <Route path="dashboard" element={<ClientDashboardModern />} />
             <Route path="demande" element={<RequestWizard />} />
             <Route path="matching" element={<MatchingResults />} />
+            <Route path="rendez-vous" element={<ClientAppointments />} />
             <Route path="suivi" element={<MissionTracking />} />
             <Route path="factures" element={<Invoices />} />
             <Route path="suivi-job/:jobId" element={<JobTracking />} />

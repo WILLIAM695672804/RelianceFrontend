@@ -5,9 +5,16 @@
 .dispute-open-btn:hover { background: var(--tech-primary-container); }
 .dispute-form { background: var(--tech-surface-container-low); border-radius: var(--border-radius-lg); padding: var(--spacing-lg); margin-bottom: var(--spacing-lg); display: flex; flex-direction: column; gap: 12px; }
 .dispute-form input, .dispute-form textarea { padding: 12px; border: 1px solid var(--tech-outline-variant); border-radius: var(--border-radius); font-size: var(--text-sm); font-family: var(--tech-font-body); resize: vertical; }
-.dispute-form input:focus, .dispute-form textarea:focus { outline: none; border-color: var(--tech-primary); box-shadow: 0 0 0 2px rgba(41,68,108,0.15); }
+.dispute-form input:focus, .dispute-form textarea:focus, .dispute-form select:focus { outline: none; border-color: var(--tech-primary); box-shadow: 0 0 0 2px rgba(41,68,108,0.15); }
+.dispute-field-label { font-size: var(--text-sm); font-weight: 600; color: var(--tech-on-surface); }
+.dispute-form select { padding: 12px; border: 1px solid var(--tech-outline-variant); border-radius: var(--border-radius); font-size: var(--text-sm); font-family: var(--tech-font-body); background: var(--tech-surface-container-lowest); cursor: pointer; }
+.dispute-counterpart { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: var(--border-radius); background: rgba(41,68,108,0.08); font-size: var(--text-sm); color: var(--tech-on-surface); }
+.dispute-counterpart .material-symbols-outlined { font-size: 20px; color: var(--tech-primary); }
+.dispute-counterpart--warn { background: rgba(245,158,11,0.12); color: #92400E; }
+.dispute-counterpart--warn .material-symbols-outlined { color: #F59E0B; }
 .dispute-submit-btn { background: var(--color-primary-red); color: #fff; border: none; padding: 12px; border-radius: var(--border-radius); font-weight: 600; cursor: pointer; transition: all var(--transition-base); }
 .dispute-submit-btn:hover { opacity: 0.9; }
+.dispute-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .dispute-list { display: flex; flex-direction: column; gap: var(--spacing-sm); }
 .dispute-card { background: var(--tech-surface-container-lowest); border: 1px solid var(--tech-outline-variant); border-radius: var(--border-radius-lg); padding: var(--spacing-md); transition: all var(--transition-base); }
 .dispute-card:hover { box-shadow: var(--shadow-md); }

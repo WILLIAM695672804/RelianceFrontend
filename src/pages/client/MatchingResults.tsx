@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import './MatchingResults.css';
 import requestService from '../../services/requestService';
 import type { MatchedTechnician } from '../../services/matchingService';
+import { createAppointment } from '../../services/operationsService';
 
 const MatchingResults: React.FC = () => {
     const navigate = useNavigate();
@@ -17,6 +18,14 @@ const MatchingResults: React.FC = () => {
     const [technicians, setTechnicians] = useState<MatchedTechnician[]>([]);
     const [selectedTech, setSelectedTech] = useState<string | null>(null);
     const [selecting, setSelecting] = useState(false);
+
+    // Modale de planification de rendez-vous
+    const [scheduleTech, setScheduleTech] = useState<MatchedTechnician | null>(null);
+    const [scheduleDate, setScheduleDate] = useState('');
+    const [scheduleNotes, setScheduleNotes] = useState('');
+    const [scheduling, setScheduling] = useState(false);
+    const [scheduleDone, setScheduleDone] = useState(false);
+    const [scheduleError, setScheduleError] = useState<string | null>(null);
 
     useEffect(() => {
         if (navState?.matchResult) {
@@ -42,6 +51,41 @@ const MatchingResults: React.FC = () => {
             setLoading(false);
         }
     };
+
+    const openSchedule = (tech: MatchedTechnician) => {
+        setScheduleTech(tech);
+        setScheduleDate('');
+        setScheduleNotes('');
+        setScheduleDone(false);
+        setScheduleError(null);
+    };
+
+    const handleSchedule = async () => {
+        if (!scheduleTech || !scheduleDate || scheduling) return;
+        if (!requestId) {
+            setScheduleError("Demande introuvable. Recommencez depuis votre demande d'intervention.");
+            return;
+        }
+        setScheduling(true);
+        setScheduleError(null);
+        try {
+            await createAppointment({
+                request_id: requestId,
+                technician_id: scheduleTech.id,
+                scheduled_start: new Date(scheduleDate).toISOString(),
+                notes: scheduleNotes || undefined,
+            });
+            setScheduleDone(true);
+        } catch (error) {
+            console.error('Erreur lors de la planification:', error);
+            setScheduleError("Impossible d'enregistrer la demande de rendez-vous. Réessayez.");
+        } finally {
+            setScheduling(false);
+        }
+    };
+
+    // Date minimale = maintenant (format datetime-local : YYYY-MM-DDTHH:mm)
+    const minDateTime = new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 16);
 
     const handleConfirm = async (technicianId: string, price: number) => {
         if (!requestId || selecting) return;
@@ -161,8 +205,15 @@ const MatchingResults: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="mr-tech-footer">
-                                        <button className="mr-btn-outline" onClick={() => navigate(`/artisan/${tech.id}`)}>View Profile</button>
-                                        <button 
+                                        <button className="mr-btn-outline" onClick={() => navigate(`/artisan/${tech.id}`)}>Voir le profil</button>
+                                        <button
+                                            className="mr-btn-outline"
+                                            onClick={(e) => { e.stopPropagation(); openSchedule(tech); }}
+                                        >
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1rem', marginRight: '0.25rem', verticalAlign: 'middle' }}>event</span>
+                                            Planifier
+                                        </button>
+                                        <button
                                             className="mr-btn-solid"
                                             disabled={selecting}
                                             onClick={(e) => {
@@ -170,7 +221,7 @@ const MatchingResults: React.FC = () => {
                                                 handleConfirm(tech.id, tech.skills[0]?.hourly_rate ?? 0);
                                             }}
                                         >
-                                            {selecting ? 'En cours...' : 'Book Now'}
+                                            {selecting ? 'En cours...' : 'Réserver'}
                                         </button>
                                     </div>
                                 </div>
@@ -233,7 +284,61 @@ const MatchingResults: React.FC = () => {
                 )}
             </main>
 
-           
+            {/* Modale de planification de rendez-vous */}
+            {scheduleTech && (
+                <div className="mr-modal-backdrop" onClick={() => !scheduling && setScheduleTech(null)}>
+                    <div className="mr-modal" onClick={(e) => e.stopPropagation()}>
+                        <button className="mr-modal-close" onClick={() => !scheduling && setScheduleTech(null)}>
+                            <span className="material-symbols-outlined">close</span>
+                        </button>
+
+                        {scheduleDone ? (
+                            <div className="mr-modal-success">
+                                <span className="material-symbols-outlined">event_available</span>
+                                <h3>Demande envoyée</h3>
+                                <p>Votre demande de rendez-vous a été transmise à {scheduleTech.name}. Vous serez notifié dès qu'il l'aura acceptée.</p>
+                                <button className="mr-btn-solid" onClick={() => navigate('/espace-client/rendez-vous')}>
+                                    Voir mes rendez-vous
+                                </button>
+                                <button className="mr-btn-outline" onClick={() => setScheduleTech(null)}>Fermer</button>
+                            </div>
+                        ) : (
+                            <>
+                                <h3 className="mr-modal-title">Planifier avec {scheduleTech.name}</h3>
+                                <p className="mr-modal-subtitle">Proposez une date et une heure d'intervention. Le technicien confirmera sa disponibilité.</p>
+
+                                <label className="mr-modal-label">Date et heure souhaitées</label>
+                                <input
+                                    type="datetime-local"
+                                    className="mr-modal-input"
+                                    value={scheduleDate}
+                                    min={minDateTime}
+                                    onChange={(e) => setScheduleDate(e.target.value)}
+                                />
+
+                                <label className="mr-modal-label">Précisions (optionnel)</label>
+                                <textarea
+                                    className="mr-modal-input"
+                                    rows={3}
+                                    placeholder="Ex : portail d'entrée, étage, accès..."
+                                    value={scheduleNotes}
+                                    onChange={(e) => setScheduleNotes(e.target.value)}
+                                />
+
+                                {scheduleError && <p className="mr-modal-error">{scheduleError}</p>}
+
+                                <button
+                                    className="mr-btn-solid mr-modal-submit"
+                                    disabled={!scheduleDate || scheduling}
+                                    onClick={handleSchedule}
+                                >
+                                    {scheduling ? 'Envoi...' : 'Confirmer la demande'}
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

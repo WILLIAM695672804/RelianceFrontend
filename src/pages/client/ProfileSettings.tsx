@@ -23,6 +23,13 @@ const ProfileSettings: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    // ── Enrôlement 2FA ────────────────────────────────────────
+    const [twoFAModal, setTwoFAModal] = useState<'setup' | 'disable' | null>(null);
+    const [twoFAData, setTwoFAData] = useState<{ secret: string; qr_code_svg: string } | null>(null);
+    const [twoFACode, setTwoFACode] = useState('');
+    const [twoFAError, setTwoFAError] = useState('');
+    const [twoFALoading, setTwoFALoading] = useState(false);
+
     useEffect(() => {
         fetchLocations();
     }, []);
@@ -82,6 +89,64 @@ const ProfileSettings: React.FC = () => {
         setAvatarPreview(null);
         setAvatarFile(null);
         setIsEditModalOpen(true);
+    };
+
+    // Clic sur le toggle 2FA : ouvre l'activation (avec QR) ou la désactivation.
+    const handleToggle2FA = async () => {
+        setTwoFAError('');
+        setTwoFACode('');
+        if (twoFactor) {
+            setTwoFAModal('disable');
+            return;
+        }
+        setTwoFAModal('setup');
+        setTwoFALoading(true);
+        try {
+            const data = await authService.generate2FA();
+            setTwoFAData(data);
+        } catch {
+            setTwoFAError('Impossible de générer le secret 2FA.');
+        } finally {
+            setTwoFALoading(false);
+        }
+    };
+
+    const confirmEnable2FA = async () => {
+        if (twoFACode.trim().length < 6) { setTwoFAError('Entrez le code à 6 chiffres.'); return; }
+        setTwoFALoading(true);
+        setTwoFAError('');
+        try {
+            await authService.enable2FA(twoFACode.trim());
+            setTwoFactor(true);
+            closeTwoFAModal();
+        } catch (err: any) {
+            setTwoFAError(err?.response?.data?.message || 'Code invalide.');
+        } finally {
+            setTwoFALoading(false);
+        }
+    };
+
+    const confirmDisable2FA = async () => {
+        if (twoFACode.trim().length < 6) { setTwoFAError('Entrez le code à 6 chiffres.'); return; }
+        setTwoFALoading(true);
+        setTwoFAError('');
+        try {
+            await authService.disable2FA(twoFACode.trim());
+            setTwoFactor(false);
+            closeTwoFAModal();
+        } catch (err: any) {
+            setTwoFAError(err?.response?.data?.message || 'Code invalide.');
+        } finally {
+            setTwoFALoading(false);
+        }
+    };
+
+    const closeTwoFAModal = () => {
+        setTwoFAModal(null);
+        setTwoFAData(null);
+        setTwoFACode('');
+        setTwoFAError('');
+        setTwoFALoading(false);
     };
 
     const { data: reqRes } = useQuery({ queryKey: ['client-requests'], queryFn: () => requestService.list() });
@@ -179,9 +244,9 @@ const ProfileSettings: React.FC = () => {
                                             <p className="ps-sec-desc">Secure your account with SMS codes</p>
                                         </div>
                                     </div>
-                                    <div 
-                                        className={`ps-toggle ${twoFactor ? 'active' : ''}`} 
-                                        onClick={() => setTwoFactor(!twoFactor)}
+                                    <div
+                                        className={`ps-toggle ${twoFactor ? 'active' : ''}`}
+                                        onClick={handleToggle2FA}
                                         style={{ backgroundColor: twoFactor ? 'var(--ds-tertiary-container)' : '#cbd5e1' }}
                                     >
                                         <div 
@@ -383,6 +448,64 @@ const ProfileSettings: React.FC = () => {
             </div>
 
             <RoleUpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
+
+            {/* Modale 2FA — activation (QR + code) / désactivation (code) */}
+            {twoFAModal && (
+                <div className="ps-2fa-backdrop" onClick={closeTwoFAModal}>
+                    <div className="ps-2fa-modal" onClick={(e) => e.stopPropagation()}>
+                        <button className="ps-2fa-close" onClick={closeTwoFAModal}>
+                            <span className="material-symbols-outlined">close</span>
+                        </button>
+
+                        {twoFAModal === 'setup' ? (
+                            <>
+                                <h2 className="ps-2fa-title">Activer la double authentification</h2>
+                                <p className="ps-2fa-desc">Scannez ce QR code avec Google Authenticator, puis entrez le code à 6 chiffres généré.</p>
+                                {twoFALoading && !twoFAData ? (
+                                    <div className="ps-2fa-loading">
+                                        <span className="material-symbols-outlined ps-2fa-spin">progress_activity</span>
+                                        <p>Génération du secret…</p>
+                                    </div>
+                                ) : twoFAData ? (
+                                    <>
+                                        <div className="ps-2fa-qr" dangerouslySetInnerHTML={{ __html: twoFAData.qr_code_svg }} />
+                                        <p className="ps-2fa-secret">Clé manuelle : <code>{twoFAData.secret}</code></p>
+                                    </>
+                                ) : null}
+                            </>
+                        ) : (
+                            <>
+                                <h2 className="ps-2fa-title">Désactiver la double authentification</h2>
+                                <p className="ps-2fa-desc">Entrez un code de votre application d'authentification pour confirmer la désactivation.</p>
+                            </>
+                        )}
+
+                        {(twoFAModal === 'disable' || twoFAData) && (
+                            <input
+                                className="ps-2fa-input"
+                                type="text"
+                                inputMode="numeric"
+                                maxLength={6}
+                                placeholder="123456"
+                                value={twoFACode}
+                                onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, ''))}
+                            />
+                        )}
+
+                        {twoFAError && <p className="ps-2fa-error">{twoFAError}</p>}
+
+                        {(twoFAModal === 'disable' || twoFAData) && (
+                            <button
+                                className="ps-2fa-submit"
+                                disabled={twoFALoading}
+                                onClick={twoFAModal === 'setup' ? confirmEnable2FA : confirmDisable2FA}
+                            >
+                                {twoFALoading ? 'Veuillez patienter…' : twoFAModal === 'setup' ? 'Activer' : 'Désactiver'}
+                            </button>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

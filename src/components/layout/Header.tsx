@@ -18,7 +18,6 @@ interface NavItem {
 
 const navItems: NavItem[] = [
     { label: 'Accueil', href: '/', isRoute: true },
-    { label: 'Actualités', href: '/actualites', isRoute: true },
     {
         label: 'A propos',
         href: '#mission',

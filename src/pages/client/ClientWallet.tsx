@@ -23,6 +23,16 @@ const ClientWallet: React.FC = () => {
     const qc = useQueryClient();
     const { data: txRes, isLoading: txLoading, isError: txError, refetch: txRefetch } =
         useQuery({ queryKey: ['client-wallet-transactions'], queryFn: () => financeService.getTransactions(1) });
+
+    // Taux de change réels (depuis l'API) pour les équivalents en devises.
+    const { data: ratesRes } = useQuery({ queryKey: ['exchange-rates'], queryFn: () => financeService.getExchangeRates() });
+    const equivalents: { currency: string; value: number }[] = (() => {
+        const rows: any[] = ratesRes?.data?.data ?? [];
+        // On ne garde que les taux vers le XAF (1 devise = N XAF) pour convertir le solde.
+        return rows
+            .filter((r) => r.to_currency === 'XAF' && Number(r.rate) > 0)
+            .map((r) => ({ currency: r.from_currency, value: balance / Number(r.rate) }));
+    })();
     const txList: any[] = txRes?.data?.data ?? [];
     const [ledgerFilter, setLedgerFilter] = useState<'all' | 'holds' | 'payments'>('all');
     const [visibleTx, setVisibleTx] = useState(8);
@@ -55,6 +65,7 @@ const ClientWallet: React.FC = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [rechargeError, setRechargeError] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const [currentPaymentId, setCurrentPaymentId] = useState<string | null>(null);
     const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     const fetchWallet = async () => {
@@ -91,6 +102,23 @@ const ClientWallet: React.FC = () => {
         setPhoneNumber('');
         setRechargeError('');
         setSubmitting(false);
+        setCurrentPaymentId(null);
+    };
+
+    // DEV uniquement : simule la confirmation de la passerelle (le webhook ne peut pas
+    // joindre localhost en local). Désactivé en production via import.meta.env.DEV.
+    const devConfirmPayment = async () => {
+        if (!currentPaymentId) return;
+        setRechargeError('');
+        try {
+            await financeService.confirmPayment(currentPaymentId);
+            if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+            await fetchWallet();
+            qc.invalidateQueries({ queryKey: ['client-wallet-transactions'] });
+            setRechargeStep(3);
+        } catch (err: any) {
+            setRechargeError(err?.response?.data?.message || 'Échec de la confirmation');
+        }
     };
 
     const startRecharge = async () => {
@@ -108,6 +136,7 @@ const ClientWallet: React.FC = () => {
                 phone_number: phoneNumber.trim() || undefined,
             });
             const paymentId = res.data?.payment_id;
+            setCurrentPaymentId(paymentId);
             setRechargeStep(2);
             pollPaymentStatus(paymentId);
         } catch (err: any) {
@@ -163,16 +192,18 @@ const ClientWallet: React.FC = () => {
                             <p className="cw-balance-label">Total Available Balance</p>
                             <h1 className="cw-balance-amount">{formatCurrency(balance).replace('FCFA', '').trim()} <span className="cw-currency-symbol">XAF</span></h1>
                             
-                            <div className="cw-equivalent-rates">
-                                <div className="cw-rate-item">
-                                    <p className="cw-rate-label">Equivalent EUR</p>
-                                    <p className="cw-rate-value">€ 6,480.00</p>
+                            {equivalents.length > 0 && (
+                                <div className="cw-equivalent-rates">
+                                    {equivalents.map((eq) => (
+                                        <div className="cw-rate-item" key={eq.currency}>
+                                            <p className="cw-rate-label">Équivalent {eq.currency}</p>
+                                            <p className="cw-rate-value">
+                                                {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: eq.currency, maximumFractionDigits: 2 }).format(eq.value)}
+                                            </p>
+                                        </div>
+                                    ))}
                                 </div>
-                                <div className="cw-rate-item">
-                                    <p className="cw-rate-label">Equivalent USD</p>
-                                    <p className="cw-rate-value">$ 7,025.15</p>
-                                </div>
-                            </div>
+                            )}
                         </div>
                         
                         <div className="cw-balance-actions">
@@ -446,6 +477,17 @@ const ClientWallet: React.FC = () => {
                                     <span className="material-symbols-outlined animate-spin text-base">progress_activity</span>
                                     En attente de confirmation…
                                 </div>
+
+                                {/* DEV uniquement : le webhook NotchPay ne peut pas joindre localhost,
+                                    donc on simule la confirmation pour tester le crédit du wallet. */}
+                                {import.meta.env.DEV && (
+                                    <button
+                                        className="mt-6 px-4 py-2 rounded-full border border-dashed border-amber-400 text-amber-600 text-xs font-bold hover:bg-amber-50 transition-all"
+                                        onClick={devConfirmPayment}
+                                    >
+                                        [DEV] Simuler la confirmation du paiement
+                                    </button>
+                                )}
                             </div>
                         )}
 

@@ -700,3 +700,22 @@
     opacity: 0.6;
     cursor: not-allowed;
 }
+
+/* Modale 2FA */
+.ps-2fa-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.45); backdrop-filter: blur(4px); z-index: 60; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.ps-2fa-modal { background: #fff; border-radius: 24px; padding: 2rem; width: 100%; max-width: 380px; position: relative; box-shadow: 0 24px 60px rgba(0,0,0,0.25); text-align: center; }
+.ps-2fa-close { position: absolute; top: 1rem; right: 1rem; width: 36px; height: 36px; border: none; background: #f1f5f9; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #64748b; }
+.ps-2fa-title { font-size: 1.25rem; font-weight: 700; color: #1e293b; margin: 0 0 0.5rem; }
+.ps-2fa-desc { font-size: 0.85rem; color: #64748b; margin: 0 0 1.25rem; }
+.ps-2fa-qr { display: flex; justify-content: center; margin: 0 auto 1rem; width: 180px; height: 180px; }
+.ps-2fa-qr svg { width: 100%; height: 100%; }
+.ps-2fa-secret { font-size: 0.75rem; color: #64748b; margin-bottom: 1rem; }
+.ps-2fa-secret code { background: #f1f5f9; padding: 2px 6px; border-radius: 6px; font-weight: 600; }
+.ps-2fa-input { width: 100%; padding: 0.75rem; font-size: 1.25rem; text-align: center; letter-spacing: 0.4em; border: 1px solid #d8dee9; border-radius: 12px; margin-bottom: 0.75rem; }
+.ps-2fa-input:focus { outline: none; border-color: #1960a3; box-shadow: 0 0 0 2px rgba(25,96,163,0.15); }
+.ps-2fa-error { color: #ef4444; font-size: 0.8rem; font-weight: 600; margin: 0 0 0.75rem; }
+.ps-2fa-submit { width: 100%; padding: 0.85rem; background: #1960a3; color: #fff; border: none; border-radius: 999px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.ps-2fa-submit:hover:not(:disabled) { background: #14507f; }
+.ps-2fa-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+.ps-2fa-loading { padding: 1.5rem; color: #64748b; }
+.ps-2fa-spin { font-size: 36px; animation: spin 1s linear infinite; }

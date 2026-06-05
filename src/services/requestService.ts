@@ -27,6 +27,7 @@ export interface ClientRequest {
     estimated_skills: string[];
   };
   proposals_count?: number;
+  counterpart?: { id: string; name: string; role: string } | null;
   created_at: string;
 }
 

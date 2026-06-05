@@ -542,8 +542,123 @@
     padding: 1.5rem;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     border: 1px solid #f1f5f9;
-    height: 100%;
 }
+
+/* Carte "Mission en cours" (sous la carte des derniers avis) */
+.tech-active-mission-card {
+    background-color: #ffffff;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f5f9;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.tech-active-mission-card.has-mission {
+    cursor: pointer;
+    border-left: 4px solid #2563eb;
+}
+.tech-active-mission-card.has-mission:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -8px rgba(37, 99, 235, 0.35);
+    border-color: #bfdbfe;
+}
+.tech-active-mission-card.has-mission:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+.tech-active-mission-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+.tech-active-mission-live {
+    background-color: #ecfdf5;
+    color: #059669;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+.tech-active-mission-live::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #10b981;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+    animation: techMissionPulse 1.6s infinite;
+}
+@keyframes techMissionPulse {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+    70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.tech-active-mission-body {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+.tech-active-mission-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.9rem;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.tech-active-mission-icon .material-symbols-outlined { font-size: 1.4rem; }
+.tech-active-mission-info { min-width: 0; }
+.tech-active-mission-title {
+    font-weight: 700;
+    color: #1e3a8a;
+    margin: 0 0 0.35rem;
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tech-active-mission-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    color: #64748b;
+    margin: 0.15rem 0;
+}
+.tech-active-mission-meta .material-symbols-outlined { font-size: 1rem; color: #94a3b8; }
+
+.tech-active-mission-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+}
+.tech-active-mission-price {
+    font-weight: 800;
+    color: #0f172a;
+    font-size: 0.95rem;
+}
+.tech-active-mission-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #2563eb;
+}
+.tech-active-mission-cta .material-symbols-outlined { font-size: 1.1rem; }
 
 .tech-sidebar-header {
     display: flex;

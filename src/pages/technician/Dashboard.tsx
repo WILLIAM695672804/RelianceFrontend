@@ -14,6 +14,7 @@ const Dashboard: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [profile, setProfile] = useState<any>(null);
     const [pendingProposals, setPendingProposals] = useState<any[]>([]);
+    const [activeMission, setActiveMission] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [showVerifiedModal, setShowVerifiedModal] = useState(searchParams.get('verified') === '1');
 
@@ -49,6 +50,12 @@ const Dashboard: React.FC = () => {
             } finally {
                 setIsLoading(false);
             }
+
+            // Mission active (séparée pour ne pas bloquer le reste si aucune mission)
+            try {
+                const missionRes = await matchingService.getActiveMission();
+                setActiveMission(missionRes?.data ?? null);
+            } catch { /* aucune mission en cours */ }
         };
         fetchData();
     }, []);
@@ -330,6 +337,50 @@ const Dashboard: React.FC = () => {
                             Resource Center
                         </a>
                     </div>
+                </div>
+
+                {/* Carte Mission en cours → redirige vers le Cockpit */}
+                <div
+                    className={`tech-active-mission-card ${activeMission ? 'has-mission' : 'is-empty'}`}
+                    onClick={() => { if (activeMission) navigate('/technicien/cockpit'); }}
+                    role={activeMission ? 'button' : undefined}
+                    tabIndex={activeMission ? 0 : undefined}
+                    onKeyDown={(e) => { if (activeMission && (e.key === 'Enter' || e.key === ' ')) navigate('/technicien/cockpit'); }}
+                >
+                    <div className="tech-active-mission-header">
+                        <h4 className="tech-sidebar-title">Mission en cours</h4>
+                        {activeMission && <span className="tech-active-mission-live">EN COURS</span>}
+                    </div>
+
+                    {activeMission ? (
+                        <>
+                            <div className="tech-active-mission-body">
+                                <div className="tech-active-mission-icon">
+                                    <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>bolt</span>
+                                </div>
+                                <div className="tech-active-mission-info">
+                                    <p className="tech-active-mission-title">{activeMission.request?.title ?? 'Mission'}</p>
+                                    <p className="tech-active-mission-meta">
+                                        <span className="material-symbols-outlined">person</span>
+                                        {activeMission.client?.name ?? 'Client'}
+                                    </p>
+                                    <p className="tech-active-mission-meta">
+                                        <span className="material-symbols-outlined">location_on</span>
+                                        {activeMission.address?.city || activeMission.address?.address || '—'}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="tech-active-mission-footer">
+                                <span className="tech-active-mission-price">{Number(activeMission.price ?? 0).toLocaleString()} XAF</span>
+                                <span className="tech-active-mission-cta">
+                                    Ouvrir le cockpit
+                                    <span className="material-symbols-outlined">arrow_forward</span>
+                                </span>
+                            </div>
+                        </>
+                    ) : (
+                        <EmptyState icon="work_off" title="Aucune mission en cours" message="Votre mission active apparaîtra ici." />
+                    )}
                 </div>
             </div>
 

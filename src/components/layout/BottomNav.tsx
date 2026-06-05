@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Link, useLocation } from 'react-router-dom';
-import { FaHome, FaUserCircle, FaWrench, FaCommentDots, FaWallet } from 'react-icons/fa';
+import { FaUserCircle, FaWrench, FaCommentDots, FaWallet } from 'react-icons/fa';
 import './BottomNav.css';
 
 const BottomNav: React.FC = () => {
@@ -14,12 +14,6 @@ const BottomNav: React.FC = () => {
     return (
         <div className="bottom-nav-container">
             <nav className="bottom-nav">
-                {/* Découverte (Social Feed) - Accessible à tous */}
-                <Link to="/actualites" className={`nav-item ${isActive('/actualites') ? 'active' : ''}`}>
-                    <FaHome className="nav-icon" />
-                    <span>Découverte</span>
-                </Link>
-
                 {isAuthenticated ? (
                     /* --- CONNECTED STATE --- */
                     <>
