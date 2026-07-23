@@ -12,7 +12,7 @@ export const financeService = {
   // Payments
   getPayments: (page = 1) => api.get(`/payments?page=${page}`),
   getPayment: (id: string) => api.get(`/payments/${id}`),
-  // ⚠️ Simule le webhook de la passerelle (passe le paiement à "settled" + crédite le wallet).
+  //  Simule le webhook de la passerelle (passe le paiement à "settled" + crédite le wallet).
   // À n'utiliser qu'en développement local : en production c'est le webhook NotchPay qui appelle ce endpoint.
   confirmPayment: (id: string) => api.post(`/payments/${id}/confirm`),
 
