@@ -25,7 +25,6 @@ export interface LoginData {
 export interface AuthResponse {
     message: string;
     user: any;
-    token?: string; // Token is now stored in httpOnly cookie, not in response body
 }
 
 const authService = {
@@ -45,11 +44,6 @@ const authService = {
 
     async getMe(): Promise<any> {
         const response = await api.get('/auth/me');
-        return response.data;
-    },
-
-    async refreshToken(): Promise<AuthResponse> {
-        const response = await api.post('/auth/refresh');
         return response.data;
     },
 

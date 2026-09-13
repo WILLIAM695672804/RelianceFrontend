@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const login = useCallback(async (data: LoginData): Promise<{ requires_2fa?: boolean; user?: AuthUser }> => {
         try {
             const response = await authService.login(data);
-            // Token is set as httpOnly cookie by the server — no localStorage needed
+            // Session Sanctum établie côté serveur (cookie de session httpOnly)
             setUser(response.user);
             setIsAuthModalOpen(false);
             return { user: response.user };
@@ -89,7 +89,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const register = useCallback(async (data: RegisterData): Promise<void> => {
         const response = await authService.register(data);
-        // Token is set as httpOnly cookie by the server — no localStorage needed
+        // Session Sanctum établie côté serveur (cookie de session httpOnly)
         setUser(response.user);
         setIsAuthModalOpen(false);
     }, []);
@@ -109,7 +109,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         } catch {
             // Ignore error, we logout locally anyway
         }
-        // Server clears the httpOnly cookie via Set-Cookie header
+        // Le serveur invalide la session et efface le cookie
         setUser(null);
     }, []);
 
