@@ -33,7 +33,7 @@ export function useAdminChannel(options: UseAdminChannelOptions) {
     const { user } = useAuth();
 
     useEffect(() => {
-        if (!user?.id || user.role !== 'admin') return;
+        if (!user?.id || !user.roles?.some((r) => r.name === 'admin')) return;
 
         const echo = getEcho();
         const channel = echo.private('admin.dashboard');
@@ -51,5 +51,5 @@ export function useAdminChannel(options: UseAdminChannelOptions) {
         return () => {
             echo.leave('admin.dashboard');
         };
-    }, [user?.id, user?.role]);
+    }, [user?.id, user?.roles]);
 }

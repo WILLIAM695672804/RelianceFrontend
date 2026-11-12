@@ -6,11 +6,13 @@ import './ReviewModal.css';
 interface ReviewModalProps {
     requestId: string;
     technicianName: string;
+    /** `pre` : avant l'intervention ; `post` (défaut) : une fois la mission terminée. */
+    stage?: 'pre' | 'post';
     onClose: () => void;
     onSubmitted: () => void;
 }
 
-const ReviewModal: React.FC<ReviewModalProps> = ({ requestId, technicianName, onClose, onSubmitted }) => {
+const ReviewModal: React.FC<ReviewModalProps> = ({ requestId, technicianName, stage = 'post', onClose, onSubmitted }) => {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
     const [submitting, setSubmitting] = useState(false);
@@ -21,7 +23,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ requestId, technicianName, on
         setSubmitting(true);
         setError(null);
         try {
-            await reviewService.submitReview(requestId, rating, comment || undefined);
+            await reviewService.submitReview(requestId, rating, comment || undefined, stage);
             onSubmitted();
         } catch (err: any) {
             const msg = err?.response?.data?.message || 'Erreur lors de l\'envoi de l\'avis.';
@@ -40,7 +42,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ requestId, technicianName, on
                 </div>
                 <div className="review-modal-body">
                     <div className="review-stars-section">
-                        <p>Comment evaluez-vous cette intervention ?</p>
+                        <p>{stage === 'pre' ? 'Quelle est votre impression avant l\'intervention ?' : 'Comment evaluez-vous cette intervention ?'}</p>
                         <StarRating value={rating} onChange={setRating} size="lg" />
                     </div>
                     <div className="review-comment-section">

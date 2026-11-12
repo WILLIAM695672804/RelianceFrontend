@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import matchingService from '../../services/matchingService';
 import RouteMap from '../../components/maps/RouteMap';
@@ -47,6 +47,8 @@ const MissionTracking: React.FC = () => {
     const [myPosition, setMyPosition] = useState<{ latitude: number; longitude: number } | null>(null);
     const [techPosition, setTechPosition] = useState<{ latitude: number; longitude: number } | null>(null);
     const [showReviewModal, setShowReviewModal] = useState(false);
+    const [reviewStage, setReviewStage] = useState<'pre' | 'post'>('post');
+    const [preReviewDone, setPreReviewDone] = useState(false);
     const [reviewSubmitted, setReviewSubmitted] = useState(false);
     const { openChat } = useChat();
 
@@ -246,9 +248,17 @@ const MissionTracking: React.FC = () => {
                         </div>
                     )}
 
+                    {/* Avis avant l'intervention (cahier des charges §4.3) */}
+                    {mission?.request?.status === 'assigned' && tech && !preReviewDone && (
+                        <button className="mt-btn-review" onClick={() => { setReviewStage('pre'); setShowReviewModal(true); }}>
+                            <span className="material-symbols-outlined">star</span>
+                            Donner mon avis avant l'intervention
+                        </button>
+                    )}
+
                     {/* Review Button - shown when mission is completed */}
                     {mission?.request?.status === 'completed' && tech && !reviewSubmitted && (
-                        <button className="mt-btn-review" onClick={() => setShowReviewModal(true)}>
+                        <button className="mt-btn-review" onClick={() => { setReviewStage('post'); setShowReviewModal(true); }}>
                             <span className="material-symbols-outlined">rate_review</span>
                             Laisser un avis
                         </button>
@@ -306,10 +316,12 @@ const MissionTracking: React.FC = () => {
                 <ReviewModal
                     requestId={mission.request.id}
                     technicianName={tech.name}
+                    stage={reviewStage}
                     onClose={() => setShowReviewModal(false)}
                     onSubmitted={() => {
                         setShowReviewModal(false);
-                        setReviewSubmitted(true);
+                        if (reviewStage === 'pre') setPreReviewDone(true);
+                        else setReviewSubmitted(true);
                     }}
                 />
             )}

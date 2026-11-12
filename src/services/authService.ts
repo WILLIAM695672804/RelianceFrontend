@@ -115,6 +115,12 @@ const authService = {
         return response.data;
     },
 
+    /** Renvoi public du lien de vérification (compte non vérifié, donc sans session). */
+    async resendVerificationEmailFor(email: string): Promise<any> {
+        const response = await api.post('/auth/email/resend', { email });
+        return response.data;
+    },
+
     async resendVerificationEmail(): Promise<any> {
         const response = await api.post('/auth/email/verification-notification');
         return response.data;

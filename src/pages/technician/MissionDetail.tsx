@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getJob, updateJobStatus, getQuotesForRequest, createJob, type TechnicianJob, type Quote } from '../../services/operationsService';
-import { getUpcomingAppointments, type Appointment } from '../../services/operationsService';
+import { updateJobStatus, getQuotesForRequest, createJob, type TechnicianJob, type Quote } from '../../services/operationsService';
 import matchingService from '../../services/matchingService';
 import './MissionDetail.css';
 
@@ -85,7 +84,6 @@ const MissionDetail: React.FC = () => {
     }
 
     const request = mission?.request;
-    const technician = mission?.technician;
     const currentStatus = job ? statusLabels[job.status] : null;
     const nextAction = job ? statusFlow[job.status] : null;
 

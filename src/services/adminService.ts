@@ -168,6 +168,12 @@ const adminService = {
         return response.data;
     },
 
+    // Cartographie
+    async getMap(): Promise<any> {
+        const response = await api.get('/admin/map');
+        return response.data;
+    },
+
     // Conversations Supervision
     async getAllConversations(params?: { page?: number; search?: string }): Promise<any> {
         const response = await api.get('/admin/conversations', { params });

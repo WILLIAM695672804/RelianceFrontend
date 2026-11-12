@@ -7,14 +7,6 @@ import { Loading, EmptyState, ErrorState } from '../../components/common/AsyncSt
 import { formatXAF, formatDateTime } from '../../utils/format';
 import './ClientWallet.css';
 
-interface Transaction {
-    id: string;
-    type: 'recharge' | 'escrow' | 'payment';
-    amount: number;
-    date: string;
-    label: string;
-}
-
 const ClientWallet: React.FC = () => {
     const navigate = useNavigate();
     const [balance, setBalance] = useState(0); // Available balance

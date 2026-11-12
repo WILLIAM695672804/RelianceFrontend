@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getJob, updateJobPhases, updateJobStatus, type TechnicianJob, type JobPhase } from '../../services/operationsService';
+import { updateJobPhases, updateJobStatus, type TechnicianJob, type JobPhase } from '../../services/operationsService';
 import matchingService from '../../services/matchingService';
 import './MissionCompletion.css';
 

@@ -1,3 +1,4 @@
+import authService from '../services/authService';
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaSpinner } from 'react-icons/fa';
@@ -36,6 +37,8 @@ const Connexion: React.FC = () => {
     });
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [needsVerification, setNeedsVerification] = useState(false);
+    const [resendInfo, setResendInfo] = useState<string | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
@@ -48,6 +51,8 @@ const Connexion: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
+        setNeedsVerification(false);
+        setResendInfo(null);
         setLoading(true);
 
         try {
@@ -70,6 +75,7 @@ const Connexion: React.FC = () => {
         } catch (err: any) {
             const msg = err.response?.data?.message || 'Une erreur est survenue';
             setError(msg);
+            setNeedsVerification(!!err.response?.data?.requires_email_verification);
         } finally {
             setLoading(false);
         }
@@ -93,6 +99,26 @@ const Connexion: React.FC = () => {
                                 fontSize: '0.9rem'
                             }}>
                                 {error}
+                                {needsVerification && (
+                                    <div style={{ marginTop: 8 }}>
+                                        <button
+                                            type="button"
+                                            className="cx-link"
+                                            style={{ background: 'none', border: 'none', color: 'inherit', textDecoration: 'underline', cursor: 'pointer', padding: 0 }}
+                                            onClick={async () => {
+                                                try {
+                                                    const r = await authService.resendVerificationEmailFor(formData.email);
+                                                    setResendInfo(r.message);
+                                                } catch {
+                                                    setResendInfo('Envoi impossible pour le moment, réessayez dans un instant.');
+                                                }
+                                            }}
+                                        >
+                                            Renvoyer le lien de vérification
+                                        </button>
+                                        {resendInfo && <div style={{ marginTop: 4 }}>{resendInfo}</div>}
+                                    </div>
+                                )}
                             </div>
                         )}
 

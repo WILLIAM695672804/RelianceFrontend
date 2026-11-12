@@ -80,6 +80,7 @@ import AdminFees from './pages/admin/AdminFees';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminRequests from './pages/admin/AdminRequests';
 import AdminConversations from './pages/admin/AdminConversations';
+import AdminMap from './pages/admin/AdminMap';
 
 // Agency Space
 import AgencyLayout from './layouts/AgencyLayout';
@@ -190,6 +191,7 @@ function App() {
             <Route path="analytics" element={<AdminAnalytics />} />
             <Route path="demandes" element={<AdminRequests />} />
             <Route path="messagerie" element={<AdminConversations />} />
+            <Route path="carte" element={<AdminMap />} />
             <Route path="notifications" element={<Notifications />} />
           </Route>
 

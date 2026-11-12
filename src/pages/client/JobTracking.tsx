@@ -20,7 +20,7 @@ const JobTracking: React.FC = () => {
     const navigate = useNavigate();
     const [tracking, setTracking] = useState<TrackingData | null>(null);
     const [quotes, setQuotes] = useState<Quote[]>([]);
-    const [requestId, setRequestId] = useState<string | null>(null);
+    const [requestId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
 

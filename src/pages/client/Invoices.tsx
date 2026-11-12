@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getInvoices, payInvoice, type Invoice } from '../../services/operationsService';
 import { Loading, EmptyState, ErrorState } from '../../components/common/AsyncStates';
@@ -25,6 +26,8 @@ const Invoices: React.FC = () => {
         mutationFn: (invoiceId: string) => payInvoice(invoiceId),
         onSuccess: () => qc.invalidateQueries({ queryKey: ['invoices'] }),
     });
+    const payError: any = payMutation.error;
+    const insufficientFunds = payError?.response?.status === 402;
 
     const invoices: Invoice[] = data?.data ?? [];
     const hasMore = (data?.meta?.last_page ?? 1) > page;
@@ -50,6 +53,15 @@ const Invoices: React.FC = () => {
                 <h1 className="inv-title">Mes Factures</h1>
                 <p className="inv-subtitle">{invoices.length} facture(s)</p>
             </div>
+
+            {payMutation.isError && (
+                <div role="alert" style={{ background: 'rgba(220,38,38,0.1)', color: '#dc2626', padding: '12px 16px', borderRadius: 8, margin: '0 0 16px' }}>
+                    {payError?.response?.data?.message || 'Le paiement a échoué.'}
+                    {insufficientFunds && (
+                        <> <Link to="/espace-client/wallet" style={{ color: 'inherit', fontWeight: 600 }}>Recharger mon portefeuille</Link></>
+                    )}
+                </div>
+            )}
 
             {invoices.length === 0 ? (
                 <EmptyState

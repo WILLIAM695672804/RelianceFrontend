@@ -31,6 +31,7 @@ const AdminLayout: React.FC = () => {
         { to: "/admin/demandes", icon: "assignment", label: "Demandes" },
         { to: "/admin/fees", icon: "paid", label: "Frais" },
         { to: "/admin/analytics", icon: "analytics", label: "Analytics" },
+        { to: "/admin/carte", icon: "map", label: "Carte" },
         { to: "/admin/messagerie", icon: "forum", label: "Messages" },
     ];
 

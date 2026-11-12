@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import authService from '../../services/authService';
@@ -11,7 +11,13 @@ const VerifyEmail: React.FC = () => {
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
     const [message, setMessage] = useState('Verification de votre adresse e-mail en cours...');
 
+    // La vérification ne doit s'exécuter qu'une fois : refreshUser() modifie `user`, ce qui
+    // relancerait l'effet en boucle (vérifications et redirections répétées).
+    const started = useRef(false);
+
     useEffect(() => {
+        if (started.current) return;
+        started.current = true;
         const verify = async () => {
             const queryParams = new URLSearchParams(location.search);
             const verificationUrl = queryParams.get('url');

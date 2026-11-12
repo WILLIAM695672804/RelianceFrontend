@@ -19,11 +19,12 @@ export interface TechBadge {
 }
 
 const reviewService = {
-  async submitReview(requestId: string, rating: number, comment?: string) {
+  async submitReview(requestId: string, rating: number, comment?: string, stage: 'pre' | 'post' = 'post') {
     const response = await api.post('/reviews', {
       request_id: requestId,
       rating,
       comment,
+      stage,
     });
     return response.data;
   },

@@ -29,7 +29,7 @@ const RequestWizard: React.FC = () => {
     const [step, setStep] = useState(1);
     const [analysisPhase, setAnalysisPhase] = useState(0);
     const [showStepNav, setShowStepNav] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [, setIsSubmitting] = useState(false);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -133,8 +133,6 @@ const RequestWizard: React.FC = () => {
     };
 
     const [scanCount, setScanCount] = useState(0);
-    const [matchRequestId, setMatchRequestId] = useState<string | null>(null);
-    const [matchData, setMatchData] = useState<any>(null);
 
     const startAiAnalysis = async () => {
         setIsSubmitting(true);
@@ -161,7 +159,6 @@ const RequestWizard: React.FC = () => {
             });
 
             const requestId = createResponse?.data?.id ?? createResponse?.id;
-            setMatchRequestId(requestId);
 
             // Phase 1 -> 2 : Evaluation (2.5s)
             await delay(2500);
@@ -170,7 +167,6 @@ const RequestWizard: React.FC = () => {
             // Trigger matching during phase 2
             const matchResult = await requestService.match(requestId);
             const technicians = matchResult?.data?.technicians || [];
-            setMatchData(matchResult?.data);
 
             // Phase 2 -> 3 : Recherche de techniciens - reveal them progressively
             await delay(2000);
