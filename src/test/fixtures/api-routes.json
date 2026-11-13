@@ -1,0 +1,838 @@
+[
+ {
+  "method": "DELETE",
+  "uri": "api/v1/agencies/{id}/members/{userId}"
+ },
+ {
+  "method": "DELETE",
+  "uri": "api/v1/auth/admin/users/{user}/roles/{role}"
+ },
+ {
+  "method": "DELETE",
+  "uri": "api/v1/conversations/{conversationId}/messages/{messageId}"
+ },
+ {
+  "method": "DELETE",
+  "uri": "api/v1/follows/{userId}"
+ },
+ {
+  "method": "DELETE",
+  "uri": "api/v1/locations/{id}"
+ },
+ {
+  "method": "DELETE",
+  "uri": "api/v1/posts/{id}"
+ },
+ {
+  "method": "DELETE",
+  "uri": "api/v1/posts/{postId}/comments/{commentId}"
+ },
+ {
+  "method": "DELETE",
+  "uri": "api/v1/push-tokens/{id}"
+ },
+ {
+  "method": "DELETE",
+  "uri": "api/v1/technician/exceptions/{id}"
+ },
+ {
+  "method": "DELETE",
+  "uri": "api/v1/technician/skills/{id}"
+ },
+ {
+  "method": "DELETE",
+  "uri": "api/v1/technician/time-slots/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/admin/conversations"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/admin/conversations/search"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/admin/conversations/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/admin/credits/rates"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/admin/disputes"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/admin/fees"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/admin/map"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/admin/payouts"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/admin/payouts/pending"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/admin/payouts/stats"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/admin/requests"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/admin/subscriptions"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/admin/subscriptions/stats"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/agencies"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/agencies/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/agencies/{id}/members"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/analytics"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/analytics/summary"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/appointments"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/appointments/upcoming"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/appointments/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/audit-logs"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/audit-logs/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/auth/admin/stats"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/auth/admin/technicians/pending"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/auth/admin/upgrade-requests"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/auth/admin/users"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/auth/admin/users/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/auth/agency/dashboard"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/auth/email/verify/{id}/{hash}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/auth/kyc/admin/documents"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/auth/kyc/mine"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/auth/me"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/badges"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/badges/user/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/conversations"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/conversations/unread-count"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/conversations/{conversationId}/messages"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/conversations/{conversationId}/messages/attachments"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/conversations/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/credits/rates"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/disputes"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/disputes/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/follows/suggestions"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/follows/{userId}/check"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/holds"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/interventions"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/interventions/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/invoices"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/invoices/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/jobs"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/jobs/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/jobs/{id}/tracking"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/locations"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/mission/active"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/my-agency"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/notification-settings"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/notifications"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/notifications/unread-count"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/payments"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/payments/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/position/technician"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/posts/explore"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/posts/feed"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/posts/search"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/posts/trending"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/posts/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/posts/{postId}/comments"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/posts/{postId}/likers"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/proposals/active-mission"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/proposals/check-new"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/proposals/my"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/proposals/stream"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/quotes/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/reputation/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/requests"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/requests/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/requests/{requestId}/quotes"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/reviews/mine"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/reviews/technician/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/skills"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/sla-events/mine"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/sla-events/request/{requestId}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/sla-rules"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/sla-rules/{id}"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/subscriptions/mine"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/subscriptions/plans"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/technician/calendar"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/technician/profile"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/technician/skills"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/technician/stats"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/technicians"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/technicians/{id}/profile"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/users/{userId}/follow-counts"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/users/{userId}/followers"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/users/{userId}/following"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/users/{userId}/posts"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/wallet"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/wallet/transactions"
+ },
+ {
+  "method": "PATCH",
+  "uri": "api/v1/admin/fees/{id}/toggle"
+ },
+ {
+  "method": "PATCH",
+  "uri": "api/v1/appointments/{id}/status"
+ },
+ {
+  "method": "PATCH",
+  "uri": "api/v1/auth/admin/users/{id}/toggle-active"
+ },
+ {
+  "method": "PATCH",
+  "uri": "api/v1/jobs/{id}/status"
+ },
+ {
+  "method": "PATCH",
+  "uri": "api/v1/locations/{id}/default"
+ },
+ {
+  "method": "PATCH",
+  "uri": "api/v1/sla-rules/{id}/toggle"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/admin/credits/rates"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/admin/disputes/{id}/resolve"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/admin/fees"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/admin/payouts/{id}/approve"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/admin/payouts/{id}/reject"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/admin/requests/{id}/assign"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/admin/subscriptions/plans"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/agencies"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/agencies/{id}/members"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/analytics/track"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/appointments"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/2fa/disable"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/2fa/enable"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/2fa/generate"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/admin/technicians/{id}/approve"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/admin/technicians/{id}/reject"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/admin/upgrade-requests/{id}/approve"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/admin/upgrade-requests/{id}/reject"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/admin/users/{user}/roles"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/agency/technicians"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/email/resend"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/email/verification-notification"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/forgot-password"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/kyc/upload"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/kyc/{id}/validate"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/login"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/logout"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/profile/avatar"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/register"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/request-upgrade"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/requests"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/auth/reset-password"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/contact"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/conversations"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/conversations/{conversationId}/messages"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/conversations/{conversationId}/messages/read"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/credits/purchase"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/disputes"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/disputes/{id}/message"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/follows/{userId}"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/holds"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/holds/{id}/capture"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/holds/{id}/release"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/interventions"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/interventions/{id}/complete"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/interventions/{id}/start"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/invoices/{id}/pay"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/jobs"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/locations"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/notifications/read-all"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/notifications/{id}/read"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/payments/{id}/confirm"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/position/update"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/posts"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/posts/{postId}/comments"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/posts/{postId}/like"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/proposals/{id}/accept"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/proposals/{id}/refuse"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/push-tokens"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/quotes"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/quotes/{id}/accept"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/quotes/{id}/reject"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/quotes/{id}/send"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/requests"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/requests/{id}/match"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/requests/{id}/select-technician"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/reviews"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/sla-events"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/sla-rules"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/subscriptions/cancel"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/subscriptions/pause"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/subscriptions/resume"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/subscriptions/subscribe"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/technician/exceptions"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/technician/profile"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/technician/skills"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/technician/time-slots"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/wallet/recharge"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/wallet/withdraw"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/webhooks/notchpay"
+ },
+ {
+  "method": "PUT",
+  "uri": "api/v1/admin/fees/{id}"
+ },
+ {
+  "method": "PUT",
+  "uri": "api/v1/admin/subscriptions/plans/{id}"
+ },
+ {
+  "method": "PUT",
+  "uri": "api/v1/admin/subscriptions/{id}"
+ },
+ {
+  "method": "PUT",
+  "uri": "api/v1/agencies/{id}"
+ },
+ {
+  "method": "PUT",
+  "uri": "api/v1/auth/profile"
+ },
+ {
+  "method": "PUT",
+  "uri": "api/v1/auth/profile/password"
+ },
+ {
+  "method": "PUT",
+  "uri": "api/v1/jobs/{id}/phases"
+ },
+ {
+  "method": "PUT",
+  "uri": "api/v1/notification-settings"
+ },
+ {
+  "method": "PUT",
+  "uri": "api/v1/posts/{id}"
+ },
+ {
+  "method": "PUT",
+  "uri": "api/v1/posts/{postId}/comments/{commentId}"
+ },
+ {
+  "method": "PUT",
+  "uri": "api/v1/sla-rules/{id}"
+ },
+ {
+  "method": "PUT",
+  "uri": "api/v1/technician/location"
+ },
+ {
+  "method": "PUT",
+  "uri": "api/v1/technician/profile"
+ }
+]
