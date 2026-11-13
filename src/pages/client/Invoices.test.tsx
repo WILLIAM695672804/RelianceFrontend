@@ -5,9 +5,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const getInvoices = vi.fn();
 const payInvoice = vi.fn();
+const downloadInvoicePdf = vi.fn();
 vi.mock('../../services/operationsService', () => ({
     getInvoices: (...a: unknown[]) => getInvoices(...a),
     payInvoice: (...a: unknown[]) => payInvoice(...a),
+    downloadInvoicePdf: (...a: unknown[]) => downloadInvoicePdf(...a),
 }));
 
 import Invoices from './Invoices';
@@ -70,5 +72,54 @@ describe('Invoices', () => {
         fireEvent.click(await screen.findByRole('button', { name: /payer/i }));
 
         await waitFor(() => expect(getInvoices.mock.calls.length).toBeGreaterThan(1));
+    });
+
+    it("mentionne les frais d'intervention de la plateforme lorsqu'ils existent", async () => {
+        getInvoices.mockResolvedValue({ data: [{ ...facture, platform_fee: 1200, net_to_issuer: 10800 }], meta: { last_page: 1 } });
+        renderPage();
+
+        expect(await screen.findByText(/frais d'intervention \(commission de la plateforme\)/i)).toBeInTheDocument();
+    });
+
+    it("n'affiche pas de ligne de frais lorsqu'aucune commission n'est active", async () => {
+        getInvoices.mockResolvedValue({ data: [{ ...facture, platform_fee: 0 }], meta: { last_page: 1 } });
+        renderPage();
+
+        await screen.findByRole('button', { name: /payer/i });
+        expect(screen.queryByText(/frais d'intervention/i)).not.toBeInTheDocument();
+    });
+
+    it('télécharge la facture en PDF sous un nom dérivé de sa référence', async () => {
+        const blob = new Blob(['%PDF-1.4'], { type: 'application/pdf' });
+        downloadInvoicePdf.mockResolvedValue(blob);
+        URL.createObjectURL = vi.fn(() => 'blob:facture');
+        URL.revokeObjectURL = vi.fn();
+        const clic = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+        getInvoices.mockResolvedValue({ data: [{ ...facture, reference: 'INV-0042' }], meta: { last_page: 1 } });
+        renderPage();
+
+        fireEvent.click(await screen.findByRole('button', { name: /télécharger le pdf/i }));
+
+        await waitFor(() => expect(downloadInvoicePdf).toHaveBeenCalledWith('f1'));
+        expect(clic).toHaveBeenCalled();
+        expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:facture');
+    });
+
+    it("signale l'échec du téléchargement du PDF", async () => {
+        downloadInvoicePdf.mockRejectedValue(new Error('403'));
+        renderPage();
+
+        fireEvent.click(await screen.findByRole('button', { name: /télécharger le pdf/i }));
+
+        expect(await screen.findByText(/téléchargement du pdf a échoué/i)).toBeInTheDocument();
+    });
+
+    it("propose d'activer la double authentification lorsque le serveur l'exige", async () => {
+        payInvoice.mockRejectedValue({ response: { status: 403, data: { message: 'Activez la double authentification (2FA).', requires_2fa_setup: true } } });
+        renderPage();
+
+        fireEvent.click(await screen.findByRole('button', { name: /payer/i }));
+
+        expect(await screen.findByRole('link', { name: /activer la double authentification/i })).toHaveAttribute('href', '/espace-client/profil');
     });
 });

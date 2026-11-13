@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const svc = vi.hoisted(() => ({ getStats: vi.fn() }));
+const svc = vi.hoisted(() => ({ getStats: vi.fn(), getRevenue: vi.fn() }));
 const navigate = vi.hoisted(() => vi.fn());
 vi.mock('../../services/adminService', () => ({ default: svc }));
 vi.mock('react-router-dom', async (orig) => ({ ...(await orig<typeof import('react-router-dom')>()), useNavigate: () => navigate }));
@@ -20,6 +20,7 @@ describe('AdminDashboard', () => {
         vi.clearAllMocks();
         vi.spyOn(console, 'error').mockImplementation(() => {});
         svc.getStats.mockResolvedValue(stats());
+        svc.getRevenue.mockResolvedValue({ data: { total: 6500, by_source: [{ source: 'job_commission', total: 1500 }, { source: 'subscription', total: 5000 }] } });
     });
 
     it('affiche les indicateurs clés', async () => {
@@ -64,5 +65,20 @@ describe('AdminDashboard', () => {
 
         await waitFor(() => expect(svc.getStats).toHaveBeenCalled());
         expect(document.querySelector('.adm-spinner')).not.toBeNull();
+    });
+
+    it("affiche les revenus de la plateforme par source, et reste utilisable sans eux", async () => {
+        render(<AdminDashboard />);
+
+        expect(await screen.findByText('Revenus de la plateforme')).toBeInTheDocument();
+        expect(screen.getByText(/job commission : 1.500 · subscription : 5.000/)).toBeInTheDocument();
+    });
+
+    it("n'affiche pas la carte de revenus si le serveur la refuse", async () => {
+        svc.getRevenue.mockRejectedValue(new Error('500'));
+        render(<AdminDashboard />);
+
+        await screen.findByText('Techniciens en attente');
+        expect(screen.queryByText('Revenus de la plateforme')).not.toBeInTheDocument();
     });
 });

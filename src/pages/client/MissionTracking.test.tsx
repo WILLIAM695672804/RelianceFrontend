@@ -10,6 +10,7 @@ vi.mock('../../services/matchingService', () => ({ default: matching }));
 vi.mock('../../context/ChatContext', () => ({ useChat: () => ({ openChat }) }));
 vi.mock('../../hooks/useProposalChannel', () => ({ useProposalChannel: (o: any) => { channels.proposal = o; } }));
 vi.mock('../../hooks/useTrackingChannel', () => ({ useTrackingChannel: (o: any) => { channels.tracking = o; } }));
+vi.mock('../../components/finance/DiagnosticFee', () => ({ default: () => null }));
 vi.mock('../../components/maps/RouteMap', () => ({ default: (p: any) => <div data-testid="route">{p.destination ? `${p.destination.latitude},${p.destination.longitude}` : 'aucune'}</div> }));
 vi.mock('../../components/reviews/ReviewModal', () => ({
     default: (p: any) => <div data-testid="review">{`${p.stage}|${p.requestId}`}<button onClick={p.onSubmitted}>soumettre</button><button onClick={p.onClose}>fermer</button></div>,

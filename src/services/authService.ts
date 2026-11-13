@@ -25,6 +25,8 @@ export interface LoginData {
 export interface AuthResponse {
     message: string;
     user: any;
+    /** Exigence de 2FA pour les clients (actions financières) : voir REQUIRE_2FA_CLIENTS côté serveur. */
+    requires_2fa_setup?: boolean;
 }
 
 const authService = {

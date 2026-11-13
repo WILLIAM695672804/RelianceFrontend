@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getInvoices, payInvoice, type Invoice } from '../../services/operationsService';
+import { getInvoices, payInvoice, downloadInvoicePdf, type Invoice } from '../../services/operationsService';
 import { Loading, EmptyState, ErrorState } from '../../components/common/AsyncStates';
 import { formatXAF, formatDate } from '../../utils/format';
 import './Invoices.css';
@@ -28,6 +28,24 @@ const Invoices: React.FC = () => {
     });
     const payError: any = payMutation.error;
     const insufficientFunds = payError?.response?.status === 402;
+    const needs2fa = !!payError?.response?.data?.requires_2fa_setup;
+    const [pdfError, setPdfError] = useState(false);
+
+    /** Télécharge la facture en PDF via un lien temporaire (la session Sanctum n'autorise pas un simple <a href>). */
+    const handlePdf = async (inv: Invoice) => {
+        setPdfError(false);
+        try {
+            const blob = await downloadInvoicePdf(inv.id);
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `facture-${inv.reference}.pdf`;
+            a.click();
+            URL.revokeObjectURL(url);
+        } catch {
+            setPdfError(true);
+        }
+    };
 
     const invoices: Invoice[] = data?.data ?? [];
     const hasMore = (data?.meta?.last_page ?? 1) > page;
@@ -60,7 +78,14 @@ const Invoices: React.FC = () => {
                     {insufficientFunds && (
                         <> <Link to="/espace-client/wallet" style={{ color: 'inherit', fontWeight: 600 }}>Recharger mon portefeuille</Link></>
                     )}
+                    {needs2fa && (
+                        <> <Link to="/espace-client/profil" style={{ color: 'inherit', fontWeight: 600 }}>Activer la double authentification</Link></>
+                    )}
                 </div>
+            )}
+
+            {pdfError && (
+                <div role="alert" style={{ color: '#dc2626', margin: '0 0 16px' }}>Le téléchargement du PDF a échoué. Réessayez.</div>
             )}
 
             {invoices.length === 0 ? (
@@ -93,6 +118,9 @@ const Invoices: React.FC = () => {
                                         {Number(inv.tax_amount) > 0 && (
                                             <span className="inv-tax">dont {formatXAF(inv.tax_amount)} de taxes</span>
                                         )}
+                                        {Number(inv.platform_fee) > 0 && (
+                                            <span className="inv-fee">Frais d'intervention (commission de la plateforme) : {formatXAF(inv.platform_fee ?? 0)}</span>
+                                        )}
                                     </div>
                                     <div className="inv-details">
                                         {inv.issuer && (
@@ -106,6 +134,13 @@ const Invoices: React.FC = () => {
                                             <span>{formatDate(inv.created_at)}</span>
                                         </div>
                                     </div>
+                                </div>
+
+                                <div className="inv-card-actions">
+                                    <button className="inv-pdf-btn" onClick={() => handlePdf(inv)}>
+                                        <span className="material-symbols-outlined">picture_as_pdf</span>
+                                        Télécharger le PDF
+                                    </button>
                                 </div>
 
                                 {inv.status === 'unpaid' && (

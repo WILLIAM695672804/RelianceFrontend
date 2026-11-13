@@ -75,19 +75,31 @@ describe('ProfileSettings', () => {
 
     // ── Édition du profil ──────────────────────────────────
 
-    it("préremplit l'édition, garde l'e-mail en lecture seule et n'envoie que nom et téléphone", async () => {
+    it("préremplit l'édition et n'envoie que nom et téléphone si l'e-mail est inchangé", async () => {
         auth.updateProfile.mockResolvedValue({});
-        const reload = vi.fn();
-        Object.defineProperty(window, 'location', { value: { ...window.location, reload }, configurable: true });
+        Object.defineProperty(window, 'location', { value: { ...window.location, reload: vi.fn() }, configurable: true });
         renderPage();
         fireEvent.click(await screen.findByText(/edit profile/i));
 
-        expect(screen.getByDisplayValue('alice@test.local')).toBeDisabled();
+        expect(screen.getByDisplayValue('alice@test.local')).toBeEnabled();
         fireEvent.change(screen.getByDisplayValue('Alice Client'), { target: { value: 'Alice Durand' } });
         fireEvent.click(screen.getByText(/save/i, { selector: 'button[type="submit"]' }));
 
         await waitFor(() => expect(auth.updateProfile).toHaveBeenCalledWith({ name: 'Alice Durand', phone: '+237600000000' }));
         expect(auth.updateAvatar).not.toHaveBeenCalled();
+    });
+
+    it("transmet le nouvel e-mail lorsqu'il change et prévient d'une nouvelle vérification", async () => {
+        auth.updateProfile.mockResolvedValue({});
+        Object.defineProperty(window, 'location', { value: { ...window.location, reload: vi.fn() }, configurable: true });
+        renderPage();
+        fireEvent.click(await screen.findByText(/edit profile/i));
+
+        expect(screen.getByText(/nouvelle vérification/i)).toBeInTheDocument();
+        fireEvent.change(screen.getByDisplayValue('alice@test.local'), { target: { value: '  nouveau@test.local ' } });
+        fireEvent.click(screen.getByText(/save/i, { selector: 'button[type="submit"]' }));
+
+        await waitFor(() => expect(auth.updateProfile).toHaveBeenCalledWith({ name: 'Alice Client', phone: '+237600000000', email: 'nouveau@test.local' }));
     });
 
     it("envoie aussi l'avatar choisi", async () => {

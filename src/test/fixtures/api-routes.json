@@ -73,6 +73,10 @@
  },
  {
   "method": "GET",
+  "uri": "api/v1/admin/ml-models"
+ },
+ {
+  "method": "GET",
   "uri": "api/v1/admin/payouts"
  },
  {
@@ -86,6 +90,10 @@
  {
   "method": "GET",
   "uri": "api/v1/admin/requests"
+ },
+ {
+  "method": "GET",
+  "uri": "api/v1/admin/revenue"
  },
  {
   "method": "GET",
@@ -245,6 +253,10 @@
  },
  {
   "method": "GET",
+  "uri": "api/v1/invoices/{id}/pdf"
+ },
+ {
+  "method": "GET",
   "uri": "api/v1/jobs"
  },
  {
@@ -353,6 +365,10 @@
  },
  {
   "method": "GET",
+  "uri": "api/v1/requests/{id}/diagnostic"
+ },
+ {
+  "method": "GET",
   "uri": "api/v1/requests/{requestId}/quotes"
  },
  {
@@ -440,6 +456,10 @@
   "uri": "api/v1/wallet/transactions"
  },
  {
+  "method": "GET",
+  "uri": "api/v1/wallets"
+ },
+ {
   "method": "PATCH",
   "uri": "api/v1/admin/fees/{id}/toggle"
  },
@@ -474,6 +494,10 @@
  {
   "method": "POST",
   "uri": "api/v1/admin/fees"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/admin/ml-models/train"
  },
  {
   "method": "POST",
@@ -613,6 +637,10 @@
  },
  {
   "method": "POST",
+  "uri": "api/v1/diagnostics/{id}/pay"
+ },
+ {
+  "method": "POST",
   "uri": "api/v1/disputes"
  },
  {
@@ -721,6 +749,10 @@
  },
  {
   "method": "POST",
+  "uri": "api/v1/requests/{id}/diagnostic"
+ },
+ {
+  "method": "POST",
   "uri": "api/v1/requests/{id}/match"
  },
  {
@@ -774,6 +806,10 @@
  {
   "method": "POST",
   "uri": "api/v1/wallet/withdraw"
+ },
+ {
+  "method": "POST",
+  "uri": "api/v1/wallets/convert"
  },
  {
   "method": "POST",

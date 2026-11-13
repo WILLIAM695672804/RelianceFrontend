@@ -91,6 +91,7 @@ import AgencyProfile from './pages/agency/AgencyProfile';
 // Auth Guard
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import LogoutConfirmModal from './components/auth/LogoutConfirmModal';
+import RouteTracker from './components/analytics/RouteTracker';
 
 function App() {
   return (
@@ -210,6 +211,7 @@ function App() {
         </Routes>
         <AuthModal />
         <LogoutConfirmModal />
+        <RouteTracker />
       </AuthProvider>
     </Router>
   );

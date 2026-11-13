@@ -29,6 +29,9 @@ export interface Invoice {
     issuer?: { id: string; name: string };
     amount: number;
     tax_amount: number;
+    /** Frais d'intervention (commission de plateforme) et net reversé au prestataire. */
+    platform_fee?: number;
+    net_to_issuer?: number;
     reference: string;
     external_pdf_ref: string | null;
     status: 'unpaid' | 'paid' | 'cancelled' | 'refunded';
@@ -121,6 +124,12 @@ export const getInvoices = async (page = 1): Promise<{ data: Invoice[]; meta: an
 export const getInvoice = async (id: string): Promise<Invoice> => {
     const response = await api.get(`/invoices/${id}`);
     return response.data.data;
+};
+
+/** Télécharge la facture au format PDF (octets) ; le nom de fichier est dérivé de la référence. */
+export const downloadInvoicePdf = async (id: string): Promise<Blob> => {
+    const response = await api.get(`/invoices/${id}/pdf`, { responseType: 'blob' });
+    return response.data;
 };
 
 export const payInvoice = async (id: string): Promise<Invoice> => {

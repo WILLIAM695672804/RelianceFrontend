@@ -21,6 +21,8 @@ interface AuthUser {
 interface AuthContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
+    /** Le serveur exige l'activation de la double authentification avant les actions financières. */
+    requires2faSetup: boolean;
     user: AuthUser | null;
     role: UserRole;
     isAuthModalOpen: boolean;
@@ -47,6 +49,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
     const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState<boolean>(false);
+    const [requires2faSetup, setRequires2faSetup] = useState<boolean>(false);
 
     const isAuthenticated = !!user;
     const role = getUserRole(user);
@@ -57,6 +60,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             try {
                 const data = await authService.getMe();
                 setUser(data.user);
+                setRequires2faSetup(!!data.requires_2fa_setup);
             } catch {
                 // No valid session cookie — user is not authenticated
                 setUser(null);
@@ -77,6 +81,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             const response = await authService.login(data);
             // Session Sanctum établie côté serveur (cookie de session httpOnly)
             setUser(response.user);
+            setRequires2faSetup(!!response.requires_2fa_setup);
             setIsAuthModalOpen(false);
             return { user: response.user };
         } catch (error: any) {
@@ -98,6 +103,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         try {
             const data = await authService.getMe();
             setUser(data.user);
+            setRequires2faSetup(!!data.requires_2fa_setup);
         } catch {
             // silently fail
         }
@@ -111,12 +117,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
         // Le serveur invalide la session et efface le cookie
         setUser(null);
+        setRequires2faSetup(false);
     }, []);
 
     return (
         <AuthContext.Provider value={{
             isAuthenticated,
             isLoading,
+            requires2faSetup,
             user,
             role,
             isAuthModalOpen,

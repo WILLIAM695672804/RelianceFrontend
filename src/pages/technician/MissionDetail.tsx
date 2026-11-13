@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { updateJobStatus, getQuotesForRequest, createJob, type TechnicianJob, type Quote } from '../../services/operationsService';
 import matchingService from '../../services/matchingService';
+import DiagnosticFee from '../../components/finance/DiagnosticFee';
 import './MissionDetail.css';
 
 const MissionDetail: React.FC = () => {
@@ -206,6 +207,7 @@ const MissionDetail: React.FC = () => {
 
                 {/* Right sidebar */}
                 <div className="md-sidebar">
+                    {request?.id && job && <DiagnosticFee requestId={request.id} role="technicien" />}
                     {/* Quick actions */}
                     <div className="md-card">
                         <h3 className="md-card-title">

@@ -13,7 +13,7 @@ import './ClientDashboardModern.css';
 const ClientDashboardModern: React.FC = () => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
-    const { user } = useAuth();
+    const { user, requires2faSetup } = useAuth();
     const [resendStatus, setResendStatus] = React.useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [showVerifiedModal, setShowVerifiedModal] = React.useState(searchParams.get('verified') === '1');
 
@@ -70,6 +70,20 @@ const ClientDashboardModern: React.FC = () => {
                         >
                             {resendStatus === 'loading' ? 'Envoi...' : (resendStatus === 'success' ? 'E-mail envoyé !' : 'Renvoyer le lien')}
                         </button>
+                    </div>
+                )}
+
+                {/* Double authentification exigée avant les actions financières (REQUIRE_2FA_CLIENTS) */}
+                {requires2faSetup && (
+                    <div className="verification-banner glass-card" role="alert">
+                        <div className="v-banner-content">
+                            <span className="material-symbols-outlined v-icon">shield_lock</span>
+                            <div className="v-text">
+                                <strong>Activez la double authentification</strong>
+                                <p>Elle est requise pour recharger votre portefeuille, payer une facture ou convertir des devises.</p>
+                            </div>
+                        </div>
+                        <button className="v-resend-btn" onClick={() => navigate('/espace-client/profil')}>Activer</button>
                     </div>
                 )}
 

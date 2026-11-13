@@ -8,6 +8,7 @@ const AdminDashboard: React.FC = () => {
     const navigate = useNavigate();
     const [stats, setStats] = useState<AdminStats | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [revenue, setRevenue] = useState<{ total: number; by_source: { source: string; total: number }[] } | null>(null);
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -21,6 +22,7 @@ const AdminDashboard: React.FC = () => {
             }
         };
         fetchStats();
+        adminService.getRevenue().then((r: any) => setRevenue(r.data)).catch(() => { /* indicateur facultatif */ });
     }, []);
 
     if (isLoading || !stats) {
@@ -73,6 +75,17 @@ const AdminDashboard: React.FC = () => {
                     <p className="adm-kpi-value">{stats.total_agencies.toLocaleString()}</p>
                 </div>
             </div>
+
+            {/* Revenus de la plateforme (commissions, abonnements) */}
+            {revenue && (
+                <div className="adm-glass adm-kpi-card" style={{ marginBottom: '1rem' }}>
+                    <p className="adm-kpi-label">Revenus de la plateforme</p>
+                    <p className="adm-kpi-value">{Number(revenue.total).toLocaleString('fr-FR')} XAF</p>
+                    <p style={{ fontSize: '0.8rem', opacity: 0.75 }}>
+                        {revenue.by_source.map((s) => `${s.source.replace(/_/g, ' ')} : ${Number(s.total).toLocaleString('fr-FR')}`).join(' · ') || 'Aucun revenu enregistré'}
+                    </p>
+                </div>
+            )}
 
             {/* Quick Action Cards */}
             <div className="adm-actions-row">

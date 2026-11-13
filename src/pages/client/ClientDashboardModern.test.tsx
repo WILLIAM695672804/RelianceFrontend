@@ -8,7 +8,8 @@ const fin = vi.hoisted(() => ({ getHolds: vi.fn(), getTransactions: vi.fn() }));
 const req = vi.hoisted(() => ({ list: vi.fn() }));
 const navigate = vi.hoisted(() => vi.fn());
 let currentUser: any;
-vi.mock('../../context/AuthContext', () => ({ useAuth: () => ({ user: currentUser }) }));
+const auth2fa = { value: false };
+vi.mock('../../context/AuthContext', () => ({ useAuth: () => ({ user: currentUser, requires2faSetup: auth2fa.value }) }));
 vi.mock('../../services/authService', () => ({ default: auth }));
 vi.mock('../../services/financeService', () => ({ financeService: fin }));
 vi.mock('../../services/requestService', () => ({ default: req }));
@@ -129,5 +130,18 @@ describe('ClientDashboardModern', () => {
         expect(navigate).toHaveBeenCalledWith('/espace-client/demande');
         expect(navigate).toHaveBeenCalledWith('/espace-client/factures');
         expect(navigate).toHaveBeenCalledWith('/espace-client/suivi');
+    });
+
+    it("affiche la bannière « double authentification » uniquement lorsque le serveur l'exige", async () => {
+        const { unmount } = renderPage();
+        await screen.findByTestId('map');
+        expect(screen.queryByText(/activez la double authentification/i)).not.toBeInTheDocument();
+        unmount();
+
+        auth2fa.value = true;
+        renderPage();
+        fireEvent.click(await screen.findByRole('button', { name: 'Activer' }));
+        expect(navigate).toHaveBeenCalledWith('/espace-client/profil');
+        auth2fa.value = false;
     });
 });

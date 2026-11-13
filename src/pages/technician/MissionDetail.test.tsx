@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const ops = vi.hoisted(() => ({ updateJobStatus: vi.fn(), getQuotesForRequest: vi.fn(), createJob: vi.fn() }));
 const matching = vi.hoisted(() => ({ getActiveMission: vi.fn() }));
 const navigate = vi.hoisted(() => vi.fn());
+vi.mock('../../components/finance/DiagnosticFee', () => ({ default: () => null }));
 vi.mock('../../services/operationsService', () => ops);
 vi.mock('../../services/matchingService', () => ({ default: matching }));
 vi.mock('react-router-dom', async (orig) => ({ ...(await orig<typeof import('react-router-dom')>()), useNavigate: () => navigate }));

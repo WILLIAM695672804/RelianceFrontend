@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const fin = vi.hoisted(() => ({ getWallet: vi.fn(), getTransactions: vi.fn(), withdraw: vi.fn() }));
 const navigate = vi.hoisted(() => vi.fn());
+vi.mock('../../components/finance/CurrencyWallets', () => ({ default: () => null }));
 vi.mock('../../services/financeService', () => ({ financeService: fin }));
 vi.mock('react-router-dom', async (orig) => ({ ...(await orig<typeof import('react-router-dom')>()), useNavigate: () => navigate }));
 

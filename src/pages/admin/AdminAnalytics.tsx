@@ -6,6 +6,9 @@ const AdminAnalytics: React.FC = () => {
   const [stats, setStats] = useState<any>(null);
   const [summary, setSummary] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [models, setModels] = useState<any[]>([]);
+  const [trainMessage, setTrainMessage] = useState('');
+  const [training, setTraining] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -21,6 +24,24 @@ const AdminAnalytics: React.FC = () => {
     };
     load();
   }, []);
+
+  const loadModels = async () => {
+    try { const res = await adminService.getMlModels(); setModels(res.data ?? []); } catch { /* section facultative */ }
+  };
+
+  useEffect(() => { void loadModels(); }, []);
+
+  const train = async () => {
+    setTraining(true);
+    setTrainMessage('');
+    try {
+      const res = await adminService.trainMlModel();
+      setTrainMessage(res.message || 'Calibrage terminé');
+      await loadModels();
+    } catch (e: any) {
+      setTrainMessage(e?.response?.data?.message || 'Le calibrage a échoué');
+    } finally { setTraining(false); }
+  };
 
   if (loading) return <div className="admin-loading">Chargement...</div>;
 
@@ -54,6 +75,31 @@ const AdminAnalytics: React.FC = () => {
             </tbody>
           </table>
         </>
+      )}
+
+      <h2 style={{ fontSize: '1.2rem', fontWeight: 600, margin: '2rem 0 1rem' }}>Modèle de prix suggéré</h2>
+      <p style={{ opacity: 0.8, marginBottom: 12 }}>
+        Le prix suggéré aux clients est calibré sur la médiane des prix réellement acceptés, par niveau de difficulté.
+      </p>
+      <button className="btn-primary" onClick={train} disabled={training}>{training ? 'Calibrage…' : 'Recalibrer maintenant'}</button>
+      {trainMessage && <p role="status" style={{ marginTop: 8 }}>{trainMessage}</p>}
+      {models.length === 0 ? (
+        <p style={{ marginTop: 12 }}>Aucun modèle entraîné pour le moment.</p>
+      ) : (
+        <table className="admin-table" style={{ marginTop: 12 }}>
+          <thead><tr><th>Version</th><th>État</th><th>Échantillons</th><th>Erreur moyenne (modèle)</th><th>Erreur moyenne (défaut)</th></tr></thead>
+          <tbody>
+            {models.map((m) => (
+              <tr key={m.id}>
+                <td>{m.version}</td>
+                <td>{m.deployed ? 'Déployé' : 'Archivé'}</td>
+                <td>{m.metrics?.samples ?? '—'}</td>
+                <td>{m.metrics?.mae_model ?? '—'}</td>
+                <td>{m.metrics?.mae_default ?? '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );

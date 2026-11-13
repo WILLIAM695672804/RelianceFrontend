@@ -62,7 +62,9 @@ const ProfileSettings: React.FC = () => {
             // Update profile info
             await authService.updateProfile({
                 name: editForm.name,
-                phone: editForm.phone
+                phone: editForm.phone,
+                // L'e-mail n'est transmis que s'il a changé : le serveur réinitialise alors sa vérification.
+                ...(editForm.email.trim() && editForm.email.trim() !== user?.email ? { email: editForm.email.trim() } : {}),
             });
 
             // Update avatar if a new file was selected
@@ -414,10 +416,14 @@ const ProfileSettings: React.FC = () => {
                                     <label>Email Address</label>
                                     <input 
                                         type="email" 
-                                        className="ps-input opacity-60"
+                                        className="ps-input"
                                         value={editForm.email}
-                                        disabled
+                                        onChange={(e) => setEditForm({...editForm, email: e.target.value})}
+                                        required
                                     />
+                                    <p className="ps-hint" style={{ fontSize: '0.75rem', opacity: 0.7, marginTop: 4 }}>
+                                        Un changement d'adresse nécessite une nouvelle vérification : un lien vous sera envoyé.
+                                    </p>
                                     <p className="text-[10px] mt-1 text-slate-400">Email cannot be changed here</p>
                                 </div>
                             </div>

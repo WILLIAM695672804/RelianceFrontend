@@ -200,6 +200,22 @@ const adminService = {
         const response = await api.get('/analytics/summary');
         return response.data;
     },
+
+    // Revenus de la plateforme et modèle de prix
+    async getRevenue(): Promise<any> {
+        const response = await api.get('/admin/revenue');
+        return response.data;
+    },
+
+    async getMlModels(): Promise<any> {
+        const response = await api.get('/admin/ml-models');
+        return response.data;
+    },
+
+    async trainMlModel(): Promise<any> {
+        const response = await api.post('/admin/ml-models/train');
+        return response.data;
+    },
 };
 
 export default adminService;

@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getInvoices, type Invoice } from '../../services/operationsService';
 import { financeService } from '../../services/financeService';
 import { Loading, EmptyState, ErrorState } from '../../components/common/AsyncStates';
+import CurrencyWallets from '../../components/finance/CurrencyWallets';
 import { formatXAF, formatDateTime } from '../../utils/format';
 import './ClientWallet.css';
 
@@ -373,6 +374,8 @@ const ClientWallet: React.FC = () => {
             </div>
 
             {/* Float Action Add Funds (Mobile mainly) */}
+            <div className="cw-content-area"><CurrencyWallets /></div>
+
             <button className="cw-mobile-fab md:hidden fixed right-6 bottom-24 w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50" onClick={() => setShowRechargeModal(true)}>
                 <span className="material-symbols-outlined">add</span>
             </button>

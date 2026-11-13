@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import matchingService from '../../services/matchingService';
 import RouteMap from '../../components/maps/RouteMap';
 import ReviewModal from '../../components/reviews/ReviewModal';
+import DiagnosticFee from '../../components/finance/DiagnosticFee';
 import { useChat } from '../../context/ChatContext';
 import { useProposalChannel } from '../../hooks/useProposalChannel';
 import { useTrackingChannel } from '../../hooks/useTrackingChannel';
@@ -310,6 +311,8 @@ const MissionTracking: React.FC = () => {
                 </div>
 
             
+
+            {mission?.request && tech && <DiagnosticFee requestId={mission.request.id} role="client" />}
 
             {/* Review Modal */}
             {showReviewModal && mission?.request && tech && (

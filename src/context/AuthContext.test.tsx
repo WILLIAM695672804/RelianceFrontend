@@ -121,4 +121,26 @@ describe('AuthContext', () => {
         render(<AuthProvider><p>contenu</p></AuthProvider>);
         expect(await screen.findByText('contenu')).toBeInTheDocument();
     });
+
+    it("mémorise l'exigence de 2FA fournie à la restauration de session et à la connexion, et l'efface à la déconnexion", async () => {
+        svc.getMe.mockResolvedValue({ user: admin, requires_2fa_setup: true });
+        svc.logout.mockResolvedValue(undefined);
+        const { result } = renderHook(() => useAuth(), { wrapper });
+        await waitFor(() => expect(result.current.requires2faSetup).toBe(true));
+
+        await act(async () => { await result.current.logout(); });
+        expect(result.current.requires2faSetup).toBe(false);
+
+        svc.login.mockResolvedValue({ user: admin, requires_2fa_setup: true });
+        await act(async () => { await result.current.login({} as never); });
+        expect(result.current.requires2faSetup).toBe(true);
+    });
+
+    it("considère l'exigence de 2FA absente par défaut", async () => {
+        svc.getMe.mockResolvedValue({ user: admin });
+        const { result } = renderHook(() => useAuth(), { wrapper });
+
+        await waitFor(() => expect(result.current.isAuthenticated).toBe(true));
+        expect(result.current.requires2faSetup).toBe(false);
+    });
 });
