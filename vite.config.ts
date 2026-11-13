@@ -39,7 +39,9 @@ export default defineConfig(({ command, mode }) => {
         include: ['src/**/*.{ts,tsx}'],
         exclude: ['src/test/**', 'src/**/*.test.{ts,tsx}', 'src/main.tsx', 'src/**/*.d.ts'],
         // Plancher de non-régression : à relever à mesure que les pages sont couvertes.
-        thresholds: { lines: 70, statements: 70, functions: 77, branches: 84 },
+        // Recalé au passage à vitest 5 : le remappage V8 fondé sur l'AST (vitest ≥ 4) mesure autrement
+        // (lignes 71,6 % → 94,0 %, branches 85,2 % → 82,1 % à code constant).
+        thresholds: { lines: 92, statements: 90, functions: 85, branches: 81 },
       },
     },
   }

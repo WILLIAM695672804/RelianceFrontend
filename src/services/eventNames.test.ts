@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { EventFormatter } from 'laravel-echo';
 
 // Sans broadcastAs(), Laravel diffuse le nom complet de la classe (App\Events\<Classe>).

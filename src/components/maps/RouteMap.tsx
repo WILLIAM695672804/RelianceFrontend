@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Map, { Marker, Source, Layer, NavigationControl } from 'react-map-gl/maplibre';
 import type { MapRef } from 'react-map-gl/maplibre';
+import type { Feature } from 'geojson';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 interface Position {
@@ -31,7 +32,7 @@ const RouteMap: React.FC<RouteMapProps> = ({
     originType = 'client',
 }) => {
     const mapRef = useRef<MapRef>(null);
-    const [routeGeoJSON, setRouteGeoJSON] = useState<GeoJSON.Feature | null>(null);
+    const [routeGeoJSON, setRouteGeoJSON] = useState<Feature | null>(null);
     const [routeInfo, setRouteInfo] = useState<{ duration: number; distance: number } | null>(null);
     const prevRouteKey = useRef('');
 
