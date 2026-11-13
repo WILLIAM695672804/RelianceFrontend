@@ -473,7 +473,12 @@ const ProfileSettings: React.FC = () => {
                                     </div>
                                 ) : twoFAData ? (
                                     <>
-                                        <div className="ps-2fa-qr" dangerouslySetInnerHTML={{ __html: twoFAData.qr_code_svg }} />
+                                        {/* Affiché comme image et non injecté dans le DOM : un SVG en <img> n'exécute aucun script. */}
+                                        <img
+                                            className="ps-2fa-qr"
+                                            src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(twoFAData.qr_code_svg)}`}
+                                            alt="QR code à scanner avec l'application d'authentification"
+                                        />
                                         <p className="ps-2fa-secret">Clé manuelle : <code>{twoFAData.secret}</code></p>
                                     </>
                                 ) : null}

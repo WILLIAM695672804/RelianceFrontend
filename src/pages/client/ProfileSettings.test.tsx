@@ -130,13 +130,18 @@ describe('ProfileSettings', () => {
     // ── Double authentification ────────────────────────────
 
     it("génère le secret, affiche le QR et la clé manuelle, puis active avec un code valide", async () => {
-        auth.generate2FA.mockResolvedValue({ secret: 'SECRET123', qr_code_svg: '<svg data-testid="qr"></svg>' });
+        auth.generate2FA.mockResolvedValue({ secret: 'SECRET123', qr_code_svg: '<svg data-testid="qr"><script>window.__xss = 1</script></svg>' });
         auth.enable2FA.mockResolvedValue(undefined);
         renderPage();
         await screen.findByRole('heading', { level: 1, name: 'Alice Client' });
 
         fireEvent.click(toggle2FA());
         expect(await screen.findByText('SECRET123')).toBeInTheDocument();
+        // Le SVG est rendu comme image : ni injecté dans le DOM, ni exécuté.
+        const qr = screen.getByAltText(/QR code/);
+        expect(qr.getAttribute('src')).toMatch(/^data:image\/svg\+xml;charset=utf-8,/);
+        expect(screen.queryByTestId('qr')).toBeNull();
+        expect((window as any).__xss).toBeUndefined();
         fireEvent.change(screen.getByPlaceholderText('123456'), { target: { value: '12a34b56' } });
         expect(screen.getByPlaceholderText('123456')).toHaveValue('123456');
         fireEvent.click(screen.getByRole('button', { name: 'Activer' }));
