@@ -14,7 +14,7 @@ export default defineConfig({
       include: ['src/**/*.{ts,tsx}'],
       exclude: ['src/test/**', 'src/**/*.test.{ts,tsx}', 'src/main.tsx', 'src/**/*.d.ts'],
       // Plancher de non-régression : à relever à mesure que les pages sont couvertes.
-      thresholds: { lines: 58, statements: 58, functions: 72, branches: 82 },
+      thresholds: { lines: 62, statements: 62, functions: 74, branches: 83 },
     },
   },
 })

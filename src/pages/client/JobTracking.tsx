@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { getJobTracking, getQuotesForRequest, acceptQuote, rejectQuote, type Quote } from '../../services/operationsService';
 import { useJobChannel } from '../../hooks/useJobChannel';
 import './JobTracking.css';
 
 interface TrackingData {
     job_id: string;
+    request_id?: string;
     status: string;
     phases: { title: string; status: string; notes?: string }[] | null;
     route: any;
@@ -20,7 +21,7 @@ const JobTracking: React.FC = () => {
     const navigate = useNavigate();
     const [tracking, setTracking] = useState<TrackingData | null>(null);
     const [quotes, setQuotes] = useState<Quote[]>([]);
-    const [requestId] = useState<string | null>(null);
+    const [escrow, setEscrow] = useState<'held' | 'insufficient_funds' | null>(null);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
 
@@ -46,11 +47,22 @@ const JobTracking: React.FC = () => {
         },
     });
 
+    const loadQuotes = async (requestId: string) => {
+        try {
+            setQuotes(await getQuotesForRequest(requestId));
+        } catch {
+            // les devis sont secondaires : le suivi reste affiché
+        }
+    };
+
     const fetchTracking = async () => {
         if (!jobId) return;
         try {
             const data = await getJobTracking(jobId);
             setTracking(data);
+            if (data?.request_id) {
+                await loadQuotes(data.request_id);
+            }
         } catch {
             // silent
         } finally {
@@ -61,11 +73,10 @@ const JobTracking: React.FC = () => {
     const handleAcceptQuote = async (quoteId: string) => {
         setActionLoading(true);
         try {
-            await acceptQuote(quoteId);
-            if (requestId) {
-                const q = await getQuotesForRequest(requestId);
-                setQuotes(q);
-            }
+            const res = await acceptQuote(quoteId);
+            // L'acceptation place les fonds sous séquestre si le solde le permet.
+            setEscrow(res?.data?.escrow ?? null);
+            if (tracking?.request_id) await loadQuotes(tracking.request_id);
         } catch {
             // silent
         } finally {
@@ -77,10 +88,7 @@ const JobTracking: React.FC = () => {
         setActionLoading(true);
         try {
             await rejectQuote(quoteId);
-            if (requestId) {
-                const q = await getQuotesForRequest(requestId);
-                setQuotes(q);
-            }
+            if (tracking?.request_id) await loadQuotes(tracking.request_id);
         } catch {
             // silent
         } finally {
@@ -186,6 +194,16 @@ const JobTracking: React.FC = () => {
                             </div>
                         ))}
                     </div>
+                </div>
+            )}
+
+            {escrow === 'held' && (
+                <div className="jt-card" role="status">Devis accepté : le montant est placé sous séquestre jusqu'à la fin de l'intervention.</div>
+            )}
+            {escrow === 'insufficient_funds' && (
+                <div className="jt-card" role="alert">
+                    Devis accepté, mais votre solde ne permet pas le séquestre.{' '}
+                    <Link to="/espace-client/wallet">Recharger mon portefeuille</Link>
                 </div>
             )}
 

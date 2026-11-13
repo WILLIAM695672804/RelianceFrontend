@@ -4,19 +4,10 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaSpinner } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import type { UserRole } from '../context/AuthContext';
+import { getRoleDashboard } from '../utils/roleDashboard';
 import Footer from '../components/layout/Footer';
 import '../styles/variables.css';
 import './Connexion.css';
-
-const getRoleDashboard = (role: UserRole): string => {
-    switch (role) {
-        case 'technicien': return '/technicien/dashboard';
-        case 'agence': return '/agence/dashboard';
-        case 'admin': return '/admin/dashboard';
-        case 'client': return '/espace-client/dashboard';
-        default: return '/';
-    }
-};
 
 const Connexion: React.FC = () => {
     const navigate = useNavigate();

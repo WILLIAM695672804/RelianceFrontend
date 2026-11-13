@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FaShieldAlt, FaArrowLeft, FaSpinner } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
+import { getRoleDashboard } from '../../utils/roleDashboard';
 import './Auth2FA.css';
 
 const Auth2FA: React.FC = () => {
@@ -27,7 +28,8 @@ const Auth2FA: React.FC = () => {
     }, [credentials, navigate]);
 
     const handleChange = (index: number, value: string) => {
-        if (isNaN(Number(value))) return;
+        // Un seul chiffre par case : ni espace, ni lettre, ni collage de plusieurs caractères.
+        if (!/^\d?$/.test(value)) return;
 
         const newOtp = [...otp];
         newOtp[index] = value;
@@ -61,12 +63,13 @@ const Auth2FA: React.FC = () => {
 
         setLoading(true);
         try {
-            await login({
+            const result = await login({
                 email: credentials.email,
                 password: credentials.password,
                 code: code,
             });
-            navigate('/espace-client/dashboard');
+            // Redirection selon le rôle réel (un technicien ou un admin n'arrive pas sur l'espace client).
+            navigate(getRoleDashboard(result.user?.roles?.[0]?.name ?? 'client'));
         } catch (err: any) {
             const msg = err.response?.data?.message || 'Code invalide';
             setError(msg);
