@@ -10,8 +10,10 @@ type Call = { method: string; url: string };
 const calls: Call[] = [];
 
 vi.mock('./api', () => {
-    const record = (method: string) => (url: string) => {
-        calls.push({ method: method.toUpperCase(), url });
+    const record = (method: string) => (url: string, body?: unknown) => {
+        // Method spoofing Laravel : un FormData posté avec `_method` est routé vers cette méthode.
+        const spoofed = typeof FormData !== 'undefined' && body instanceof FormData ? body.get('_method') : null;
+        calls.push({ method: String(spoofed ?? method).toUpperCase(), url });
         return Promise.resolve({ data: { data: [], meta: {} } });
     };
     return { default: { get: record('get'), post: record('post'), put: record('put'), patch: record('patch'), delete: record('delete') } };
@@ -26,6 +28,8 @@ const exists = ({ method, url }: Call) => {
 };
 
 const dummyFile = () => new File(['x'], 'x.txt');
+/** FormData portant `_method=PUT`, tel que le construit IdentityHub pour la mise à jour du profil. */
+const spoofedPut = () => { const f = new FormData(); f.append('_method', 'PUT'); return f; };
 const args = ['id-1', 'id-2', 'id-3', {}, {}];
 
 async function exerciseAll(mod: Record<string, unknown>) {
@@ -35,7 +39,7 @@ async function exerciseAll(mod: Record<string, unknown>) {
             // verifyEmail reçoit une URL signée complète fournie par le serveur : hors table de routage.
             if (typeof fn !== 'function' || fn.name === 'verifyEmail') continue;
             try {
-                await (fn as (...a: unknown[]) => unknown)(...args.slice(0, Math.max(fn.length, 3)).map((a, i) => (i === 1 && fn.name === 'uploadKycDocument' ? dummyFile() : a)));
+                await (fn as (...a: unknown[]) => unknown)(...args.slice(0, Math.max(fn.length, 3)).map((a, i) => (i === 1 && fn.name === 'uploadKycDocument' ? dummyFile() : i === 0 && fn.name === 'updateTechProfile' ? spoofedPut() : a)));
             } catch {
                 /* l'appel peut échouer sur des arguments factices : seule l'URL émise nous importe */
             }

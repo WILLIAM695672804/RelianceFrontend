@@ -761,10 +761,6 @@
  },
  {
   "method": "POST",
-  "uri": "api/v1/technician/profile"
- },
- {
-  "method": "POST",
   "uri": "api/v1/technician/skills"
  },
  {
