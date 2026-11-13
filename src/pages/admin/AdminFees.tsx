@@ -20,7 +20,10 @@ const AdminFees: React.FC = () => {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await adminService.createFee({ ...form, value: parseFloat(form.value) });
+      // Un pourcentage est saisi en % (10) et stocké en fraction (0,10) ; un montant fixe reste en XAF.
+      const saisie = parseFloat(form.value);
+      const value = form.fee_type === 'percentage' ? saisie / 100 : saisie;
+      await adminService.createFee({ ...form, value });
       setShowModal(false);
       setForm({ name: '', fee_type: 'percentage', value: '', applies_to: 'job' });
       await loadFees();
@@ -67,7 +70,7 @@ const AdminFees: React.FC = () => {
                 <option value="percentage">Pourcentage</option>
                 <option value="fixed">Montant fixe</option>
               </select>
-              <input type="number" step="0.0001" placeholder="Valeur" value={form.value} onChange={e => setForm({ ...form, value: e.target.value })} required />
+              <input type="number" step="0.01" min="0" max={form.fee_type === 'percentage' ? 100 : undefined} placeholder={form.fee_type === 'percentage' ? 'Valeur (%)' : 'Valeur (XAF)'} value={form.value} onChange={e => setForm({ ...form, value: e.target.value })} required />
               <select value={form.applies_to} onChange={e => setForm({ ...form, applies_to: e.target.value })}>
                 <option value="job">Job / Mission</option>
                 <option value="withdrawal">Retrait</option>

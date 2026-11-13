@@ -16,11 +16,13 @@ const ZoneIntervention: React.FC = () => {
     const load = async () => {
       try {
         const profile = await getTechProfile();
-        if (profile?.location) {
-          setLatitude(profile.location.latitude || profile.location.meta?.latitude);
-          setLongitude(profile.location.longitude || profile.location.meta?.longitude);
-          setAddress(profile.location.address || '');
-          setRadius(profile.location.radius_km || profile.location.radius || 20);
+        // GET /technician/profile expose la zone sous « service_perimeter » (IdentityHubResource).
+        const zone = profile?.service_perimeter ?? profile?.location;
+        if (zone) {
+          setLatitude(zone.latitude ?? zone.meta?.latitude ?? null);
+          setLongitude(zone.longitude ?? zone.meta?.longitude ?? null);
+          setAddress(zone.address || '');
+          setRadius(zone.radius_km || zone.radius || 20);
         }
       } catch { /* silent */ }
     };
