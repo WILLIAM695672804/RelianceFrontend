@@ -59,7 +59,9 @@ const InscriptionEntreprise: React.FC = () => {
             });
             navigate('/agence/dashboard');
         } catch (err: any) {
-            setError(err?.response?.data?.message || 'Échec de l\'inscription. Vérifiez vos informations.');
+            const data = err?.response?.data;
+            const premiereErreur = data?.errors ? (Object.values(data.errors).flat()[0] as string | undefined) : undefined;
+            setError(premiereErreur || data?.message || 'Échec de l\'inscription. Vérifiez vos informations.');
         } finally {
             setLoading(false);
         }

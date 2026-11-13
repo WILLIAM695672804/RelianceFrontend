@@ -54,7 +54,7 @@ const InscriptionAgence: React.FC = () => {
                 address: formData.address,
                 description: formData.description,
             });
-            navigate('/espace-client/dashboard');
+            navigate('/agence/dashboard');
         } catch (err: any) {
             const data = err.response?.data;
             if (data?.errors) {

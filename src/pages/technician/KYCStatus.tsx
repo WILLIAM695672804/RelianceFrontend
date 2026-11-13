@@ -10,6 +10,7 @@ interface KycDoc {
     status: string;
     icon: string;
     url?: string | null;
+    rejectionReason?: string | null;
 }
 
 const KYCStatus: React.FC = () => {
@@ -34,9 +35,13 @@ const KYCStatus: React.FC = () => {
                 const fetchedDocs = await fetchKycDocuments();
                 // Map the fetched docs back into the base structure
                 setKycDocs(prev => prev.map(base => {
-                    const found = fetchedDocs.find((d: any) => d.type === base.id);
+                    // Après un rejet, un nouveau dépôt crée un second document du même type :
+                    // c'est le plus récent qui fait foi.
+                    const found = fetchedDocs
+                        .filter((d: any) => d.type === base.id)
+                        .sort((a: any, b: any) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime())[0];
                     if (found) {
-                        return { ...base, status: found.status, url: found.url };
+                        return { ...base, status: found.status, url: found.url, rejectionReason: found.rejection_reason ?? null };
                     }
                     return base;
                 }));
@@ -72,7 +77,7 @@ const KYCStatus: React.FC = () => {
                 const res = await uploadKycDocument(docId, file);
                 
                 setKycDocs(prev => prev.map(doc => 
-                    doc.id === docId ? { ...doc, status: res.document.status || 'pending', url: res.document.url } : doc
+                    doc.id === docId ? { ...doc, status: res.document.status || 'pending', url: res.document.url, rejectionReason: null } : doc
                 ));
                 
                 setUploadStatus('success');
@@ -162,6 +167,11 @@ const KYCStatus: React.FC = () => {
                                         <span className="material-symbols-outlined text-sm mr-1">{theme.icon}</span>
                                         {theme.text}
                                     </div>
+                                    {doc.status === 'rejected' && doc.rejectionReason && (
+                                        <p className="tech-kyc-reject-reason" style={{ color: 'var(--error)', marginTop: 8, fontSize: '0.85rem' }}>
+                                            Motif du rejet : {doc.rejectionReason}
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="tech-kyc-doc-actions">
                                     {uploadingId === doc.id ? (
