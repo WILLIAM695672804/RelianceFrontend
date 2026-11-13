@@ -109,7 +109,7 @@ const MatchingResults: React.FC = () => {
                 {/* Header */}
                 <header className="mr-header">
                     <div>
-                        <h1 className="mr-header-title">Technician trouvers</h1>
+                        <h1 className="mr-header-title">Techniciens trouvés</h1>
                         <p className="mr-header-subtitle">Optimized results powered by our proprietary matching engine to find the most qualified artisans for your specific needs.</p>
                     </div>
                 </header>

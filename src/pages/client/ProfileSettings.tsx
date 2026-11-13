@@ -183,8 +183,7 @@ const ProfileSettings: React.FC = () => {
                         <div className="ps-hero-text">
                             <h1 className="ps-user-name">{user?.name || 'Client Name'}</h1>
                             <div className="ps-hero-meta">
-                                <span className="ps-badge-outline">Verified Account</span>
-                                <span className="text-xs">Joined June 2023</span>
+                                {user?.email_verified_at && <span className="ps-badge-outline">Verified Account</span>}
                             </div>
                         </div>
                     </div>
@@ -221,7 +220,7 @@ const ProfileSettings: React.FC = () => {
                                     <label>Primary Address</label>
                                     <div className="flex items-start gap-2 mt-1">
                                         <span className="material-symbols-outlined text-slate-400">location_on</span>
-                                        <p>{locations.find(l => l.is_default)?.address || 'Rue 1.234, Akwa, Douala, Cameroon'}</p>
+                                        <p>{locations.find(l => l.is_default)?.address || 'Not provided'}</p>
                                     </div>
                                 </div>
                             </div>
