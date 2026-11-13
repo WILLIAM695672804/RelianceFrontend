@@ -30,10 +30,10 @@ export function useQuoteChannel(options: UseQuoteChannelOptions) {
         const channel = echo.private(`quotes.${user.id}`);
 
         if (options.onQuoteSubmitted) {
-            channel.listen('.QuoteSubmitted', options.onQuoteSubmitted);
+            channel.listen('QuoteSubmitted', options.onQuoteSubmitted);
         }
         if (options.onInvoiceCreated) {
-            channel.listen('.InvoiceCreated', options.onInvoiceCreated);
+            channel.listen('InvoiceCreated', options.onInvoiceCreated);
         }
 
         return () => {

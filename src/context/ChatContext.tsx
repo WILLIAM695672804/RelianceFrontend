@@ -110,7 +110,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const channel = echo.private(`conversation.${conversation.id}`);
         channelRef.current = channel;
 
-        channel.listen('.MessageSent', (event: { message: MessageData }) => {
+        channel.listen('MessageSent', (event: { message: MessageData }) => {
             setMessages((prev) => [...prev, event.message]);
             if (event.message.sender_id !== user.id) {
                 if (isChatOpen) {
@@ -121,7 +121,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
         });
 
-        channel.listen('.MessageRead', (event: { user_id: string; read_at: string }) => {
+        channel.listen('MessageRead', (event: { user_id: string; read_at: string }) => {
             if (event.user_id !== user.id) {
                 setMessages((prev) =>
                     prev.map((msg) =>
@@ -147,8 +147,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
 
         return () => {
-            channel.stopListening('.MessageSent');
-            channel.stopListening('.MessageRead');
+            channel.stopListening('MessageSent');
+            channel.stopListening('MessageRead');
             echo.leave(`conversation.${conversation.id}`);
             channelRef.current = null;
         };

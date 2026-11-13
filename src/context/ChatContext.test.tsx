@@ -91,7 +91,7 @@ describe('ChatContext', () => {
     const pret = async () => {
         const hook = renderHook(() => useChat(), { wrapper });
         await waitFor(() => expect(hook.result.current.conversation).not.toBeNull());
-        await waitFor(() => expect(handlers.listen['.MessageSent']).toBeDefined());
+        await waitFor(() => expect(handlers.listen['MessageSent']).toBeDefined());
         return hook;
     };
 
@@ -99,9 +99,9 @@ describe('ChatContext', () => {
         const { result } = await pret();
         await waitFor(() => expect(result.current.unreadCount).toBe(3));
 
-        act(() => handlers.listen['.MessageSent']({ message: msg('m3', 't1') }));
+        act(() => handlers.listen['MessageSent']({ message: msg('m3', 't1') }));
         expect(result.current.unreadCount).toBe(4);
-        act(() => handlers.listen['.MessageSent']({ message: msg('m4', 'me') }));
+        act(() => handlers.listen['MessageSent']({ message: msg('m4', 'me') }));
         expect(result.current.unreadCount).toBe(4);
         expect(result.current.messages.map((m) => m.id)).toEqual(['m1', 'm2', 'm3', 'm4']);
     });
@@ -109,10 +109,10 @@ describe('ChatContext', () => {
     it("marque lu un message reçu fenêtre ouverte", async () => {
         const { result } = await pret();
         act(() => result.current.openChat());
-        await waitFor(() => expect(handlers.listen['.MessageSent']).toBeDefined());
+        await waitFor(() => expect(handlers.listen['MessageSent']).toBeDefined());
         chat.markAsRead.mockClear();
 
-        act(() => handlers.listen['.MessageSent']({ message: msg('m3', 't1') }));
+        act(() => handlers.listen['MessageSent']({ message: msg('m3', 't1') }));
 
         expect(chat.markAsRead).toHaveBeenCalledWith('c1');
     });
@@ -134,7 +134,7 @@ describe('ChatContext', () => {
         chat.getMessages.mockResolvedValue({ data: [msg('m1', 'me')], links: {} });
         const { result } = await pret();
 
-        act(() => handlers.listen['.MessageRead']({ user_id: 't1', read_at: '2026-11-02T00:00:00Z' }));
+        act(() => handlers.listen['MessageRead']({ user_id: 't1', read_at: '2026-11-02T00:00:00Z' }));
 
         expect(result.current.messages[0].read_at).toBe('2026-11-02T00:00:00Z');
     });
@@ -143,7 +143,7 @@ describe('ChatContext', () => {
         chat.getMessages.mockResolvedValue({ data: [msg('m1', 'me')], links: {} });
         const { result } = await pret();
 
-        act(() => handlers.listen['.MessageRead']({ user_id: 'me', read_at: '2026-11-02T00:00:00Z' }));
+        act(() => handlers.listen['MessageRead']({ user_id: 'me', read_at: '2026-11-02T00:00:00Z' }));
 
         expect(result.current.messages[0].read_at).toBeNull();
     });

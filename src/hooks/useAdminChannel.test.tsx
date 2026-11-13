@@ -24,7 +24,7 @@ describe('useAdminChannel', () => {
         renderHook(() => useAdminChannel({ onUserRegistered }));
 
         expect(echo.private).toHaveBeenCalledWith('admin.dashboard');
-        expect(listen).toHaveBeenCalledWith('.Admin\\NewUserRegistered', onUserRegistered);
+        expect(listen).toHaveBeenCalledWith('Admin\\NewUserRegistered', onUserRegistered);
     });
 
     it("n'écoute que les événements pour lesquels un gestionnaire est fourni", () => {
@@ -33,7 +33,7 @@ describe('useAdminChannel', () => {
         renderHook(() => useAdminChannel({ onDisputeOpened: vi.fn() }));
 
         expect(listen).toHaveBeenCalledTimes(1);
-        expect(listen.mock.calls[0][0]).toBe('.Admin\\DisputeOpened');
+        expect(listen.mock.calls[0][0]).toBe('Admin\\DisputeOpened');
     });
 
     it.each([

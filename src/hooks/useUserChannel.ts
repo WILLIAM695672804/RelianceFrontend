@@ -29,10 +29,10 @@ export function useUserChannel(options: UseUserChannelOptions) {
         const channel = echo.private(`user.${user.id}`);
 
         if (options.onKycStatusChanged) {
-            channel.listen('.KycStatusChanged', options.onKycStatusChanged);
+            channel.listen('KycStatusChanged', options.onKycStatusChanged);
         }
         if (options.onRoleUpgradeDecision) {
-            channel.listen('.RoleUpgradeDecision', options.onRoleUpgradeDecision);
+            channel.listen('RoleUpgradeDecision', options.onRoleUpgradeDecision);
         }
 
         return () => {

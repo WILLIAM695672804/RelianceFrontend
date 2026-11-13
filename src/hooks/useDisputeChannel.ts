@@ -31,10 +31,10 @@ export function useDisputeChannel({ disputeId, onMessageCreated, onStatusChanged
         const channel = echo.private(`disputes.${disputeId}`);
 
         if (onMessageCreated) {
-            channel.listen('.DisputeMessageCreated', onMessageCreated);
+            channel.listen('DisputeMessageCreated', onMessageCreated);
         }
         if (onStatusChanged) {
-            channel.listen('.DisputeStatusChanged', onStatusChanged);
+            channel.listen('DisputeStatusChanged', onStatusChanged);
         }
 
         return () => {

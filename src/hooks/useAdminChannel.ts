@@ -39,13 +39,13 @@ export function useAdminChannel(options: UseAdminChannelOptions) {
         const channel = echo.private('admin.dashboard');
 
         if (options.onUserRegistered) {
-            channel.listen('.Admin\\NewUserRegistered', options.onUserRegistered);
+            channel.listen('Admin\\NewUserRegistered', options.onUserRegistered);
         }
         if (options.onRequestCreated) {
-            channel.listen('.Admin\\NewRequestCreated', options.onRequestCreated);
+            channel.listen('Admin\\NewRequestCreated', options.onRequestCreated);
         }
         if (options.onDisputeOpened) {
-            channel.listen('.Admin\\DisputeOpened', options.onDisputeOpened);
+            channel.listen('Admin\\DisputeOpened', options.onDisputeOpened);
         }
 
         return () => {

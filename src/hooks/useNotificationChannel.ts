@@ -24,7 +24,7 @@ export function useNotificationChannel(options: UseNotificationChannelOptions) {
         const channel = echo.private(`notifications.${user.id}`);
 
         if (options.onNotificationCreated) {
-            channel.listen('.NotificationCreated', options.onNotificationCreated);
+            channel.listen('NotificationCreated', options.onNotificationCreated);
         }
 
         return () => {

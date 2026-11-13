@@ -29,10 +29,10 @@ export function useJobChannel({ jobId, onStatusChanged, onPhasesUpdated }: UseJo
         const channel = echo.private(`jobs.${jobId}`);
 
         if (onStatusChanged) {
-            channel.listen('.JobStatusChanged', onStatusChanged);
+            channel.listen('JobStatusChanged', onStatusChanged);
         }
         if (onPhasesUpdated) {
-            channel.listen('.PhasesUpdated', onPhasesUpdated);
+            channel.listen('PhasesUpdated', onPhasesUpdated);
         }
 
         return () => {

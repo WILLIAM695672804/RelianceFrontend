@@ -42,13 +42,13 @@ export function useProposalChannel(options: UseProposalChannelOptions) {
         const channel = echo.private(`proposals.${user.id}`);
 
         if (options.onProposalCreated) {
-            channel.listen('.ProposalCreated', options.onProposalCreated);
+            channel.listen('ProposalCreated', options.onProposalCreated);
         }
         if (options.onProposalAccepted) {
-            channel.listen('.ProposalAccepted', options.onProposalAccepted);
+            channel.listen('ProposalAccepted', options.onProposalAccepted);
         }
         if (options.onProposalRefused) {
-            channel.listen('.ProposalRefused', options.onProposalRefused);
+            channel.listen('ProposalRefused', options.onProposalRefused);
         }
 
         return () => {

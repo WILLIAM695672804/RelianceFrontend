@@ -38,16 +38,16 @@ export function useWalletChannel(options: UseWalletChannelOptions) {
         const channel = echo.private(`wallet.${user.id}`);
 
         if (options.onBalanceUpdated) {
-            channel.listen('.BalanceUpdated', options.onBalanceUpdated);
+            channel.listen('BalanceUpdated', options.onBalanceUpdated);
         }
         if (options.onPaymentSettled) {
-            channel.listen('.PaymentSettled', options.onPaymentSettled);
+            channel.listen('PaymentSettled', options.onPaymentSettled);
         }
         if (options.onHoldCaptured) {
-            channel.listen('.HoldCaptured', options.onHoldCaptured);
+            channel.listen('HoldCaptured', options.onHoldCaptured);
         }
         if (options.onHoldReleased) {
-            channel.listen('.HoldReleased', options.onHoldReleased);
+            channel.listen('HoldReleased', options.onHoldReleased);
         }
 
         return () => {

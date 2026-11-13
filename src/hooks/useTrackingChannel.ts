@@ -20,7 +20,7 @@ export function useTrackingChannel({ jobId, onPositionUpdated }: UseTrackingChan
         const channel = echo.private(`tracking.${jobId}`);
 
         if (onPositionUpdated) {
-            channel.listen('.TechnicianPositionUpdated', onPositionUpdated);
+            channel.listen('TechnicianPositionUpdated', onPositionUpdated);
         }
 
         return () => {
