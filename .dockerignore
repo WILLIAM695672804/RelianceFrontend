@@ -1,0 +1,10 @@
+# node_modules est réinstallé par « npm ci » pour l'architecture du serveur ;
+# l'envoyer coûterait plusieurs centaines de mégaoctets de contexte.
+node_modules/
+dist/
+coverage/
+.git/
+.env
+.env.*
+!.env.example
+*.log
