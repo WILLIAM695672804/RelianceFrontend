@@ -1,13 +1,22 @@
+/// <reference types="node" />
+import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { EventFormatter } from 'laravel-echo';
 
 // Sans broadcastAs(), Laravel diffuse le nom complet de la classe (App\Events\<Classe>).
 // Les tests des hooks simulent Echo : ils ne vérifient pas cette correspondance, d'où ce garde-fou.
-const sources = import.meta.glob(['/src/**/*.{ts,tsx}', '!/src/**/*.test.{ts,tsx}'], {
-    query: '?raw',
-    import: 'default',
-    eager: true,
-}) as Record<string, string>;
+// Sources lues avec fs et non import.meta.glob(?raw), qui fausserait la couverture V8 (cf. routes.contract.test.ts).
+function lister(dossier: string): string[] {
+    return readdirSync(dossier).flatMap((nom) => {
+        const chemin = join(dossier, nom);
+        if (statSync(chemin).isDirectory()) return nom === 'test' ? [] : lister(chemin);
+        return /\.(ts|tsx)$/.test(nom) && !/\.test\.(ts|tsx)$/.test(nom) ? [chemin] : [];
+    });
+}
+const sources = Object.fromEntries(
+    lister(join(process.cwd(), 'src')).map((f) => [f, readFileSync(f, 'utf8')]),
+);
 
 const ECOUTE = /\.(?:listen|stopListening)\(\s*['"]([^'"]+)['"]/g;
 
