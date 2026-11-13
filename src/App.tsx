@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import ScrollToTop from './components/common/ScrollToTop';
 // Header is now handled by PublicLayout
@@ -22,82 +23,88 @@ import InscriptionClient from './pages/inscription/InscriptionClient';
 import InscriptionTechnicien from './pages/inscription/InscriptionTechnicien';
 import InscriptionAgence from './pages/inscription/InscriptionAgence';
 import InscriptionEntreprise from './pages/inscription/InscriptionEntreprise';
-import VerifyEmail from './pages/client/VerifyEmail';
 
 // Public Layout
 import PublicLayout from './layouts/PublicLayout';
 
 // Client Space
-import ClientModernLayout from './layouts/ClientModernLayout';
-import ClientDashboardModern from './pages/client/ClientDashboardModern';
-import Auth2FA from './pages/client/Auth2FA';
-import RequestWizard from './pages/client/RequestWizard/RequestWizard';
-import MatchingResults from './pages/client/MatchingResults';
-import ClientAppointments from './pages/client/ClientAppointments';
-import MissionTracking from './pages/client/MissionTracking';
-import ClientWallet from './pages/client/ClientWallet';
-import ProfileSettings from './pages/client/ProfileSettings';
 
 // Technician Space
-import TechnicianLayout from './layouts/TechnicianLayout';
-import ZoneIntervention from './pages/technician/ZoneIntervention';
-import KYCStatus from './pages/technician/KYCStatus';
-import Dashboard from './pages/technician/Dashboard';
-import Planning from './pages/technician/Planning';
-import LiveRadar from './pages/technician/LiveRadar';
-import Cockpit from './pages/technician/Cockpit';
-import MissionDetail from './pages/technician/MissionDetail';
-import QuoteEditor from './pages/technician/QuoteEditor';
-import MissionCompletion from './pages/technician/MissionCompletion';
-import Wallet from './pages/technician/Wallet';
-import TransactionHistory from './pages/technician/TransactionHistory';
-import IdentityHub from './pages/technician/IdentityHub';
-import ReviewsList from './pages/technician/ReviewsList';
-import SocialWall from './pages/technician/SocialWall';
-import Trophies from './pages/technician/Trophies';
-import SlaAuditLog from './pages/technician/SlaAuditLog';
-import Subscriptions from './pages/technician/Subscriptions';
 
 // Client Operations Pages
-import Invoices from './pages/client/Invoices';
-import JobTracking from './pages/client/JobTracking';
 
 // Common Pages (shared between client & technician)
-import Notifications from './pages/common/Notifications';
-import Disputes from './pages/common/Disputes';
-import DisputeDetail from './pages/common/DisputeDetail';
 
 // Admin Space
-import AdminLayout from './layouts/AdminLayout';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminUsers from './pages/admin/AdminUsers';
-import AdminTechnicians from './pages/admin/AdminTechnicians';
-import AdminKyc from './pages/admin/AdminKyc';
-import AdminDisputes from './pages/admin/AdminDisputes';
-import AdminSubscriptions from './pages/admin/AdminSubscriptions';
-import AdminUpgradeRequests from './pages/admin/AdminUpgradeRequests';
-import AdminFees from './pages/admin/AdminFees';
-import AdminAnalytics from './pages/admin/AdminAnalytics';
-import AdminRequests from './pages/admin/AdminRequests';
-import AdminConversations from './pages/admin/AdminConversations';
-import AdminMap from './pages/admin/AdminMap';
 
 // Agency Space
-import AgencyLayout from './layouts/AgencyLayout';
-import AgencyDashboard from './pages/agency/AgencyDashboard';
-import AgencyMembers from './pages/agency/AgencyMembers';
-import AgencyProfile from './pages/agency/AgencyProfile';
 
 // Auth Guard
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import LogoutConfirmModal from './components/auth/LogoutConfirmModal';
 import RouteTracker from './components/analytics/RouteTracker';
 
+// Espaces authentifiés chargés à la demande : le visiteur d'une page publique ne télécharge ni la
+// carte (MapLibre) ni les écrans client, technicien, agence et administrateur.
+const VerifyEmail = lazy(() => import('./pages/client/VerifyEmail'));
+const ClientModernLayout = lazy(() => import('./layouts/ClientModernLayout'));
+const ClientDashboardModern = lazy(() => import('./pages/client/ClientDashboardModern'));
+const Auth2FA = lazy(() => import('./pages/client/Auth2FA'));
+const RequestWizard = lazy(() => import('./pages/client/RequestWizard/RequestWizard'));
+const MatchingResults = lazy(() => import('./pages/client/MatchingResults'));
+const ClientAppointments = lazy(() => import('./pages/client/ClientAppointments'));
+const MissionTracking = lazy(() => import('./pages/client/MissionTracking'));
+const ClientWallet = lazy(() => import('./pages/client/ClientWallet'));
+const ProfileSettings = lazy(() => import('./pages/client/ProfileSettings'));
+const TechnicianLayout = lazy(() => import('./layouts/TechnicianLayout'));
+const ZoneIntervention = lazy(() => import('./pages/technician/ZoneIntervention'));
+const KYCStatus = lazy(() => import('./pages/technician/KYCStatus'));
+const Dashboard = lazy(() => import('./pages/technician/Dashboard'));
+const Planning = lazy(() => import('./pages/technician/Planning'));
+const LiveRadar = lazy(() => import('./pages/technician/LiveRadar'));
+const Cockpit = lazy(() => import('./pages/technician/Cockpit'));
+const MissionDetail = lazy(() => import('./pages/technician/MissionDetail'));
+const QuoteEditor = lazy(() => import('./pages/technician/QuoteEditor'));
+const MissionCompletion = lazy(() => import('./pages/technician/MissionCompletion'));
+const Wallet = lazy(() => import('./pages/technician/Wallet'));
+const TransactionHistory = lazy(() => import('./pages/technician/TransactionHistory'));
+const IdentityHub = lazy(() => import('./pages/technician/IdentityHub'));
+const ReviewsList = lazy(() => import('./pages/technician/ReviewsList'));
+const SocialWall = lazy(() => import('./pages/technician/SocialWall'));
+const Trophies = lazy(() => import('./pages/technician/Trophies'));
+const SlaAuditLog = lazy(() => import('./pages/technician/SlaAuditLog'));
+const Subscriptions = lazy(() => import('./pages/technician/Subscriptions'));
+const Invoices = lazy(() => import('./pages/client/Invoices'));
+const JobTracking = lazy(() => import('./pages/client/JobTracking'));
+const Notifications = lazy(() => import('./pages/common/Notifications'));
+const Disputes = lazy(() => import('./pages/common/Disputes'));
+const DisputeDetail = lazy(() => import('./pages/common/DisputeDetail'));
+const AdminLayout = lazy(() => import('./layouts/AdminLayout'));
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
+const AdminTechnicians = lazy(() => import('./pages/admin/AdminTechnicians'));
+const AdminKyc = lazy(() => import('./pages/admin/AdminKyc'));
+const AdminDisputes = lazy(() => import('./pages/admin/AdminDisputes'));
+const AdminSubscriptions = lazy(() => import('./pages/admin/AdminSubscriptions'));
+const AdminUpgradeRequests = lazy(() => import('./pages/admin/AdminUpgradeRequests'));
+const AdminFees = lazy(() => import('./pages/admin/AdminFees'));
+const AdminAnalytics = lazy(() => import('./pages/admin/AdminAnalytics'));
+const AdminRequests = lazy(() => import('./pages/admin/AdminRequests'));
+const AdminConversations = lazy(() => import('./pages/admin/AdminConversations'));
+const AdminMap = lazy(() => import('./pages/admin/AdminMap'));
+const AgencyLayout = lazy(() => import('./layouts/AgencyLayout'));
+const AgencyDashboard = lazy(() => import('./pages/agency/AgencyDashboard'));
+const AgencyMembers = lazy(() => import('./pages/agency/AgencyMembers'));
+const AgencyProfile = lazy(() => import('./pages/agency/AgencyProfile'));
+
+const ChargementPage = () => <div className="page-loading" role="status" aria-live="polite">Chargement…</div>;
+
 function App() {
   return (
     <Router>
       <ScrollToTop />
       <AuthProvider>
+        <Suspense fallback={<ChargementPage />}>
         <Routes>
           {/* Routes Publiques avec le Header global */}
           <Route element={<PublicLayout />}>
@@ -209,6 +216,7 @@ function App() {
             <Route path="notifications" element={<Notifications />} />
           </Route>
         </Routes>
+        </Suspense>
         <AuthModal />
         <LogoutConfirmModal />
         <RouteTracker />

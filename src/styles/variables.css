@@ -255,3 +255,12 @@ button {
     padding: var(--spacing-2xl) 0;
   }
 }
+
+/* Indicateur affiché pendant le chargement différé d'un espace (App.tsx, Suspense) */
+.page-loading {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+  color: #64748b;
+  font-size: 0.95rem;
+}

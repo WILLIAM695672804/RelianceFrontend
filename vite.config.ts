@@ -37,7 +37,8 @@ export default defineConfig(({ command, mode }) => {
       coverage: {
         provider: 'v8',
         include: ['src/**/*.{ts,tsx}'],
-        exclude: ['src/test/**', 'src/**/*.test.{ts,tsx}', 'src/main.tsx', 'src/**/*.d.ts'],
+        // App.tsx : table de routage (chargements différés), vérifiée par routes.contract.test.ts.
+        exclude: ['src/test/**', 'src/**/*.test.{ts,tsx}', 'src/main.tsx', 'src/App.tsx', 'src/**/*.d.ts'],
         // Plancher de non-régression : à relever à mesure que les pages sont couvertes.
         // Recalé au passage à vitest 5 : le remappage V8 fondé sur l'AST (vitest ≥ 4) dénombre davantage
         // de branches et de fonctions (à code constant : branches 85,2 % → 63,9 %, fonctions 78,4 % → 67,1 %).
