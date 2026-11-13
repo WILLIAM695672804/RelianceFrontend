@@ -1,6 +1,7 @@
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 import api from './api';
+import { API_URL, REALTIME } from '../config';
 
 (window as any).Pusher = Pusher;
 
@@ -10,19 +11,20 @@ export function getEcho(): Echo<'pusher'> {
     if (!echoInstance) {
         echoInstance = new Echo({
             broadcaster: 'pusher',
-            key: 'reliance-key',
-            wsHost: '127.0.0.1',
-            wsPort: 6001,
-            forceTLS: false,
+            key: REALTIME.key,
+            wsHost: REALTIME.host,
+            wsPort: REALTIME.port,
+            wssPort: REALTIME.port,
+            forceTLS: REALTIME.tls,
             disableStats: true,
             cluster: 'mt1',
-            enabledTransports: ['ws'],
+            enabledTransports: REALTIME.tls ? ['wss'] : ['ws'],
             // Authorizer custom : pusher-js n'applique PAS withCredentials nativement,
             // donc le cookie auth_token n'était pas envoyé (→ 401). On passe par axios
             // (api) qui envoie le cookie (withCredentials) et l'auth Sanctum fonctionne.
             authorizer: (channel: any) => ({
                 authorize: (socketId: string, callback: (error: boolean, data: any) => void) => {
-                    api.post('http://127.0.0.1:8000/broadcasting/auth', {
+                    api.post(`${API_URL}/broadcasting/auth`, {
                         socket_id: socketId,
                         channel_name: channel.name,
                     })

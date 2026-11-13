@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { API_URL } from '../config';
 
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = API_URL;
 
 const api = axios.create({
     baseURL: `${API_BASE}/api/v1`,
@@ -9,7 +10,7 @@ const api = axios.create({
         'Accept': 'application/json',
     },
     withCredentials: true, // Send the Sanctum session cookie with every request
-    // Sanctum SPA : l'interface (:5173) et l'API (:8000) sont d'origines différentes. Depuis axios 1.6,
+    // Sanctum SPA : l'interface et l'API sont d'origines différentes. Depuis axios 1.6,
     // l'en-tête X-XSRF-TOKEN n'est ajouté entre origines que si withXSRFToken est vrai ; sans cela,
     // toute requête POST/PUT/DELETE (connexion comprise) reçoit un 419 « CSRF token mismatch ».
     withXSRFToken: true,

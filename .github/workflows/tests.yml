@@ -16,4 +16,11 @@ jobs:
       - run: npm ci
       - run: npx tsc -b
       - run: npm run test:coverage
-      - run: npm run build
+      - name: Build de production (valeurs fictives : vérifie la compilation et le garde-fou de configuration)
+        run: npm run build
+        env:
+          VITE_API_URL: https://api.reliance.example
+          VITE_PUSHER_APP_KEY: cle-ci
+          VITE_PUSHER_HOST: ws.reliance.example
+          VITE_PUSHER_PORT: '443'
+          VITE_PUSHER_SCHEME: https
