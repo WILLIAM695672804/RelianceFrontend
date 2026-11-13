@@ -148,7 +148,7 @@ const adminService = {
     },
 
     async updateFee(id: string, data: Partial<{ name: string; fee_type: string; value: number; applies_to: string; active: boolean }>): Promise<any> {
-        const response = await api.patch(`/admin/fees/${id}`, data);
+        const response = await api.put(`/admin/fees/${id}`, data);
         return response.data;
     },
 
@@ -192,12 +192,12 @@ const adminService = {
 
     // Analytics
     async getAnalytics(params?: { period?: string }): Promise<any> {
-        const response = await api.get('/admin/analytics', { params });
+        const response = await api.get('/analytics', { params });
         return response.data;
     },
 
     async getAnalyticsSummary(): Promise<any> {
-        const response = await api.get('/admin/analytics/summary');
+        const response = await api.get('/analytics/summary');
         return response.data;
     },
 };
