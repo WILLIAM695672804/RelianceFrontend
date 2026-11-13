@@ -8,7 +8,7 @@ vi.mock('../../services/financeService', () => ({ financeService: fin }));
 import CurrencyWallets from './CurrencyWallets';
 import DiagnosticFee from './DiagnosticFee';
 
-const plain = (s: string | null) => (s ?? '').replace(/[  ]/g, ' ');
+const plain = (s: string | null) => (s ?? '').replace(/[\u202f\u00a0]/g, ' ');
 const wrap = (ui: React.ReactElement) => render(<MemoryRouter>{ui}</MemoryRouter>);
 const wallets = [
     { currency: 'EUR', balance: 10, available_balance: 10 }, { currency: 'USD', balance: 0, available_balance: 0 },

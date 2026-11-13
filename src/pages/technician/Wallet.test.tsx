@@ -11,7 +11,7 @@ vi.mock('react-router-dom', async (orig) => ({ ...(await orig<typeof import('rea
 
 import Wallet from './Wallet';
 
-const plain = (s: string | null) => (s ?? '').replace(/[  ]/g, ' ');
+const plain = (s: string | null) => (s ?? '').replace(/[\u202f\u00a0]/g, ' ');
 const renderPage = () =>
     render(
         <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>

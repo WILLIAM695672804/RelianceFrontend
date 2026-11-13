@@ -42,7 +42,7 @@ const ClientDashboardModern: React.FC = () => {
             await authService.resendVerificationEmail();
             setResendStatus('success');
             setTimeout(() => setResendStatus('idle'), 5000);
-        } catch (error) {
+        } catch {
             setResendStatus('error');
             setTimeout(() => setResendStatus('idle'), 5000);
         }

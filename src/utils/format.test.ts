@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { formatDate, formatDateTime, formatNumber, formatXAF } from './format';
 
 // Intl insère des espaces insécables (U+202F / U+00A0) : on normalise avant comparaison.
-const plain = (s: string) => s.replace(/[  ]/g, ' ');
+const plain = (s: string) => s.replace(/[\u202f\u00a0]/g, ' ');
 
 describe('formatXAF', () => {
     it("arrondit à l'entier et suffixe la devise", () => {

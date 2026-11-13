@@ -18,7 +18,7 @@ vi.mock('react-router-dom', async (orig) => ({ ...(await orig<typeof import('rea
 
 import ClientDashboardModern from './ClientDashboardModern';
 
-const plain = (s: string | null) => (s ?? '').replace(/[  ]/g, ' ');
+const plain = (s: string | null) => (s ?? '').replace(/[\u202f\u00a0]/g, ' ');
 const renderPage = (url = '/espace-client/dashboard') =>
     render(
         <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
