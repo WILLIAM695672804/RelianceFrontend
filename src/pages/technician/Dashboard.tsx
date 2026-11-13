@@ -44,7 +44,11 @@ const Dashboard: React.FC = () => {
                 setProfile(profileData);
                 
                 const proposalsData = await matchingService.getTechnicianProposals();
-                setPendingProposals(proposalsData.data || proposalsData);
+                // /proposals/my renvoie { data: <paginateur{ data: [...] }> } et toutes les propositions :
+                // on extrait le tableau et on ne garde que celles qui attendent une réponse.
+                const payload: any = proposalsData?.data ?? proposalsData;
+                const list: any[] = Array.isArray(payload) ? payload : (Array.isArray(payload?.data) ? payload.data : []);
+                setPendingProposals(list.filter((p: any) => p.status === 'pending'));
             } catch (error) {
                 console.error("Failed to load data on dashboard", error);
             } finally {
@@ -94,18 +98,27 @@ const Dashboard: React.FC = () => {
                             <span className="tech-kpi-badge blue">NEW</span>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {pendingProposals.map((prop) => (
-                                <div key={prop.id} className="glass-panel p-4 flex flex-col justify-between border-l-4 border-blue-500" style={{ cursor: 'pointer' }} onClick={() => navigate(`/technicien/mission/${prop.client_request?.id || prop.request_id}`)}>
+                            {pendingProposals.map((prop) => {
+                                const req = prop.request ?? prop.client_request;
+                                const requestId = req?.id ?? prop.request_id;
+                                const category = typeof req?.category === 'string' ? req.category : req?.category?.name;
+                                const price = prop.estimated_price ?? prop.price;
+                                return (
+                                <div key={prop.id} className="glass-panel p-4 flex flex-col justify-between border-l-4 border-blue-500" style={{ cursor: 'pointer' }} onClick={() => navigate(`/technicien/mission/${requestId}`)}>
                                     <div>
                                         <div className="flex justify-between items-start mb-2">
-                                            <span className="tech-table-type">{prop.client_request?.category || 'Intervention'}</span>
-                                            <span className="tech-tech-match text-sm font-bold text-blue-600">{Math.round(prop.score)}% Match</span>
+                                            <span className="tech-table-type">{category || 'Intervention'}</span>
+                                            {Number.isFinite(Number(prop.score)) && prop.score != null && (
+                                                <span className="tech-tech-match text-sm font-bold text-blue-600">{Math.round(prop.score)}% Match</span>
+                                            )}
                                         </div>
-                                        <h5 className="font-bold text-slate-800">{prop.client_request?.title}</h5>
-                                        <p className="text-sm text-slate-500 mb-3 line-clamp-2">{prop.client_request?.description}</p>
+                                        <h5 className="font-bold text-slate-800">{req?.title}</h5>
+                                        <p className="text-sm text-slate-500 mb-3 line-clamp-2">{req?.description}</p>
                                         <div className="flex items-center text-xs text-slate-400 gap-3">
-                                            <span className="flex items-center"><span className="material-symbols-outlined text-xs mr-1">location_on</span> {Math.round(prop.distance)} km</span>
-                                            <span className="flex items-center"><span className="material-symbols-outlined text-xs mr-1">payments</span> {prop.estimated_price || 'A négocier'} XAF</span>
+                                            {prop.distance != null && Number.isFinite(Number(prop.distance)) && (
+                                                <span className="flex items-center"><span className="material-symbols-outlined text-xs mr-1">location_on</span> {Math.round(prop.distance)} km</span>
+                                            )}
+                                            <span className="flex items-center"><span className="material-symbols-outlined text-xs mr-1">payments</span> {price ? formatNumber(price) : 'A négocier'} XAF</span>
                                         </div>
                                     </div>
                                     <div className="flex gap-2 mt-4">
@@ -120,12 +133,13 @@ const Dashboard: React.FC = () => {
                                             e.stopPropagation();
                                             try {
                                                 await matchingService.acceptProposal(prop.id);
-                                                navigate(`/technicien/mission/${prop.client_request?.id || prop.request_id}`);
+                                                navigate(`/technicien/mission/${requestId}`);
                                             } catch { /* silent */ }
                                         }}>Accepter</button>
                                     </div>
                                 </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 )}
@@ -214,7 +228,7 @@ const Dashboard: React.FC = () => {
                             latitude={profile?.service_perimeter?.latitude || 4.0511} 
                             longitude={profile?.service_perimeter?.longitude || 9.7679} 
                             city={profile?.service_perimeter?.city || 'Cameroon Hub'}
-                            radiusInKm={50}
+                            radiusInKm={profile?.service_perimeter?.radius || 50}
                         />
                     </div>
                 </div>
