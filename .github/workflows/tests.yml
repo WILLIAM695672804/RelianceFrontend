@@ -15,10 +15,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx tsc -b
-      - name: Lint (les erreurs bloquent ; les avertissements recensent la dette)
+      - name: "Lint (les erreurs bloquent ; les avertissements recensent la dette)"
         run: npm run lint
       - run: npm run test:coverage
-      - name: Build de production (valeurs fictives : vérifie la compilation et le garde-fou de configuration)
+      - name: "Build de production (valeurs fictives, vérifie la compilation et le garde-fou de configuration)"
         run: npm run build
         env:
           VITE_API_URL: https://api.reliance.example
