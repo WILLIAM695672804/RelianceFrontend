@@ -13,6 +13,8 @@ export default defineConfig({
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],
       exclude: ['src/test/**', 'src/**/*.test.{ts,tsx}', 'src/main.tsx', 'src/**/*.d.ts'],
+      // Plancher de non-régression : à relever à mesure que les pages sont couvertes.
+      thresholds: { lines: 3, statements: 3, functions: 12, branches: 35 },
     },
   },
 })
