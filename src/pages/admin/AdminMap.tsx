@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Map, { Marker, Popup, NavigationControl } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import '../../components/maps/maplibreWorker';
 import adminService from '../../services/adminService';
 
 interface MapTechnician {

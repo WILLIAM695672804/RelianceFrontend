@@ -25,6 +25,7 @@ export default defineConfig(({ command, mode }) => {
           manualChunks: {
             react: ['react', 'react-dom', 'react-router-dom'],
             realtime: ['laravel-echo', 'pusher-js'],
+            maplibre: ['maplibre-gl'],
           },
         },
       },

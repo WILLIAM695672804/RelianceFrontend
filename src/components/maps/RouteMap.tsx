@@ -3,6 +3,7 @@ import Map, { Marker, Source, Layer, NavigationControl } from 'react-map-gl/mapl
 import type { MapRef } from 'react-map-gl/maplibre';
 import type { Feature } from 'geojson';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import './maplibreWorker';
 
 interface Position {
     latitude: number;
