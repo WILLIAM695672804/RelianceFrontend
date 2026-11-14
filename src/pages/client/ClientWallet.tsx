@@ -305,6 +305,10 @@ const ClientWallet: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Portefeuilles par devise : dans la colonne principale. Placés dans un second
+                    cw-content-area, ils formaient une demi-colonne voisine (.cw-page passe en ligne dès 768 px). */}
+                <CurrencyWallets />
+
                 {/* Transaction Ledger */}
                 <div className="cw-ledger-card rounded-3xl overflow-hidden mt-6">
                     <div className="cw-ledger-header flex items-center justify-between p-6 border-b border-slate-100">
@@ -374,7 +378,6 @@ const ClientWallet: React.FC = () => {
             </div>
 
             {/* Float Action Add Funds (Mobile mainly) */}
-            <div className="cw-content-area"><CurrencyWallets /></div>
 
             <button className="cw-mobile-fab md:hidden fixed right-6 bottom-24 w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50" onClick={() => setShowRechargeModal(true)}>
                 <span className="material-symbols-outlined">add</span>

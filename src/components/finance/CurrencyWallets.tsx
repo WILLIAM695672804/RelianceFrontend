@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { financeService } from '../../services/financeService';
+import './CurrencyWallets.css';
 
 interface WalletLine { currency: string; balance: number; available_balance: number; }
 
@@ -48,28 +49,48 @@ const CurrencyWallets: React.FC = () => {
     };
 
     return (
-        <section className="currency-wallets" aria-label="Portefeuilles par devise" style={{ marginTop: 24 }}>
-            <h3>Mes devises</h3>
-            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+        <section className="currency-wallets cwx-card" aria-label="Portefeuilles par devise">
+            <header className="cwx-header">
+                <h3 className="cwx-title">Mes devises</h3>
+                <p className="cwx-subtitle">Soldes disponibles et conversion au taux fixé par l'administration.</p>
+            </header>
+            <ul className="cwx-balances">
                 {wallets.map((w) => (
-                    <li key={w.currency} data-testid={`wallet-${w.currency}`}>
-                        <strong>{w.currency}</strong> : {formater(Number(w.available_balance ?? w.balance), w.currency)}
+                    <li
+                        key={w.currency}
+                        data-testid={`wallet-${w.currency}`}
+                        className={`cwx-balance${w.currency === 'XAF' ? ' cwx-balance--principal' : ''}`}
+                    >
+                        <span className="cwx-currency">{w.currency}</span>
+                        <span className="cwx-amount">{formater(Number(w.available_balance ?? w.balance), w.currency)}</span>
                     </li>
                 ))}
             </ul>
-            <form onSubmit={convertir} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                <input type="number" min="0" step="0.01" placeholder="Montant à convertir" value={amount} onChange={(e) => setAmount(e.target.value)} />
-                <select aria-label="Devise source" value={from} onChange={(e) => setFrom(e.target.value)}>
-                    {DEVISES.map((d) => <option key={d} value={d}>{d}</option>)}
-                </select>
-                <span aria-hidden>→</span>
-                <select aria-label="Devise cible" value={to} onChange={(e) => setTo(e.target.value)}>
-                    {DEVISES.map((d) => <option key={d} value={d}>{d}</option>)}
-                </select>
-                <button type="submit" disabled={busy}>{busy ? 'Conversion…' : 'Convertir'}</button>
+            <form className="cwx-convert" onSubmit={convertir}>
+                <p className="cwx-convert-label">Convertir entre mes devises</p>
+                <input
+                    className="cwx-input"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    inputMode="decimal"
+                    placeholder="Montant à convertir"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                />
+                <div className="cwx-pair">
+                    <select className="cwx-select" aria-label="Devise source" value={from} onChange={(e) => setFrom(e.target.value)}>
+                        {DEVISES.map((d) => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                    <span className="material-symbols-outlined cwx-arrow" aria-hidden>arrow_forward</span>
+                    <select className="cwx-select" aria-label="Devise cible" value={to} onChange={(e) => setTo(e.target.value)}>
+                        {DEVISES.map((d) => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                </div>
+                <button className="cwx-button" type="submit" disabled={busy}>{busy ? 'Conversion…' : 'Convertir'}</button>
             </form>
             {message && (
-                <p role={message.type === 'ok' ? 'status' : 'alert'} style={{ color: message.type === 'ok' ? '#16a34a' : '#dc2626' }}>
+                <p role={message.type === 'ok' ? 'status' : 'alert'} className={`cwx-message cwx-message--${message.type}`}>
                     {message.texte}
                     {message.activer2fa && <> <Link to="/espace-client/profil">Activer la double authentification</Link></>}
                 </p>
