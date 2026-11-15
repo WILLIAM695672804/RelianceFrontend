@@ -4,7 +4,6 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getInvoices, type Invoice } from '../../services/operationsService';
 import { financeService } from '../../services/financeService';
 import { Loading, EmptyState, ErrorState } from '../../components/common/AsyncStates';
-import CurrencyWallets from '../../components/finance/CurrencyWallets';
 import { formatXAF, formatDateTime } from '../../utils/format';
 import './ClientWallet.css';
 
@@ -304,10 +303,6 @@ const ClientWallet: React.FC = () => {
                         </div>
                     </div>
                 </div>
-
-                {/* Portefeuilles par devise : dans la colonne principale. Placés dans un second
-                    cw-content-area, ils formaient une demi-colonne voisine (.cw-page passe en ligne dès 768 px). */}
-                <CurrencyWallets />
 
                 {/* Transaction Ledger */}
                 <div className="cw-ledger-card rounded-3xl overflow-hidden mt-6">

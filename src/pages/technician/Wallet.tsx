@@ -5,7 +5,6 @@ import './Wallet.css';
 import './Withdrawal.css';
 import { financeService } from '../../services/financeService';
 import { Loading, EmptyState, ErrorState } from '../../components/common/AsyncStates';
-import CurrencyWallets from '../../components/finance/CurrencyWallets';
 import { formatXAF, formatNumber, formatDate } from '../../utils/format';
 
 const Wallet: React.FC = () => {
@@ -222,8 +221,6 @@ const Wallet: React.FC = () => {
                     </div>
                 )}
             </section>
-
-            <CurrencyWallets />
 
             {/* ===== Withdrawal Bottom Sheet Modal ===== */}
             <div 

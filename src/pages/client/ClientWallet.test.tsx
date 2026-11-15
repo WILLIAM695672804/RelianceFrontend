@@ -8,7 +8,6 @@ const fin = vi.hoisted(() => ({
     rechargeWallet: vi.fn(), getPayment: vi.fn(), confirmPayment: vi.fn(),
 }));
 const getInvoices = vi.hoisted(() => vi.fn());
-vi.mock('../../components/finance/CurrencyWallets', () => ({ default: () => null }));
 vi.mock('../../services/financeService', () => ({ financeService: fin }));
 vi.mock('../../services/operationsService', () => ({ getInvoices }));
 

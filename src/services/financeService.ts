@@ -4,9 +4,6 @@ export const financeService = {
   // Wallet
   getWallet: () => api.get('/wallet'),
   // Portefeuilles multi-devises (XAF, EUR, USD) et conversion au taux de l'administrateur
-  getWallets: () => api.get('/wallets'),
-  convertCurrency: (data: { amount: number; from_currency: string; to_currency: string }) =>
-    api.post('/wallets/convert', data),
   rechargeWallet: (data: { amount: number; method: string; phone_number?: string }) =>
     api.post('/wallet/recharge', data),
   getTransactions: (page = 1) => api.get(`/wallet/transactions?page=${page}`),
