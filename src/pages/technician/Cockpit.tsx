@@ -1,9 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RouteMap from '../../components/maps/RouteMap';
 import matchingService from '../../services/matchingService';
 import { useChat } from '../../context/ChatContext';
 import { createJob, updateJobStatus, type TechnicianJob } from '../../services/operationsService';
+
+/** Intervalle de renvoi de la position à l'arrêt (le serveur la conserve 5 minutes). */
+const POSITION_SIGNAL_MS = 30_000;
 import './Cockpit.css';
 
 // Flux de statut d'intervention (identique a MissionDetail) : un cran a la fois.
@@ -107,21 +110,31 @@ const Cockpit: React.FC = () => {
         } catch { /* silent */ }
     }, []);
 
+    // watchPosition ne signale une position qu'au déplacement : à l'arrêt, plus rien ne partait et le
+    // serveur l'oubliait au bout de 5 minutes. La dernière position est donc renvoyée toutes les
+    // 30 s tant que le cockpit est ouvert.
+    const dernierePosition = useRef<{ lat: number; lng: number } | null>(null);
+
     useEffect(() => {
         if (!navigator.geolocation) return;
         const watchId = navigator.geolocation.watchPosition(
             (pos) => {
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
+                dernierePosition.current = { lat, lng };
                 setMyPosition({ latitude: lat, longitude: lng });
                 sendPosition(lat, lng);
             },
-            () => {},
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
+            () => { /* délai dépassé ou position indisponible : la dernière connue reste valable */ },
+            { enableHighAccuracy: true, timeout: 30000, maximumAge: 5000 }
         );
+        const signal = setInterval(() => {
+            if (dernierePosition.current) sendPosition(dernierePosition.current.lat, dernierePosition.current.lng);
+        }, POSITION_SIGNAL_MS);
 
         return () => {
             navigator.geolocation.clearWatch(watchId);
+            clearInterval(signal);
         };
     }, [sendPosition]);
 

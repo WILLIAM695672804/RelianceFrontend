@@ -83,11 +83,14 @@ describe('MissionTracking', () => {
     // ── Suivi de position ──────────────────────────────────
 
     it('affiche la position initiale du technicien puis ses mises à jour en direct', async () => {
-        matching.getTechnicianPosition.mockResolvedValue({ data: { latitude: 4.01, longitude: 9.71 } });
+        const ilYa = (min: number) => new Date(Date.now() - min * 60_000).toISOString();
+        matching.getTechnicianPosition.mockResolvedValue({ data: { latitude: 4.01, longitude: 9.71, updated_at: ilYa(7) } });
         renderPage();
         await waitFor(() => expect(screen.getByTestId('route')).toHaveTextContent('4.01,9.71'));
+        // Une position ancienne n'est pas présentée comme « en direct ».
+        expect(screen.getByText('Dernière position il y a 7 min')).toBeInTheDocument();
 
-        await act(async () => { channels.tracking.onPositionUpdated({ latitude: 4.02, longitude: 9.72 }); });
+        await act(async () => { channels.tracking.onPositionUpdated({ latitude: 4.02, longitude: 9.72, timestamp: ilYa(0) }); });
 
         expect(screen.getByTestId('route')).toHaveTextContent('4.02,9.72');
         expect(channels.tracking.jobId).toBe('j1');

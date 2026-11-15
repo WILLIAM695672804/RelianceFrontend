@@ -7,6 +7,7 @@ import DiagnosticFee from '../../components/finance/DiagnosticFee';
 import { useChat } from '../../context/ChatContext';
 import { useProposalChannel } from '../../hooks/useProposalChannel';
 import { useTrackingChannel } from '../../hooks/useTrackingChannel';
+import { fraicheurPosition } from '../../utils/fraicheurPosition';
 import './MissionTracking.css';
 
 interface MissionData {
@@ -46,7 +47,13 @@ const MissionTracking: React.FC = () => {
     const [mission, setMission] = useState<MissionData | null>(null);
     const [loading, setLoading] = useState(true);
     const [myPosition, setMyPosition] = useState<{ latitude: number; longitude: number } | null>(null);
-    const [techPosition, setTechPosition] = useState<{ latitude: number; longitude: number } | null>(null);
+    const [techPosition, setTechPosition] = useState<{ latitude: number; longitude: number; updatedAt?: string } | null>(null);
+    // Horloge rafraîchie toutes les 30 s : l'âge de la position affiché suit le temps qui passe.
+    const [maintenant, setMaintenant] = useState(() => Date.now());
+    useEffect(() => {
+        const horloge = setInterval(() => setMaintenant(Date.now()), 30_000);
+        return () => clearInterval(horloge);
+    }, []);
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [reviewStage, setReviewStage] = useState<'pre' | 'post'>('post');
     const [preReviewDone, setPreReviewDone] = useState(false);
@@ -81,7 +88,7 @@ const MissionTracking: React.FC = () => {
         const watchId = navigator.geolocation.watchPosition(
             (pos) => setMyPosition({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
             () => {},
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
+            { enableHighAccuracy: true, timeout: 30000, maximumAge: 10000 }
         );
         return () => navigator.geolocation.clearWatch(watchId);
     }, []);
@@ -92,7 +99,7 @@ const MissionTracking: React.FC = () => {
             try {
                 const res = await matchingService.getTechnicianPosition();
                 if (res.data) {
-                    setTechPosition({ latitude: res.data.latitude, longitude: res.data.longitude });
+                    setTechPosition({ latitude: res.data.latitude, longitude: res.data.longitude, updatedAt: res.data.updated_at });
                 }
             } catch { /* silent */ }
         };
@@ -103,7 +110,7 @@ const MissionTracking: React.FC = () => {
     useTrackingChannel({
         jobId: mission?.job_id ?? undefined,
         onPositionUpdated: (data) => {
-            setTechPosition({ latitude: data.latitude, longitude: data.longitude });
+            setTechPosition({ latitude: data.latitude, longitude: data.longitude, updatedAt: data.timestamp });
         },
     });
 
@@ -209,7 +216,7 @@ const MissionTracking: React.FC = () => {
                                 </div>
                                 <div className="mt-step-info">
                                     <p className="mt-step-title">En route</p>
-                                    {techPosition && <p className="mt-step-desc">Position en direct</p>}
+                                    {techPosition && <p className="mt-step-desc">{fraicheurPosition(techPosition.updatedAt, maintenant)}</p>}
                                 </div>
                             </div>
                             <div className="mt-timeline-step pending">

@@ -30,20 +30,23 @@ const ClientLocationMap: React.FC<ClientLocationMapProps> = ({ onLocationFound }
             },
             (err) => {
                 setLoading(false);
-                switch (err.code) {
-                    case err.PERMISSION_DENIED:
-                        setError('Activez la localisation pour voir votre position');
-                        break;
-                    case err.POSITION_UNAVAILABLE:
-                        setError('Position indisponible');
-                        break;
-                    default:
-                        setError('Impossible de récupérer votre position');
+                // Un délai dépassé ou une position momentanément indisponible (appareil immobile,
+                // intérieur, ordinateur) ne doit pas effacer la dernière position connue : la carte
+                // disparaissait au profit d'un message d'erreur au bout de quelques secondes.
+                // Seul un refus d'autorisation retire la position ; sinon l'erreur ne s'affiche
+                // que si aucune position n'a encore été obtenue (setError ne masque rien sinon).
+                if (err.code === err.PERMISSION_DENIED) {
+                    setPosition(null);
+                    setError('Activez la localisation pour voir votre position');
+                    return;
                 }
+                setError(err.code === err.POSITION_UNAVAILABLE
+                    ? 'Position indisponible'
+                    : 'Impossible de récupérer votre position');
             },
             {
                 enableHighAccuracy: true,
-                timeout: 10000,
+                timeout: 30000,
                 maximumAge: 30000,
             }
         );
@@ -61,7 +64,7 @@ const ClientLocationMap: React.FC<ClientLocationMapProps> = ({ onLocationFound }
         );
     }
 
-    if (error || !position) {
+    if (!position) {
         return (
             <div style={overlayStyle}>
                 <span className="material-symbols-outlined" style={{ fontSize: '32px', color: '#ef4444' }}>location_off</span>

@@ -142,4 +142,26 @@ describe('Cockpit', () => {
         unmount();
         expect(clearWatch).toHaveBeenCalledWith(7);
     });
+
+    it("renvoie la dernière position toutes les 30 s, même à l'arrêt", async () => {
+        vi.useFakeTimers({ shouldAdvanceTime: true });
+        try {
+            const watchPosition = vi.fn((ok: PositionCallback) => { ok({ coords: { latitude: 4.01, longitude: 9.71 } } as GeolocationPosition); return 7; });
+            geoloc({ watchPosition, clearWatch: vi.fn() });
+            const { unmount } = renderPage();
+            await waitFor(() => expect(matching.updatePosition).toHaveBeenCalledTimes(1));
+
+            await vi.advanceTimersByTimeAsync(30_000);
+            expect(matching.updatePosition).toHaveBeenCalledTimes(2);
+            await vi.advanceTimersByTimeAsync(30_000);
+            expect(matching.updatePosition).toHaveBeenCalledTimes(3);
+            expect(matching.updatePosition).toHaveBeenLastCalledWith(4.01, 9.71);
+
+            unmount();
+            await vi.advanceTimersByTimeAsync(60_000);
+            expect(matching.updatePosition).toHaveBeenCalledTimes(3); // plus d'envoi une fois la page quittée
+        } finally {
+            vi.useRealTimers();
+        }
+    });
 });
