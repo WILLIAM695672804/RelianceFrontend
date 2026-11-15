@@ -51,4 +51,19 @@ describe('VerifyEmail', () => {
         expect(await screen.findByText('Lien expiré')).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /retour a la connexion/i })).toBeInTheDocument();
     });
+
+    it("reconstitue l'appel de vérification à partir du lien direct", async () => {
+        verifyEmail.mockResolvedValue({ message: 'Vérifié' });
+        renderAt('?id=9e4867&hash=abc123&expires=1794734280&signature=f00d');
+
+        await screen.findByText('Vérifié');
+        expect(verifyEmail).toHaveBeenCalledWith('/auth/email/verify/9e4867/abc123?expires=1794734280&signature=f00d');
+    });
+
+    it("un lien direct incomplet est signalé comme invalide", async () => {
+        renderAt('?id=9e4867&hash=abc123');
+
+        expect(await screen.findByText(/invalide ou manquant/)).toBeInTheDocument();
+        expect(verifyEmail).not.toHaveBeenCalled();
+    });
 });

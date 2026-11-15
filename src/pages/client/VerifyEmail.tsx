@@ -20,7 +20,13 @@ const VerifyEmail: React.FC = () => {
         started.current = true;
         const verify = async () => {
             const queryParams = new URLSearchParams(location.search);
-            const verificationUrl = queryParams.get('url');
+            // Lien direct (id, hash, expires, signature) depuis le 15/11 : l'ancien lien contenait une
+            // adresse encodée, motif d'hameçonnage pour les filtres anti-spam. « url » reste accepté
+            // pour les courriels envoyés avant, valables jusqu'à leur expiration.
+            const [id, hash, expires, signature] = ['id', 'hash', 'expires', 'signature'].map((k) => queryParams.get(k));
+            const verificationUrl = id && hash && expires && signature
+                ? `/auth/email/verify/${encodeURIComponent(id)}/${encodeURIComponent(hash)}?${new URLSearchParams({ expires, signature })}`
+                : queryParams.get('url');
 
             if (!verificationUrl) {
                 setStatus('error');
