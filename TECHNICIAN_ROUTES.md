@@ -17,7 +17,6 @@ Ce document recense l'ensemble des écrans et fonctionnalités implémentés pou
 | `/technicien/competences` | **Matrice de Compétences**<br>- Sélection des métiers et spécialités.<br>- Définition du Tarif Horaire et des Frais de Déplacement.<br>- Upload de certificats/diplômes. |
 | `/technicien/zone` | **Zone d'Intervention**<br>- Carte interactive pour définir le rayon d'action.<br>- Gestion des adresses de départ. |
 | `/technicien/verification` | **Centre de Vérification (KYC)**<br>- Upload des pièces justificatives (CNI, Casier Judiciaire, RCP).<br>- Suivi du statut de validation (En attente, Validé, Rejeté). |
-| `/technicien/abonnement` | **Abonnement & Facturation**<br>- Choix du plan (Free, Starter, Pro).<br>- Gestion des méthodes de paiement.<br>- Historique des factures de la plateforme. |
 
 ---
 
