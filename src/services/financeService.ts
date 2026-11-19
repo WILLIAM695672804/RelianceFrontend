@@ -25,13 +25,6 @@ export const financeService = {
   // Holds
   getHolds: () => api.get('/holds'),
 
-  // Subscriptions
-  getPlans: () => api.get('/subscriptions/plans'),
-  getMySubscription: () => api.get('/subscriptions/mine'),
-  subscribe: (planId: string, billing: 'monthly' | 'yearly') =>
-    api.post('/subscriptions/subscribe', { plan_id: planId, billing_cycle: billing }),
-  cancelSubscription: () => api.post('/subscriptions/cancel'),
-
   // Credits
   getExchangeRates: () => api.get('/credits/rates'),
   purchaseCredits: (data: { amount: number; from_currency: string }) =>

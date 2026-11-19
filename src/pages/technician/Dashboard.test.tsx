@@ -199,15 +199,14 @@ describe('Dashboard technicien', () => {
         expect(await screen.findByText(/welcome back, professional/i)).toBeInTheDocument();
     });
 
-    it("mène au radar, aux abonnements et au planning", async () => {
+    it("mène au radar et au planning, sans offre d'abonnement", async () => {
         renderPage();
 
         fireEvent.click(await screen.findByText('Go Online'));
-        fireEvent.click(screen.getByText('Upgrade Now'));
         fireEvent.click(screen.getByText('View All Missions'));
 
         expect(navigate).toHaveBeenCalledWith('/technicien/radar');
-        expect(navigate).toHaveBeenCalledWith('/technicien/abonnements');
         expect(navigate).toHaveBeenCalledWith('/technicien/planning');
+        expect(screen.queryByText('Upgrade Now')).not.toBeInTheDocument();
     });
 });

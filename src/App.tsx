@@ -73,7 +73,6 @@ const ReviewsList = lazy(() => import('./pages/technician/ReviewsList'));
 const SocialWall = lazy(() => import('./pages/technician/SocialWall'));
 const Trophies = lazy(() => import('./pages/technician/Trophies'));
 const SlaAuditLog = lazy(() => import('./pages/technician/SlaAuditLog'));
-const Subscriptions = lazy(() => import('./pages/technician/Subscriptions'));
 const Invoices = lazy(() => import('./pages/client/Invoices'));
 const JobTracking = lazy(() => import('./pages/client/JobTracking'));
 const Notifications = lazy(() => import('./pages/common/Notifications'));
@@ -174,7 +173,6 @@ function App() {
             <Route path="identite" element={<IdentityHub />} />
             <Route path="avis" element={<ReviewsList />} />
             <Route path="audit-sla" element={<SlaAuditLog />} />
-            <Route path="abonnements" element={<Subscriptions />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="litiges" element={<Disputes />} />
             <Route path="litiges/:id" element={<DisputeDetail />} />

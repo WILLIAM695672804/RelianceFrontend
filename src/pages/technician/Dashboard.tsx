@@ -330,16 +330,6 @@ const Dashboard: React.FC = () => {
 
                     <hr className="tech-sidebar-divider" />
 
-                    {/* Promo Card */}
-                    <div className="tech-promo-card">
-                        <div className="tech-promo-content">
-                            <h5 className="tech-promo-title">Reliance Premium</h5>
-                            <p className="tech-promo-desc">Boost your mission visibility and get exclusive priority support.</p>
-                            <button className="tech-promo-btn" onClick={() => navigate('/technicien/abonnements')}>Upgrade Now</button>
-                        </div>
-                        <span className="material-symbols-outlined bg-icon">verified_user</span>
-                    </div>
-
                     {/* Helpful Links */}
                     <div className="tech-helpful-links">
                         <a className="tech-link-item" style={{ cursor: 'pointer' }} onClick={() => navigate('/contact')}>
