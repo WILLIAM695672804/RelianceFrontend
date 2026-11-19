@@ -20,7 +20,7 @@ describe('AdminDashboard', () => {
         vi.clearAllMocks();
         vi.spyOn(console, 'error').mockImplementation(() => {});
         svc.getStats.mockResolvedValue(stats());
-        svc.getRevenue.mockResolvedValue({ data: { total: 6500, by_source: [{ source: 'job_commission', total: 1500 }, { source: 'subscription', total: 5000 }] } });
+        svc.getRevenue.mockResolvedValue({ data: { total: 6500, by_source: [{ source: 'job_commission', total: 1500 }, { source: 'diagnostic_fee', total: 5000 }] } });
     });
 
     it('affiche les indicateurs clés', async () => {
@@ -71,7 +71,7 @@ describe('AdminDashboard', () => {
         render(<AdminDashboard />);
 
         expect(await screen.findByText('Revenus de la plateforme')).toBeInTheDocument();
-        expect(screen.getByText(/job commission : 1.500 · subscription : 5.000/)).toBeInTheDocument();
+        expect(screen.getByText(/job commission : 1.500 · diagnostic fee : 5.000/)).toBeInTheDocument();
     });
 
     it("n'affiche pas la carte de revenus si le serveur la refuse", async () => {

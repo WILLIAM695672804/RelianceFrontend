@@ -18,7 +18,6 @@ const AdminLayout: React.FC = () => {
         if (path.includes('demandes')) return 'Gestion des Demandes';
         if (path.includes('messagerie')) return 'Supervision Messagerie';
         if (path.includes('litiges')) return 'Gestion des Litiges';
-        if (path.includes('abonnements')) return 'Abonnements';
         if (path.includes('promotions')) return 'Promotions de Rôle';
         return 'Administration';
     };

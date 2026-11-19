@@ -76,7 +76,7 @@ const AdminDashboard: React.FC = () => {
                 </div>
             </div>
 
-            {/* Revenus de la plateforme (commissions, abonnements) */}
+            {/* Revenus de la plateforme (commissions) */}
             {revenue && (
                 <div className="adm-glass adm-kpi-card" style={{ marginBottom: '1rem' }}>
                     <p className="adm-kpi-label">Revenus de la plateforme</p>

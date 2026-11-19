@@ -84,7 +84,6 @@ const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
 const AdminTechnicians = lazy(() => import('./pages/admin/AdminTechnicians'));
 const AdminKyc = lazy(() => import('./pages/admin/AdminKyc'));
 const AdminDisputes = lazy(() => import('./pages/admin/AdminDisputes'));
-const AdminSubscriptions = lazy(() => import('./pages/admin/AdminSubscriptions'));
 const AdminUpgradeRequests = lazy(() => import('./pages/admin/AdminUpgradeRequests'));
 const AdminFees = lazy(() => import('./pages/admin/AdminFees'));
 const AdminAnalytics = lazy(() => import('./pages/admin/AdminAnalytics'));
@@ -191,7 +190,6 @@ function App() {
             <Route path="technicians" element={<AdminTechnicians />} />
             <Route path="kyc" element={<AdminKyc />} />
             <Route path="litiges" element={<AdminDisputes />} />
-            <Route path="abonnements" element={<AdminSubscriptions />} />
             <Route path="promotions" element={<AdminUpgradeRequests />} />
             <Route path="fees" element={<AdminFees />} />
             <Route path="analytics" element={<AdminAnalytics />} />
