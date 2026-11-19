@@ -97,14 +97,6 @@
  },
  {
   "method": "GET",
-  "uri": "api/v1/admin/subscriptions"
- },
- {
-  "method": "GET",
-  "uri": "api/v1/admin/subscriptions/stats"
- },
- {
-  "method": "GET",
   "uri": "api/v1/agencies"
  },
  {
@@ -401,14 +393,6 @@
  },
  {
   "method": "GET",
-  "uri": "api/v1/subscriptions/mine"
- },
- {
-  "method": "GET",
-  "uri": "api/v1/subscriptions/plans"
- },
- {
-  "method": "GET",
   "uri": "api/v1/technician/calendar"
  },
  {
@@ -510,10 +494,6 @@
  {
   "method": "POST",
   "uri": "api/v1/admin/requests/{id}/assign"
- },
- {
-  "method": "POST",
-  "uri": "api/v1/admin/subscriptions/plans"
  },
  {
   "method": "POST",
@@ -773,22 +753,6 @@
  },
  {
   "method": "POST",
-  "uri": "api/v1/subscriptions/cancel"
- },
- {
-  "method": "POST",
-  "uri": "api/v1/subscriptions/pause"
- },
- {
-  "method": "POST",
-  "uri": "api/v1/subscriptions/resume"
- },
- {
-  "method": "POST",
-  "uri": "api/v1/subscriptions/subscribe"
- },
- {
-  "method": "POST",
   "uri": "api/v1/technician/exceptions"
  },
  {
@@ -818,14 +782,6 @@
  {
   "method": "PUT",
   "uri": "api/v1/admin/fees/{id}"
- },
- {
-  "method": "PUT",
-  "uri": "api/v1/admin/subscriptions/plans/{id}"
- },
- {
-  "method": "PUT",
-  "uri": "api/v1/admin/subscriptions/{id}"
  },
  {
   "method": "PUT",
